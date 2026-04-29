@@ -1,0 +1,19 @@
+-- Enable RLS
+ALTER TABLE students ENABLE ROW LEVEL SECURITY;
+ALTER TABLE progress ENABLE ROW LEVEL SECURITY;
+
+-- Students can read their own data
+CREATE POLICY "Students can read own data" ON students
+    FOR SELECT USING (auth.uid() = id);
+
+-- Students can read their own progress
+CREATE POLICY "Students can read own progress" ON progress
+    FOR SELECT USING (auth.uid() = student_id);
+
+-- Students can insert their own progress
+CREATE POLICY "Students can insert own progress" ON progress
+    FOR INSERT WITH CHECK (auth.uid() = student_id);
+
+-- Teachers can read all (optional - add teacher role)
+CREATE POLICY "Teachers can read all" ON students
+    FOR SELECT USING (auth.jwt() ->> 'role' = 'teacher');
