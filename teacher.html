@@ -103,13 +103,46 @@
             border: none;
             text-align: center;
         }
-        .login-info {
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+        }
+        .login-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 32px;
+            padding: 40px;
+            width: 450px;
             text-align: center;
-            padding: 20px;
-            background: rgba(255,215,0,0.1);
-            border-radius: 16px;
+        }
+        .login-card h2 {
+            color: white;
             margin-bottom: 20px;
-            color: #ffd700;
+        }
+        .login-card input {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+        .login-card button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .error-msg {
+            color: #ff6b6b;
+            margin-top: 10px;
         }
         .teacher-badge {
             background: #ffd700;
@@ -132,35 +165,14 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>👩‍🏫 Teacher Dashboard <span class="teacher-badge" id="teacherBadge">Loading...</span></h1>
-            <div>
-                <a href="index.html" class="back-link">← Student View</a>
-                <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
-            </div>
-        </div>
-
-        <div id="loginInfo" class="login-info">
-            ⚠️ Checking teacher access...
-        </div>
-
-        <div class="stats-grid" id="statsGrid">
-            <div class="loading">Loading stats...</div>
-        </div>
-
-        <div class="students-table">
-            <h3 style="color: white; margin-bottom: 15px;">📋 All Students Progress</h3>
-            <div id="studentsTable">
-                <div class="loading">Loading students...</div>
-            </div>
-        </div>
+    <div id="app">
+        <!-- Dynamic content will be inserted here -->
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // ============================================================
-        // YOUR SUPABASE CREDENTIALS (already inserted)
+        // SUPABASE CONFIGURATION (your credentials)
         // ============================================================
         const SUPABASE_URL = 'https://wqoshwbtxulnlfccbuvi.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxb3Nod2J0eHVsbmxmY2NidXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODAwMTgsImV4cCI6MjA5MzA1NjAxOH0.ChxkoIlruVPtontdf0_uvG__XSpZdVhScxR1f-F_ArA';
@@ -169,181 +181,185 @@
         let currentUser = null;
 
         // ------------------------------------------------------------
-        // Check if logged-in user is a teacher
+        // RENDER LOGIN FORM
         // ------------------------------------------------------------
-        async function checkTeacher() {
-            const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-            if (userError || !user) {
-                document.getElementById('loginInfo').innerHTML = '🔐 Please sign in as teacher: <button onclick="signIn()" style="background:#667eea; border:none; margin-top:10px; padding:8px 20px; border-radius:20px; color:white; cursor:pointer;">Sign In</button>';
-                document.getElementById('teacherBadge').textContent = 'Not Signed In';
-                return false;
-            }
-
-            // Fetch user role from students table
-            const { data: student, error: roleError } = await supabase
-                .from('students')
-                .select('role')
-                .eq('id', user.id)
-                .maybeSingle();
-
-            if (roleError || !student || student.role !== 'teacher') {
-                document.getElementById('loginInfo').innerHTML = '❌ You are not authorized as a teacher. Only teachers can access this page.';
-                document.getElementById('teacherBadge').textContent = 'Unauthorized';
-                document.getElementById('statsGrid').innerHTML = '';
-                document.getElementById('studentsTable').innerHTML = '';
-                return false;
-            }
-
-            currentUser = user;
-            document.getElementById('loginInfo').innerHTML = `✅ Logged in as: ${user.email} (Teacher)`;
-            document.getElementById('teacherBadge').textContent = 'Teacher';
-            await loadTeacherData();
-            return true;
+        function renderLoginForm(errorMsg = '') {
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="login-container">
+                    <div class="login-card">
+                        <h2>🔐 Teacher Access</h2>
+                        <input type="email" id="teacherEmail" placeholder="Email address" autocomplete="email">
+                        <input type="password" id="teacherPassword" placeholder="Password" autocomplete="current-password">
+                        <div id="loginError" class="error-msg">${errorMsg}</div>
+                        <button id="doLoginBtn">Sign In</button>
+                        <p style="color:#aaa; margin-top:15px; font-size:14px;">Only teachers can access this dashboard.</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('doLoginBtn').addEventListener('click', async () => {
+                const email = document.getElementById('teacherEmail').value;
+                const password = document.getElementById('teacherPassword').value;
+                if (!email || !password) {
+                    renderLoginForm('Please enter email and password');
+                    return;
+                }
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) {
+                    renderLoginForm('Login failed: ' + error.message);
+                } else {
+                    // Success – reload to show dashboard
+                    location.reload();
+                }
+            });
         }
 
         // ------------------------------------------------------------
-        // Load all student data and statistics
+        // RENDER TEACHER DASHBOARD (after successful login & role check)
+        // ------------------------------------------------------------
+        async function renderDashboard() {
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="container">
+                    <div class="header">
+                        <h1>👩‍🏫 Teacher Dashboard <span class="teacher-badge" id="teacherBadge">Teacher</span></h1>
+                        <div>
+                            <a href="index.html" class="back-link">← Student View</a>
+                            <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
+                        </div>
+                    </div>
+                    <div id="loginInfo" class="login-info" style="background:rgba(255,215,0,0.1); padding:15px; border-radius:16px; margin-bottom:20px; text-align:center;"></div>
+                    <div class="stats-grid" id="statsGrid"><div class="loading">Loading stats...</div></div>
+                    <div class="students-table">
+                        <h3 style="color: white; margin-bottom: 15px;">📋 All Students Progress</h3>
+                        <div id="studentsTable"><div class="loading">Loading students...</div></div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                await supabase.auth.signOut();
+                location.reload();
+            });
+
+            await loadTeacherData();
+        }
+
+        // ------------------------------------------------------------
+        // LOAD DATA FROM SUPABASE (for teacher)
         // ------------------------------------------------------------
         async function loadTeacherData() {
-            // Get all students
-            const { data: students } = await supabase
-                .from('students')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            // Get all progress submissions
-            const { data: allProgress } = await supabase.from('progress').select('*');
-
-            // Leaderboard view (optional, for extra stats)
-            const { data: leaderboard } = await supabase.from('leaderboard_view').select('*');
-
-            const totalStudents = students?.length || 0;
-            const totalSubmissions = allProgress?.length || 0;
-            const avgScore = allProgress?.length
-                ? Math.round(allProgress.reduce((sum, p) => sum + (p.speaking_score || 0), 0) / allProgress.length)
-                : 0;
-            const activeToday = allProgress?.filter(p => p.task_date === new Date().toISOString().split('T')[0]).length || 0;
-
-            document.getElementById('statsGrid').innerHTML = `
-                <div class="stat-card"><div class="stat-number">${totalStudents}</div><div>Total Students</div></div>
-                <div class="stat-card"><div class="stat-number">${totalSubmissions}</div><div>Total Submissions</div></div>
-                <div class="stat-card"><div class="stat-number">${avgScore}</div><div>Average Score</div></div>
-                <div class="stat-card"><div class="stat-number">${activeToday}</div><div>Active Today</div></div>
-            `;
-
-            if (!students || students.length === 0) {
-                document.getElementById('studentsTable').innerHTML = '<div class="loading">No students yet. Ask someone to sign up.</div>';
-                return;
-            }
-
-            // Build table rows
-            let tableRows = '';
-            for (const student of students) {
-                // Get student's latest submission (if any)
-                const { data: submissions } = await supabase
-                    .from('progress')
+            try {
+                // Get all students
+                const { data: students, error: studentsError } = await supabase
+                    .from('students')
                     .select('*')
-                    .eq('student_id', student.id)
-                    .order('submitted_at', { ascending: false })
-                    .limit(1);
+                    .order('created_at', { ascending: false });
 
-                const lastSubmission = submissions?.[0];
-                const lastScore = lastSubmission?.speaking_score || '—';
-                const lastDate = lastSubmission?.submitted_at
-                    ? new Date(lastSubmission.submitted_at).toLocaleDateString()
-                    : 'Never';
+                if (studentsError) throw studentsError;
 
-                tableRows += `
-                    <tr>
-                        <td>${escapeHtml(student.full_name || student.email.split('@')[0])}</td>
-                        <td>${escapeHtml(student.email)}</td>
-                        <td><span class="score-badge">${student.role || 'student'}</span></td>
-                        <td>${new Date(student.created_at).toLocaleDateString()}</td>
-                        <td>${lastScore}</td>
-                        <td>${lastDate}</td>
-                        <td>
-                            <input type="number" class="grade-input" id="grade-${student.id}" placeholder="Score" min="0" max="100">
-                            <button class="grade-btn" onclick="gradeStudent('${student.id}')">Save</button>
-                        </td>
-                    </tr>
+                // Get all progress
+                const { data: allProgress, error: progressError } = await supabase
+                    .from('progress')
+                    .select('*');
+
+                if (progressError) throw progressError;
+
+                const totalStudents = students?.length || 0;
+                const totalSubmissions = allProgress?.length || 0;
+                const avgScore = allProgress?.length
+                    ? Math.round(allProgress.reduce((sum, p) => sum + (p.speaking_score || 0), 0) / allProgress.length)
+                    : 0;
+                const today = new Date().toISOString().split('T')[0];
+                const activeToday = allProgress?.filter(p => p.task_date === today).length || 0;
+
+                document.getElementById('loginInfo').innerHTML = `✅ Logged in as: ${currentUser.email} (Teacher)`;
+                document.getElementById('statsGrid').innerHTML = `
+                    <div class="stat-card"><div class="stat-number">${totalStudents}</div><div>Total Students</div></div>
+                    <div class="stat-card"><div class="stat-number">${totalSubmissions}</div><div>Total Submissions</div></div>
+                    <div class="stat-card"><div class="stat-number">${avgScore}</div><div>Average Score</div></div>
+                    <div class="stat-card"><div class="stat-number">${activeToday}</div><div>Active Today</div></div>
                 `;
-            }
 
-            document.getElementById('studentsTable').innerHTML = `
-                <table>
-                    <thead>
-                        <tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Last Score</th><th>Last Active</th><th>Grade</th></tr>
-                    </thead>
-                    <tbody>
-                        ${tableRows}
-                    </tbody>
-                </table>
-            `;
+                if (!students || students.length === 0) {
+                    document.getElementById('studentsTable').innerHTML = '<div class="loading">No students yet. Ask someone to sign up.</div>';
+                    return;
+                }
+
+                let tableRows = '';
+                for (const student of students) {
+                    const { data: submissions } = await supabase
+                        .from('progress')
+                        .select('*')
+                        .eq('student_id', student.id)
+                        .order('submitted_at', { ascending: false })
+                        .limit(1);
+
+                    const lastSubmission = submissions?.[0];
+                    const lastScore = lastSubmission?.speaking_score || '—';
+                    const lastDate = lastSubmission?.submitted_at
+                        ? new Date(lastSubmission.submitted_at).toLocaleDateString()
+                        : 'Never';
+
+                    tableRows += `
+                        <tr>
+                            <td>${escapeHtml(student.full_name || student.email.split('@')[0])}</td>
+                            <td>${escapeHtml(student.email)}</td>
+                            <td><span class="score-badge">${student.role || 'student'}</span></td>
+                            <td>${new Date(student.created_at).toLocaleDateString()}</td>
+                            <td>${lastScore}</td>
+                            <td>${lastDate}</td>
+                            <td>
+                                <input type="number" class="grade-input" id="grade-${student.id}" placeholder="Score" min="0" max="100">
+                                <button class="grade-btn" onclick="gradeStudent('${student.id}')">Save</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                document.getElementById('studentsTable').innerHTML = `
+                    <table>
+                        <thead>
+                            <tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Last Score</th><th>Last Active</th><th>Grade</th></tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                `;
+
+                // Make grading function globally available
+                window.gradeStudent = async (studentId) => {
+                    const scoreInput = document.getElementById(`grade-${studentId}`);
+                    const score = parseInt(scoreInput.value);
+                    if (isNaN(score) || score < 0 || score > 100) {
+                        alert('Please enter a valid score between 0 and 100');
+                        return;
+                    }
+                    const today = new Date().toISOString().split('T')[0];
+                    const { error } = await supabase
+                        .from('progress')
+                        .upsert({
+                            student_id: studentId,
+                            task_date: today,
+                            speaking_score: score,
+                            task_completed: true,
+                            submitted_at: new Date().toISOString()
+                        }, { onConflict: 'student_id, task_date' });
+
+                    if (error) {
+                        alert('Error: ' + error.message);
+                    } else {
+                        alert(`✅ Grade ${score} saved!`);
+                        // Reload data to refresh the table
+                        await loadTeacherData();
+                    }
+                };
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('statsGrid').innerHTML = `<div class="stat-card">Error loading data: ${err.message}</div>`;
+            }
         }
 
-        // ------------------------------------------------------------
-        // Grade a student (insert/update progress for today)
-        // ------------------------------------------------------------
-        async function gradeStudent(studentId) {
-            const scoreInput = document.getElementById(`grade-${studentId}`);
-            const score = parseInt(scoreInput.value);
-
-            if (isNaN(score) || score < 0 || score > 100) {
-                alert('Please enter a valid score between 0 and 100');
-                return;
-            }
-
-            const today = new Date().toISOString().split('T')[0];
-
-            // Upsert: if a record for today exists, update it; otherwise insert
-            const { error } = await supabase
-                .from('progress')
-                .upsert({
-                    student_id: studentId,
-                    task_date: today,
-                    speaking_score: score,
-                    task_completed: true,
-                    submitted_at: new Date().toISOString()
-                }, { onConflict: 'student_id, task_date' });
-
-            if (error) {
-                alert('Error saving grade: ' + error.message);
-            } else {
-                alert(`✅ Grade ${score} saved for student!`);
-                scoreInput.value = '';
-                // Refresh the table to show updated last score
-                await loadTeacherData();
-            }
-        }
-
-        // ------------------------------------------------------------
-        // Sign in helper (called when not logged in)
-        // ------------------------------------------------------------
-        async function signIn() {
-            const email = prompt('Enter your teacher email:');
-            const password = prompt('Enter your password:');
-            if (!email || !password) return;
-
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) {
-                alert('Login failed: ' + error.message);
-            } else {
-                location.reload(); // reload to show dashboard
-            }
-        }
-
-        // ------------------------------------------------------------
-        // Logout
-        // ------------------------------------------------------------
-        async function signOut() {
-            await supabase.auth.signOut();
-            location.reload();
-        }
-
-        // ------------------------------------------------------------
-        // Helper: escape HTML to prevent injection
-        // ------------------------------------------------------------
         function escapeHtml(str) {
             if (!str) return '';
             return str.replace(/[&<>]/g, function(m) {
@@ -355,14 +371,47 @@
         }
 
         // ------------------------------------------------------------
-        // Attach global functions and initialize
+        // INITIALIZATION: Check session and role
         // ------------------------------------------------------------
-        window.gradeStudent = gradeStudent;
-        window.signIn = signIn;
+        async function init() {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            if (error || !user) {
+                renderLoginForm();
+                return;
+            }
 
-        document.getElementById('logoutBtn').addEventListener('click', signOut);
+            // User is logged in, check if role is teacher
+            const { data: student, error: roleError } = await supabase
+                .from('students')
+                .select('role')
+                .eq('id', user.id)
+                .maybeSingle();
 
-        checkTeacher();
+            if (roleError || !student || student.role !== 'teacher') {
+                // Not a teacher – show error and logout option
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <div class="login-container">
+                        <div class="login-card">
+                            <h2>⛔ Access Denied</h2>
+                            <p>You are not authorized as a teacher.</p>
+                            <button id="logoutAndLoginBtn" style="margin-top:20px;">Sign Out</button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('logoutAndLoginBtn').addEventListener('click', async () => {
+                    await supabase.auth.signOut();
+                    location.reload();
+                });
+                return;
+            }
+
+            // Teacher is authenticated – show dashboard
+            currentUser = user;
+            await renderDashboard();
+        }
+
+        init();
     </script>
 </body>
 </html>
