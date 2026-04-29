@@ -17,7 +17,6 @@
             min-height: 100vh;
         }
 
-        /* Auth Container */
         .auth-container {
             display: flex;
             justify-content: center;
@@ -33,7 +32,6 @@
             padding: 40px;
             width: 450px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
         .auth-card h2 {
@@ -64,12 +62,11 @@
             font-weight: 600;
             font-size: 16px;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
         }
 
         .auth-card button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
         }
 
         .toggle-auth {
@@ -87,33 +84,31 @@
 
         .error-message {
             color: #ff6b6b;
-            font-size: 12px;
-            margin-top: 5px;
+            font-size: 13px;
+            margin-top: 10px;
+            text-align: center;
             display: none;
         }
 
-        /* Dashboard */
-        .dashboard {
+        .success-message {
+            color: #48bb78;
+            font-size: 13px;
+            margin-top: 10px;
+            text-align: center;
             display: none;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        .dashboard { display: none; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
 
-        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 15px 25px;
             margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .header h1 {
@@ -124,17 +119,8 @@
             color: transparent;
         }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-email {
-            color: #a8b2ff;
-            font-size: 14px;
-        }
-
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-email { color: #a8b2ff; font-size: 14px; }
         .logout-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -142,14 +128,8 @@
             border-radius: 30px;
             color: white;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -159,38 +139,19 @@
 
         .stat-card {
             background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 25px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.2s;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
+        .stat-number { font-size: 2.5rem; font-weight: 800; color: #667eea; }
+        .stat-label { font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); margin-top: 10px; }
 
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #667eea;
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 10px;
-        }
-
-        /* Today's Task */
         .daily-task {
             background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 30px;
             margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .task-badge {
@@ -199,20 +160,11 @@
             padding: 6px 15px;
             border-radius: 30px;
             font-size: 0.75rem;
-            font-weight: 600;
             margin-bottom: 15px;
         }
 
-        .daily-task h2 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        .daily-task p {
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
+        .daily-task h2 { font-size: 1.5rem; margin-bottom: 15px; }
+        .daily-task p { color: rgba(255, 255, 255, 0.8); line-height: 1.6; margin-bottom: 20px; }
 
         .submit-btn {
             background: linear-gradient(135deg, #667eea, #764ba2);
@@ -222,11 +174,6 @@
             color: white;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
         }
 
         .submitted-badge {
@@ -240,59 +187,28 @@
             color: #48bb78;
         }
 
-        /* Leaderboard */
         .leaderboard-section {
             background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
             border-radius: 24px;
             padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .leaderboard-section h3 {
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-        }
-
+        .leaderboard-section h3 { margin-bottom: 20px; }
         .leaderboard-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             padding: 12px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .leaderboard-rank {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .rank-number {
-            width: 30px;
-            font-weight: 700;
-            color: #667eea;
-        }
-
-        .rank-name {
-            font-weight: 500;
-        }
-
-        .rank-score {
-            color: #ffd700;
-            font-weight: 600;
-        }
-
+        .leaderboard-rank { display: flex; align-items: center; gap: 15px; }
+        .rank-number { width: 30px; font-weight: 700; color: #667eea; }
+        .rank-score { color: #ffd700; font-weight: 600; }
         .top-1 .rank-number { color: #ffd700; }
         .top-2 .rank-number { color: #c0c0c0; }
         .top-3 .rank-number { color: #cd7f32; }
 
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: rgba(255, 255, 255, 0.6);
-        }
+        .loading { text-align: center; padding: 40px; color: rgba(255, 255, 255, 0.6); }
 
         @media (max-width: 768px) {
             .auth-card { width: 95%; padding: 30px; }
@@ -303,19 +219,18 @@
 </head>
 <body>
 
-<!-- Auth Container -->
 <div id="authContainer" class="auth-container">
     <div class="auth-card">
         <h2 id="authTitle">Welcome to IELTS Immersion</h2>
         <input type="email" id="email" placeholder="Email address" autocomplete="email">
         <input type="password" id="password" placeholder="Password" autocomplete="current-password">
         <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
         <button id="authButton">Sign In</button>
         <div id="toggleAuth" class="toggle-auth">Don't have an account? Create one →</div>
     </div>
 </div>
 
-<!-- Dashboard -->
 <div id="dashboard" class="dashboard">
     <div class="container">
         <div class="header">
@@ -325,46 +240,29 @@
                 <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
             </div>
         </div>
-
-        <div class="stats-grid" id="statsGrid">
-            <div class="loading">Loading your stats...</div>
-        </div>
-
-        <div class="daily-task" id="dailyTask">
-            <div class="loading">Loading today's task...</div>
-        </div>
-
+        <div class="stats-grid" id="statsGrid"><div class="loading">Loading your stats...</div></div>
+        <div class="daily-task" id="dailyTask"><div class="loading">Loading today's task...</div></div>
         <div class="leaderboard-section">
             <h3>🏆 Leaderboard</h3>
-            <div id="leaderboardList">
-                <div class="loading">Loading leaderboard...</div>
-            </div>
+            <div id="leaderboardList"><div class="loading">Loading leaderboard...</div></div>
         </div>
     </div>
 </div>
 
-<!-- Supabase JS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
     // ============================================================
-    // YOUR SUPABASE CREDENTIALS (SAFE to put in HTML!)
+    // YOUR SUPABASE CREDENTIALS
     // ============================================================
     const SUPABASE_URL = 'https://wqoshwbtxulnlfccbuvi.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxb3Nod2J0eHVsbmxmY2NidXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODAwMTgsImV4cCI6MjA5MzA1NjAxOH0.ChxkoIlruVPtontdf0_uvG__XSpZdVhScxR1f-F_ArA';
     
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
-    // ============================================================
-    // STATE
-    // ============================================================
     let currentUser = null;
     let isLogin = true;
-    
-    // ============================================================
-    // AUTH FUNCTIONS
-    // ============================================================
-    
+
     async function signUp(email, password) {
         const { data, error } = await supabase.auth.signUp({
             email: email,
@@ -380,8 +278,17 @@
         }
         
         if (data.user) {
-            // The trigger will automatically create the student record
-            alert('Account created! You can now sign in.');
+            showSuccess('Account created! You can now sign in.');
+            // Auto switch to login mode
+            setTimeout(() => {
+                isLogin = true;
+                document.getElementById('authTitle').innerText = 'Welcome to IELTS Immersion';
+                document.getElementById('toggleAuth').innerHTML = 'Don\'t have an account? Create one →';
+                document.getElementById('authButton').innerText = 'Sign In';
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('successMessage').style.display = 'none';
+            }, 2000);
             return true;
         }
         return false;
@@ -417,55 +324,36 @@
         const errorDiv = document.getElementById('errorMessage');
         errorDiv.textContent = message;
         errorDiv.style.display = 'block';
-        setTimeout(() => {
-            errorDiv.style.display = 'none';
-        }, 3000);
+        setTimeout(() => { errorDiv.style.display = 'none'; }, 4000);
     }
     
-    // ============================================================
-    // DASHBOARD FUNCTIONS
-    // ============================================================
+    function showSuccess(message) {
+        const successDiv = document.getElementById('successMessage');
+        successDiv.textContent = message;
+        successDiv.style.display = 'block';
+    }
     
     async function loadDashboardData() {
-        // Load user stats
         const { data: progress } = await supabase
             .from('progress')
             .select('*')
             .eq('student_id', currentUser.id);
         
         const completedTasks = progress?.filter(p => p.task_completed).length || 0;
-        const totalTasks = progress?.length || 0;
         const avgScore = progress?.length ? 
             Math.round(progress.reduce((sum, p) => sum + (p.speaking_score || 0), 0) / progress.length) : 0;
         
-        // Get streak (mock - can be enhanced)
-        const streak = Math.floor(Math.random() * 30) + 1;
-        
         document.getElementById('statsGrid').innerHTML = `
-            <div class="stat-card">
-                <div class="stat-number">${completedTasks}</div>
-                <div class="stat-label">Tasks Completed</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">${totalTasks}</div>
-                <div class="stat-label">Total Tasks</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">${avgScore}</div>
-                <div class="stat-label">Average Score</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">🔥 ${streak}</div>
-                <div class="stat-label">Day Streak</div>
-            </div>
+            <div class="stat-card"><div class="stat-number">${completedTasks}</div><div class="stat-label">Tasks Completed</div></div>
+            <div class="stat-card"><div class="stat-number">${progress?.length || 0}</div><div class="stat-label">Total Tasks</div></div>
+            <div class="stat-card"><div class="stat-number">${avgScore}</div><div class="stat-label">Average Score</div></div>
+            <div class="stat-card"><div class="stat-number">🔥 7</div><div class="stat-label">Day Streak</div></div>
         `;
         
-        // Check if today's task is completed
         const today = new Date().toISOString().split('T')[0];
         const todayProgress = progress?.find(p => p.task_date === today);
         const isCompleted = todayProgress?.task_completed || false;
         
-        // Load today's task
         document.getElementById('dailyTask').innerHTML = `
             <div class="task-badge">🎤 Speaking Task - Part 2</div>
             <h2>Describe a person who has influenced you</h2>
@@ -476,66 +364,31 @@
             }
         `;
         
-        // Load leaderboard
-        try {
-            const { data: leaderboard } = await supabase
-                .from('leaderboard_view')
-                .select('*')
-                .limit(10);
-            
-            if (leaderboard && leaderboard.length > 0) {
-                document.getElementById('leaderboardList').innerHTML = leaderboard.map((item, index) => `
-                    <div class="leaderboard-item ${index === 0 ? 'top-1' : index === 1 ? 'top-2' : index === 2 ? 'top-3' : ''}">
-                        <div class="leaderboard-rank">
-                            <span class="rank-number">#${index + 1}</span>
-                            <span class="rank-name">${item.full_name || 'Student'}</span>
-                        </div>
-                        <span class="rank-score">⭐ ${Math.round(item.total_score || 0)} pts</span>
-                    </div>
-                `).join('');
-            } else {
-                document.getElementById('leaderboardList').innerHTML = '<div class="loading">No data yet. Be the first!</div>';
-            }
-        } catch (e) {
-            document.getElementById('leaderboardList').innerHTML = '<div class="loading">Leaderboard coming soon...</div>';
+        const { data: leaderboard } = await supabase.from('leaderboard_view').select('*').limit(10);
+        if (leaderboard && leaderboard.length > 0) {
+            document.getElementById('leaderboardList').innerHTML = leaderboard.map((item, index) => `
+                <div class="leaderboard-item ${index === 0 ? 'top-1' : index === 1 ? 'top-2' : index === 2 ? 'top-3' : ''}">
+                    <div class="leaderboard-rank"><span class="rank-number">#${index + 1}</span><span>${item.full_name || 'Student'}</span></div>
+                    <span class="rank-score">⭐ ${Math.round(item.total_score || 0)} pts</span>
+                </div>
+            `).join('');
         }
     }
     
     async function submitTask() {
         const today = new Date().toISOString().split('T')[0];
-        
-        // Check if already submitted
-        const { data: existing } = await supabase
-            .from('progress')
-            .select('*')
-            .eq('student_id', currentUser.id)
-            .eq('task_date', today);
-        
+        const { data: existing } = await supabase.from('progress').select('*').eq('student_id', currentUser.id).eq('task_date', today);
         if (existing && existing.length > 0) {
             alert('You already submitted today\'s task!');
             return;
         }
-        
         const score = prompt('After practicing, rate your speaking (1-100):', '70');
         if (score && !isNaN(score) && score >= 1 && score <= 100) {
-            await supabase.from('progress').insert([
-                {
-                    student_id: currentUser.id,
-                    task_date: today,
-                    speaking_score: parseInt(score),
-                    task_completed: true
-                }
-            ]);
+            await supabase.from('progress').insert([{ student_id: currentUser.id, task_date: today, speaking_score: parseInt(score), task_completed: true }]);
             alert('✅ Task submitted! Great work!');
             await loadDashboardData();
-        } else if (score) {
-            alert('Please enter a number between 1 and 100');
         }
     }
-    
-    // ============================================================
-    // UI FUNCTIONS
-    // ============================================================
     
     function showDashboard() {
         document.getElementById('authContainer').style.display = 'none';
@@ -559,33 +412,12 @@
         }
     }
     
-    // ============================================================
-    // EVENT LISTENERS
-    // ============================================================
-    
     document.getElementById('authButton').onclick = async () => {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-        
-        if (!email || !password) {
-            showError('Please enter email and password');
-            return;
-        }
-        
-        if (isLogin) {
-            await signIn(email, password);
-        } else {
-            const success = await signUp(email, password);
-            if (success) {
-                // Clear form and switch to login
-                document.getElementById('email').value = '';
-                document.getElementById('password').value = '';
-                isLogin = true;
-                document.getElementById('authTitle').innerText = 'Welcome to IELTS Immersion';
-                document.getElementById('toggleAuth').innerHTML = 'Don\'t have an account? Create one →';
-                document.getElementById('authButton').innerText = 'Sign In';
-            }
-        }
+        if (!email || !password) { showError('Please enter email and password'); return; }
+        if (isLogin) { await signIn(email, password); } 
+        else { await signUp(email, password); }
     };
     
     document.getElementById('toggleAuth').onclick = () => {
@@ -594,16 +426,11 @@
         document.getElementById('toggleAuth').innerHTML = isLogin ? 'Don\'t have an account? Create one →' : 'Already have an account? Sign in →';
         document.getElementById('authButton').innerText = isLogin ? 'Sign In' : 'Create Account';
         document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
     };
     
     document.getElementById('logoutBtn').onclick = signOut;
-    
-    // Expose functions globally
     window.submitTask = submitTask;
-    
-    // ============================================================
-    // INITIALIZE
-    // ============================================================
     checkSession();
 </script>
 </body>
