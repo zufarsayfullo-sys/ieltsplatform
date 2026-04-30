@@ -1204,3 +1204,39 @@ function notify(msg, type='success') {
 }
 </script>
 
+<!-- ═══════════════════════════════════════════════════════════════
+  SUPABASE SETUP — Run these SQL queries in your Supabase SQL Editor:
+
+  1. Tasks table (if not already created):
+  CREATE TABLE IF NOT EXISTS tasks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    description TEXT,
+    skill TEXT DEFAULT 'Writing',
+    task_date DATE NOT NULL,
+    created_by UUID REFERENCES auth.users(id),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Anyone can read tasks" ON tasks FOR SELECT USING (true);
+  CREATE POLICY "Admin can insert tasks" ON tasks FOR INSERT WITH CHECK (true);
+  CREATE POLICY "Admin can delete tasks" ON tasks FOR DELETE USING (true);
+
+  2. Task completions table:
+  CREATE TABLE IF NOT EXISTS task_completions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    task_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id),
+    user_name TEXT,
+    user_avatar TEXT,
+    completed_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(task_id, user_id)
+  );
+  ALTER TABLE task_completions ENABLE ROW LEVEL SECURITY;
+  CREATE POLICY "Anyone can read completions" ON task_completions FOR SELECT USING (true);
+  CREATE POLICY "Users can insert own completions" ON task_completions FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+═══════════════════════════════════════════════════════════════ -->
+
+</body>
+</html>
