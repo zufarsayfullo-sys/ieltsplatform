@@ -1,8 +1,5 @@
-<!--
-  FULL TEACHER DASHBOARD – FIXED TASKS DISPLAY
-  Copy this entire file and replace your existing teacher.html
--->
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -24,129 +21,244 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-he
 body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background:radial-gradient(ellipse 60% 40% at 15% 20%,rgba(124,107,205,0.08) 0%,transparent 60%),
              radial-gradient(ellipse 50% 50% at 85% 80%,rgba(59,130,246,0.06) 0%,transparent 60%)}
-
 #app{position:relative;z-index:1;min-height:100vh}
 .hidden{display:none!important}
 
-/* Login view */
-#login-view{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
-.login-card{background:rgba(13,15,24,0.95);border:1px solid var(--bdr2);border-radius:24px;padding:52px;max-width:420px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,0.6);}
-.login-logo{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;letter-spacing:5px;text-transform:uppercase;color:var(--muted2);margin-bottom:40px}
-.login-h{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;margin-bottom:6px}
-.login-sub{font-size:14px;color:var(--muted);margin-bottom:36px}
+/* Login */
+#login-view{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{background:rgba(13,15,24,0.95);border:1px solid var(–bdr2);border-radius:24px;padding:52px;max-width:420px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,0.6)}
+.login-logo{font-family:‘Syne’,sans-serif;font-size:13px;font-weight:800;letter-spacing:5px;text-transform:uppercase;color:var(–muted2);margin-bottom:40px}
+.login-h{font-family:‘Syne’,sans-serif;font-size:32px;font-weight:800;margin-bottom:6px}
+.login-sub{font-size:14px;color:var(–muted);margin-bottom:36px}
 .field{margin-bottom:16px}
-.field label{display:block;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
-.field input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--bdr2);border-radius:10px;padding:13px 16px;font-family:'Inter',sans-serif;font-size:15px;color:var(--txt);outline:none;transition:all 0.18s;}
-.field input:focus{border-color:var(--violet2);background:rgba(124,107,205,0.06)}
-.btn-primary{width:100%;background:linear-gradient(135deg,var(--violet),#4a3a9a);color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px;}
+.field label{display:block;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(–muted);margin-bottom:7px}
+.field input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(–bdr2);border-radius:10px;padding:13px 16px;font-family:‘Inter’,sans-serif;font-size:15px;color:var(–txt);outline:none;transition:all 0.18s}
+.field input:focus{border-color:var(–violet2);background:rgba(124,107,205,0.06)}
+.btn-primary{width:100%;background:linear-gradient(135deg,var(–violet),#4a3a9a);color:#fff;border:none;border-radius:12px;padding:14px;font-family:‘Inter’,sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px}
 .btn-primary:hover{filter:brightness(1.12);transform:translateY(-1px)}
-.login-err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:10px 14px;font-size:13px;color:#fca5a5;margin-bottom:16px;display:none;}
-.teacher-note{margin-top:20px;padding:12px 16px;border-radius:10px;background:rgba(124,107,205,0.08);border:1px solid rgba(124,107,205,0.2);font-size:12px;color:var(--muted);line-height:1.6;text-align:center;}
+.login-err{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:10px 14px;font-size:13px;color:#fca5a5;margin-bottom:16px;display:none}
+.teacher-note{margin-top:20px;padding:12px 16px;border-radius:10px;background:rgba(124,107,205,0.08);border:1px solid rgba(124,107,205,0.2);font-size:12px;color:var(–muted);line-height:1.6;text-align:center}
 
-/* Main layout */
+/* Layout */
 #main-view{display:flex;min-height:100vh}
-.sidebar{width:240px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--bdr);position:fixed;top:0;left:0;height:100vh;z-index:100;}
-.sb-logo{padding:28px 24px 20px;font-family:'Syne',sans-serif;font-size:12px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--muted2);border-bottom:1px solid var(--bdr);}
-.sb-logo span{display:block;font-size:18px;font-weight:800;color:var(--violet2);letter-spacing:0;margin-top:4px}
-.sb-nav{padding:16px 12px;flex:1}
-.sb-section{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted2);font-weight:600;padding:0 12px;margin:16px 0 6px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted);transition:all 0.15s;margin-bottom:2px;}
-.nav-item:hover{background:rgba(255,255,255,0.04);color:var(--txt)}
-.nav-item.active{background:rgba(124,107,205,0.15);color:var(--violet2)}
+.sidebar{width:240px;flex-shrink:0;background:var(–s1);border-right:1px solid var(–bdr);position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+.sb-logo{padding:28px 24px 20px;font-family:‘Syne’,sans-serif;font-size:12px;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(–muted2);border-bottom:1px solid var(–bdr)}
+.sb-logo span{display:block;font-size:18px;font-weight:800;color:var(–violet2);letter-spacing:0;margin-top:4px}
+.sb-nav{padding:16px 12px}
+.sb-section{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(–muted2);font-weight:600;padding:0 12px;margin:16px 0 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;color:var(–muted);transition:all 0.15s;margin-bottom:2px}
+.nav-item:hover{background:rgba(255,255,255,0.04);color:var(–txt)}
+.nav-item.active{background:rgba(124,107,205,0.15);color:var(–violet2)}
 .nav-item .icon{font-size:16px;width:20px;text-align:center}
-.sb-bottom{padding:16px;border-top:1px solid var(--bdr);}
-.teacher-badge{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:10px;}
-.tb-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--violet),#4a3a9a);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.nav-item.ai-item{background:linear-gradient(135deg,rgba(124,107,205,0.15),rgba(59,130,246,0.1));border:1px solid rgba(124,107,205,0.25);color:var(–violet2)}
+.nav-item.ai-item:hover{filter:brightness(1.1)}
+.nav-item.ai-item.active{background:linear-gradient(135deg,rgba(124,107,205,0.3),rgba(59,130,246,0.2));border-color:var(–violet2)}
+.sb-bottom{padding:16px;border-top:1px solid var(–bdr)}
+.teacher-badge{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,0.03);border-radius:10px}
+.tb-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(–violet),#4a3a9a);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
 .tb-info{flex:1;min-width:0}
-.tb-name{font-size:12px;font-weight:600;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tb-role{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-.logout-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:16px;transition:color 0.15s;flex-shrink:0;}
-.logout-btn:hover{color:var(--red)}
-
+.tb-name{font-size:12px;font-weight:600;color:var(–txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-role{font-size:10px;color:var(–muted);letter-spacing:1px;text-transform:uppercase}
+.logout-btn{background:transparent;border:none;color:var(–muted);cursor:pointer;font-size:16px;transition:color 0.15s;flex-shrink:0}
+.logout-btn:hover{color:var(–red)}
 .main-content{margin-left:240px;flex:1;min-height:100vh}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(--bdr);background:rgba(7,8,13,0.8);backdrop-filter:blur(16px);position:sticky;top:0;z-index:50;}
-.page-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;border-bottom:1px solid var(–bdr);background:rgba(7,8,13,0.8);backdrop-filter:blur(16px);position:sticky;top:0;z-index:50}
+.page-title{font-family:‘Syne’,sans-serif;font-size:22px;font-weight:800}
 .topbar-right{display:flex;align-items:center;gap:12px}
-
 .page{display:none;padding:32px 40px}
 .page.active{display:block}
 
-/* Stats & tables */
+/* Stats */
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
-.stat-card{background:var(--s1);border:1px solid var(--bdr);border-radius:16px;padding:22px;position:relative;overflow:hidden}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--sc)}
-.sc-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:10px}
-.sc-val{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;margin-bottom:4px}
-.sc-sub{font-size:12px;color:var(--muted)}
-
+.stat-card{background:var(–s1);border:1px solid var(–bdr);border-radius:16px;padding:22px;position:relative;overflow:hidden}
+.stat-card::before{content:’’;position:absolute;top:0;left:0;right:0;height:2px;background:var(–sc)}
+.sc-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(–muted);font-weight:500;margin-bottom:10px}
+.sc-val{font-family:‘Syne’,sans-serif;font-size:36px;font-weight:800;margin-bottom:4px}
+.sc-sub{font-size:12px;color:var(–muted)}
 .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.section-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
-.table-wrap{background:var(--s1);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;margin-bottom:28px}
+.section-title{font-family:‘Syne’,sans-serif;font-size:18px;font-weight:700}
+.table-wrap{background:var(–s1);border:1px solid var(–bdr);border-radius:16px;overflow:hidden;margin-bottom:28px}
 table{width:100%;border-collapse:collapse}
-thead tr{background:rgba(255,255,255,0.03);border-bottom:1px solid var(--bdr)}
-th{padding:12px 18px;text-align:left;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
-tbody tr{border-bottom:1px solid var(--bdr);transition:background 0.15s}
+thead tr{background:rgba(255,255,255,0.03);border-bottom:1px solid var(–bdr)}
+th{padding:12px 18px;text-align:left;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(–muted)}
+tbody tr{border-bottom:1px solid var(–bdr);transition:background 0.15s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:rgba(255,255,255,0.02)}
-td{padding:14px 18px;font-size:14px;color:var(--txt)}
-td.muted{color:var(--muted)}
-
+td{padding:14px 18px;font-size:14px;color:var(–txt)}
+td.muted{color:var(–muted)}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.5px}
 .badge-green{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);color:#4ade80}
 .badge-red{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fca5a5}
 .badge-orange{background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.25);color:#fb923c}
 .badge-blue{background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.25);color:#93c5fd}
-.badge-violet{background:rgba(124,107,205,0.15);border:1px solid rgba(124,107,205,0.3);color:var(--violet2)}
-.badge-muted{background:rgba(255,255,255,0.05);border:1px solid var(--bdr);color:var(--muted)}
-
-.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:9px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.18s;border:none}
+.badge-violet{background:rgba(124,107,205,0.15);border:1px solid rgba(124,107,205,0.3);color:var(–violet2)}
+.badge-muted{background:rgba(255,255,255,0.05);border:1px solid var(–bdr);color:var(–muted)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:9px;font-family:‘Inter’,sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.18s;border:none}
 .btn-sm{padding:6px 12px;font-size:12px;border-radius:7px}
-.btn-violet{background:linear-gradient(135deg,var(--violet),#4a3a9a);color:#fff}
+.btn-violet{background:linear-gradient(135deg,var(–violet),#4a3a9a);color:#fff}
 .btn-violet:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.btn-ghost{background:rgba(255,255,255,0.04);border:1px solid var(--bdr2);color:var(--muted)}
-.btn-ghost:hover{background:rgba(255,255,255,0.08);color:var(--txt)}
+.btn-ghost{background:rgba(255,255,255,0.04);border:1px solid var(–bdr2);color:var(–muted)}
+.btn-ghost:hover{background:rgba(255,255,255,0.08);color:var(–txt)}
 .btn-red{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fca5a5}
 .btn-red:hover{background:rgba(239,68,68,0.2)}
 .btn-green{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);color:#4ade80}
 .btn-green:hover{background:rgba(34,197,94,0.2)}
 
+/* Modals */
 .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:24px}
 .modal-overlay.show{display:flex}
-.modal{background:var(--s1);border:1px solid var(--bdr2);border-radius:20px;padding:36px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+.modal{background:var(–s1);border:1px solid var(–bdr2);border-radius:20px;padding:36px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1)}
 .modal::-webkit-scrollbar{width:4px}
-.modal::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:4px}
+.modal::-webkit-scrollbar-thumb{background:var(–bdr2);border-radius:4px}
 @keyframes popIn{from{opacity:0;transform:scale(0.88)}to{opacity:1;transform:scale(1)}}
 .modal-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
-.modal-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700}
-.modal-close{background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:2px;line-height:1}
-.modal-close:hover{color:var(--txt)}
-
+.modal-title{font-family:‘Syne’,sans-serif;font-size:20px;font-weight:700}
+.modal-close{background:transparent;border:none;color:var(–muted);font-size:20px;cursor:pointer;padding:2px;line-height:1}
+.modal-close:hover{color:var(–txt)}
 .form-group{margin-bottom:18px}
-.form-group label{display:block;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
-.form-input,.form-select,.form-textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--bdr2);border-radius:10px;padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;color:var(--txt);outline:none;transition:all 0.18s;}
-.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--violet2);background:rgba(124,107,205,0.06);}
+.form-group label{display:block;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(–muted);margin-bottom:7px}
+.form-input,.form-select,.form-textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(–bdr2);border-radius:10px;padding:12px 14px;font-family:‘Inter’,sans-serif;font-size:14px;color:var(–txt);outline:none;transition:all 0.18s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(–violet2);background:rgba(124,107,205,0.06)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .type-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
-.type-pill{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:rgba(255,255,255,0.03);color:var(--muted);transition:all 0.15s;}
-.type-pill:hover{border-color:var(--violet2);color:var(--violet2)}
-.type-pill.selected{background:rgba(124,107,205,0.2);border-color:var(--violet2);color:var(--violet2)}
-
+.type-pill{padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(–bdr2);background:rgba(255,255,255,0.03);color:var(–muted);transition:all 0.15s}
+.type-pill:hover{border-color:var(–violet2);color:var(–violet2)}
+.type-pill.selected{background:rgba(124,107,205,0.2);border-color:var(–violet2);color:var(–violet2)}
 .empty-state{text-align:center;padding:60px 20px}
 .empty-icon{font-size:48px;margin-bottom:12px}
 .empty-title{font-size:16px;font-weight:600;margin-bottom:6px}
-.empty-sub{font-size:14px;color:var(--muted)}
+.empty-sub{font-size:14px;color:var(–muted)}
 .loading-wrap{padding:60px;display:flex;flex-direction:column;align-items:center;gap:14px}
-.spinner{width:32px;height:32px;border-radius:50%;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--violet2);animation:spin 0.7s linear infinite;margin:0 auto}
+.spinner{width:32px;height:32px;border-radius:50%;border:3px solid rgba(255,255,255,0.1);border-top-color:var(–violet2);animation:spin 0.7s linear infinite;margin:0 auto}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-#toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--s2);border:1px solid var(--bdr2);border-radius:12px;padding:14px 20px;font-size:14px;font-weight:500;display:none;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideUp 0.3s ease;}
+#toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(–s2);border:1px solid var(–bdr2);border-radius:12px;padding:14px 20px;font-size:14px;font-weight:500;display:none;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:slideUp 0.3s ease}
 #toast.show{display:flex}
 @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════════════════════════════════
+AI TASK GENERATOR PAGE
+═══════════════════════════════════════════ */
+.ai-page-wrap{max-width:800px}
+
+.ai-hero{
+background:linear-gradient(135deg,rgba(124,107,205,0.12) 0%,rgba(59,130,246,0.08) 100%);
+border:1px solid rgba(124,107,205,0.25);
+border-radius:20px;
+padding:32px;
+margin-bottom:28px;
+position:relative;
+overflow:hidden;
+}
+.ai-hero::before{
+content:‘✦’;
+position:absolute;
+right:32px;top:50%;transform:translateY(-50%);
+font-size:80px;opacity:0.06;
+}
+.ai-hero-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(–violet2);margin-bottom:10px}
+.ai-hero-title{font-family:‘Syne’,sans-serif;font-size:26px;font-weight:800;margin-bottom:8px}
+.ai-hero-desc{font-size:14px;color:var(–muted);line-height:1.7;max-width:520px}
+
+/* Upload zone */
+.upload-zone{
+border:2px dashed rgba(124,107,205,0.35);
+border-radius:16px;
+padding:40px;
+text-align:center;
+cursor:pointer;
+transition:all 0.2s;
+background:rgba(124,107,205,0.04);
+margin-bottom:24px;
+position:relative;
+}
+.upload-zone:hover,.upload-zone.dragover{
+border-color:var(–violet2);
+background:rgba(124,107,205,0.1);
+}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-size:36px;margin-bottom:12px}
+.upload-title{font-size:16px;font-weight:600;margin-bottom:6px}
+.upload-sub{font-size:13px;color:var(–muted)}
+.upload-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:20px;padding:4px 12px;font-size:12px;color:#4ade80;margin-top:12px}
+
+/* Analysis result card */
+.ai-result-card{
+background:var(–s1);
+border:1px solid rgba(124,107,205,0.25);
+border-radius:16px;
+overflow:hidden;
+margin-bottom:24px;
+display:none;
+}
+.ai-result-card.show{display:block}
+.ai-result-header{
+background:linear-gradient(135deg,rgba(124,107,205,0.15),rgba(59,130,246,0.08));
+border-bottom:1px solid rgba(124,107,205,0.2);
+padding:18px 24px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+.ai-result-title{font-size:14px;font-weight:700;color:var(–violet2);display:flex;align-items:center;gap:8px}
+.ai-result-body{padding:24px}
+
+/* Generated task preview */
+.gen-task-preview{
+background:rgba(255,255,255,0.03);
+border:1px solid var(–bdr2);
+border-radius:12px;
+padding:20px;
+margin-bottom:20px;
+}
+.gen-field{margin-bottom:16px;display:flex;flex-direction:column;gap:5px}
+.gen-field:last-child{margin-bottom:0}
+.gen-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(–muted)}
+.gen-value{font-size:14px;line-height:1.6;color:var(–txt)}
+.gen-value.big{font-size:16px;font-weight:700;color:var(–violet2)}
+.gen-value.instructions{font-size:13px;color:#b8bfd4;background:rgba(0,0,0,0.2);border-radius:8px;padding:12px 14px;white-space:pre-wrap;line-height:1.7}
+
+.ai-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+/* Thinking animation */
+.thinking-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(–violet2);margin:0 2px;animation:bounce 1.2s ease-in-out infinite}
+.thinking-dots span:nth-child(2){animation-delay:0.2s}
+.thinking-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+
+.ai-thinking{
+display:none;
+align-items:center;
+gap:14px;
+padding:24px;
+background:var(–s1);
+border:1px solid rgba(124,107,205,0.25);
+border-radius:16px;
+margin-bottom:24px;
+font-size:14px;
+color:var(–muted);
+}
+.ai-thinking.show{display:flex}
+
+/* History of generated tasks */
+.gen-history{margin-top:32px}
+.gen-history-title{font-family:‘Syne’,sans-serif;font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+/* File name chip */
+.file-chip{
+display:inline-flex;align-items:center;gap:8px;
+background:rgba(124,107,205,0.1);border:1px solid rgba(124,107,205,0.25);
+border-radius:8px;padding:7px 14px;font-size:13px;
+margin-bottom:16px;
+}
+.file-chip-remove{cursor:pointer;color:var(–muted);margin-left:4px;font-size:15px}
+.file-chip-remove:hover{color:var(–red)}
 </style>
+
 </head>
 <body>
 
-<!-- Login View -->
+<!-- Login -->
+
 <div id="login-view">
   <div class="login-card">
     <div class="login-logo">IELTS Platform</div>
@@ -161,6 +273,7 @@ td.muted{color:var(--muted)}
 </div>
 
 <!-- Main App -->
+
 <div id="main-view" class="hidden">
   <aside class="sidebar">
     <div class="sb-logo">IELTS Platform<span>Teacher</span></div>
@@ -169,92 +282,273 @@ td.muted{color:var(--muted)}
       <div class="nav-item active" onclick="showPage('dashboard')" data-page="dashboard"><span class="icon">📊</span> Dashboard</div>
       <div class="nav-item" onclick="showPage('students')" data-page="students"><span class="icon">👥</span> Students</div>
       <div class="sb-section">Content</div>
+      <div class="nav-item ai-item" onclick="showPage('ai-generator')" data-page="ai-generator"><span class="icon">✦</span> AI Task Generator</div>
       <div class="nav-item" onclick="showPage('tasks')" data-page="tasks"><span class="icon">📋</span> Daily Tasks</div>
       <div class="nav-item" onclick="showPage('results')" data-page="results"><span class="icon">📈</span> Results</div>
       <div class="sb-section">Communication</div>
       <div class="nav-item" onclick="showPage('notifications')" data-page="notifications"><span class="icon">🔔</span> Notifications</div>
     </nav>
     <div class="sb-bottom">
-      <div class="teacher-badge"><div class="tb-avatar" id="tb-avatar">T</div><div class="tb-info"><div class="tb-name" id="tb-name">Teacher</div><div class="tb-role">Instructor</div></div><button class="logout-btn" onclick="doLogout()">⎋</button></div>
+      <div class="teacher-badge">
+        <div class="tb-avatar" id="tb-avatar">T</div>
+        <div class="tb-info"><div class="tb-name" id="tb-name">Teacher</div><div class="tb-role">Instructor</div></div>
+        <button class="logout-btn" onclick="doLogout()">⎋</button>
+      </div>
     </div>
   </aside>
 
   <div class="main-content">
-    <div class="topbar"><div class="page-title" id="page-title">Dashboard</div><div class="topbar-right"><span id="today-date"></span></div></div>
+    <div class="topbar">
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="topbar-right"><span id="today-date"></span></div>
+    </div>
 
-    <!-- Dashboard Page -->
-    <div class="page active" id="page-dashboard">
-      <div class="stats-grid" id="stats-grid">
-        <div class="stat-card" style="--sc:var(--violet2)"><div class="sc-label">Total Students</div><div class="sc-val" id="stat-students">—</div><div class="sc-sub">registered accounts</div></div>
-        <div class="stat-card" style="--sc:var(--green)"><div class="sc-label">Tasks This Week</div><div class="sc-val" id="stat-tasks">—</div><div class="sc-sub">published tasks</div></div>
-        <div class="stat-card" style="--sc:var(--orange)"><div class="sc-label">Submissions Today</div><div class="sc-val" id="stat-today">—</div><div class="sc-sub">task completions</div></div>
-        <div class="stat-card" style="--sc:var(--blue)"><div class="sc-label">Avg Score</div><div class="sc-val" id="stat-avg">—</div><div class="sc-sub">across all tasks</div></div>
+```
+<!-- Dashboard -->
+<div class="page active" id="page-dashboard">
+  <div class="stats-grid">
+    <div class="stat-card" style="--sc:var(--violet2)"><div class="sc-label">Total Students</div><div class="sc-val" id="stat-students">—</div><div class="sc-sub">registered accounts</div></div>
+    <div class="stat-card" style="--sc:var(--green)"><div class="sc-label">Tasks This Week</div><div class="sc-val" id="stat-tasks">—</div><div class="sc-sub">published tasks</div></div>
+    <div class="stat-card" style="--sc:var(--orange)"><div class="sc-label">Submissions Today</div><div class="sc-val" id="stat-today">—</div><div class="sc-sub">task completions</div></div>
+    <div class="stat-card" style="--sc:var(--blue)"><div class="sc-label">Avg Score</div><div class="sc-val" id="stat-avg">—</div><div class="sc-sub">across all tasks</div></div>
+  </div>
+  <div class="section-hdr"><div class="section-title">Recent Submissions</div><button class="btn btn-ghost btn-sm" onclick="showPage('results')">View All →</button></div>
+  <div class="table-wrap"><table><thead><tr><th>Student</th><th>Task</th><th>Score</th><th>Time</th><th>Status</th></tr></thead><tbody id="recent-tbody"><tr><td colspan="5"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr></tbody></table></div>
+  <div class="section-hdr"><div class="section-title">Today's Tasks</div><button class="btn btn-violet btn-sm" onclick="openTaskModal()">+ Add Task</button></div>
+  <div class="table-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Completions</th><th>Due</th><th>Actions</th></tr></thead><tbody id="today-tasks-tbody"><tr><td colspan="5"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr></tbody></table></div>
+</div>
+
+<!-- Students -->
+<div class="page" id="page-students">
+  <div class="section-hdr">
+    <div style="width:280px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid var(--bdr2);border-radius:10px;padding:9px 14px">
+      <span>🔍</span><input type="text" placeholder="Search students…" oninput="filterStudents(this.value)" style="background:transparent;border:none;outline:none;flex:1;color:var(--txt)">
+    </div>
+    <span id="student-count" style="font-size:13px;color:var(--muted)"></span>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>Student</th><th>Email</th><th>Joined</th><th>Tasks Done</th><th>Avg Score</th><th>Last Active</th><th>Actions</th></tr></thead><tbody id="students-tbody"><tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr></tbody></table></div>
+</div>
+
+<!-- ═══════════ AI GENERATOR PAGE ═══════════ -->
+<div class="page" id="page-ai-generator">
+  <div class="ai-page-wrap">
+
+    <!-- Hero -->
+    <div class="ai-hero">
+      <div class="ai-hero-label">✦ Powered by Claude AI</div>
+      <h2 class="ai-hero-title">AI Task Generator</h2>
+      <p class="ai-hero-desc">Upload any HTML file — a reading passage, listening transcript, sample essay, or exercise — and Claude will automatically create a ready-to-publish IELTS task with instructions, band target, and scoring.</p>
+    </div>
+
+    <!-- Upload Zone -->
+    <div class="upload-zone" id="upload-zone"
+      ondragover="event.preventDefault();this.classList.add('dragover')"
+      ondragleave="this.classList.remove('dragover')"
+      ondrop="handleFileDrop(event)">
+      <input type="file" accept=".html,.htm,.txt" id="html-file-input" onchange="handleFileSelect(event)">
+      <div class="upload-icon">📄</div>
+      <div class="upload-title">Drop your HTML file here</div>
+      <div class="upload-sub">or click to browse — .html, .htm, .txt accepted</div>
+      <div id="file-name-display" style="display:none" class="upload-badge">
+        <span>📎</span><span id="file-name-text"></span>
       </div>
-      <div class="section-hdr"><div class="section-title">Recent Submissions</div><button class="btn btn-ghost btn-sm" onclick="showPage('results')">View All →</button></div>
-      <div class="table-wrap"><table><thead><tr><th>Student</th><th>Task</th><th>Score</th><th>Time</th><th>Status</th></tr></thead><tbody id="recent-tbody"><tr><td colspan="5"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr></tbody></table></div>
-      <div class="section-hdr"><div class="section-title">Today's Tasks</div><button class="btn btn-violet btn-sm" onclick="openTaskModal()">+ Add Task</button></div>
-      <div class="table-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Completions</th><th>Due</th><th>Actions</th></tr></thead><tbody id="today-tasks-tbody"><tr><td colspan="5"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr></tbody></table></div>
     </div>
 
-    <!-- Students Page -->
-    <div class="page" id="page-students">
-      <div class="section-hdr"><div class="search-bar" style="width:280px; display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.04); border:1px solid var(--bdr2); border-radius:10px; padding:9px 14px;"><span class="search-icon">🔍</span><input type="text" placeholder="Search students…" oninput="filterStudents(this.value)" id="student-search" style="background:transparent; border:none; outline:none; flex:1;"></div><span id="student-count" style="font-size:13px;color:var(--muted)"></span></div>
-      <div class="table-wrap"><table><thead><tr><th>Student</th><th>Email</th><th>Joined</th><th>Tasks Done</th><th>Avg Score</th><th>Last Active</th><th>Actions</th></tr></thead><tbody id="students-tbody"><tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr></tbody></table></div>
+    <!-- Selected file chip + controls -->
+    <div id="file-controls" style="display:none;margin-bottom:20px">
+      <div class="file-chip">
+        <span>📎</span>
+        <span id="chip-filename" style="font-weight:600"></span>
+        <span class="file-chip-remove" onclick="clearFile()">✕</span>
+      </div>
+      <br>
+      <!-- Extra context input -->
+      <div class="form-group" style="margin-top:8px">
+        <label>Extra context for AI (optional)</label>
+        <input type="text" class="form-input" id="ai-extra-context" placeholder="e.g. 'Target Band 6.5 writing students' or 'Focus on academic vocabulary'">
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-violet" onclick="generateTask()" id="generate-btn">
+          <span>✦</span> Generate IELTS Task
+        </button>
+        <button class="btn btn-ghost" onclick="clearFile()">Clear</button>
+      </div>
     </div>
 
-    <!-- Tasks Page (with refresh button) -->
-    <div class="page" id="page-tasks">
-      <div class="section-hdr">
-        <div style="display:flex;gap:10px;align-items:center">
-          <select class="form-select" style="width:160px;padding:8px 12px" id="task-filter-date" onchange="loadTasks()"><option value="all">All Dates</option><option value="today">Today</option><option value="week">This Week</option><option value="past">Past</option></select>
-          <select class="form-select" style="width:150px;padding:8px 12px" id="task-filter-type" onchange="loadTasks()"><option value="all">All Types</option><option value="writing">Writing</option><option value="reading">Reading</option><option value="listening">Listening</option><option value="speaking">Speaking</option><option value="vocabulary">Vocabulary</option><option value="grammar">Grammar</option></select>
-          <button class="btn btn-ghost btn-sm" onclick="loadTasks()">⟳ Refresh</button>
+    <!-- Thinking state -->
+    <div class="ai-thinking" id="ai-thinking">
+      <div class="thinking-dots"><span></span><span></span><span></span></div>
+      <span id="thinking-msg">Claude is reading your file and generating an IELTS task…</span>
+    </div>
+
+    <!-- Result Card -->
+    <div class="ai-result-card" id="ai-result-card">
+      <div class="ai-result-header">
+        <div class="ai-result-title"><span>✦</span> Generated Task Preview</div>
+        <span style="font-size:12px;color:var(--muted)">Review before publishing</span>
+      </div>
+      <div class="ai-result-body">
+        <div class="gen-task-preview" id="gen-preview"></div>
+        <div class="ai-actions">
+          <button class="btn btn-violet" onclick="publishGeneratedTask()">
+            ✓ Publish This Task
+          </button>
+          <button class="btn btn-ghost" onclick="openTaskModalWithGenerated()">
+            ✏️ Edit Before Publishing
+          </button>
+          <button class="btn btn-ghost" onclick="regenerateTask()">
+            ↺ Regenerate
+          </button>
         </div>
-        <button class="btn btn-violet" onclick="openTaskModal()">+ New Task</button>
       </div>
-      <div class="table-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Date</th><th>Due Time</th><th>Completions</th><th>Avg Score</th><th>Actions</th></tr></thead><tbody id="tasks-tbody"><tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr></tbody></table></div>
     </div>
 
-    <!-- Results Page -->
-    <div class="page" id="page-results">
-      <div class="section-hdr"><div style="display:flex;gap:10px;flex-wrap:wrap"><select class="form-select" style="width:200px" id="result-filter-task" onchange="loadResults()"><option value="all">All Tasks</option></select><select class="form-select" style="width:180px" id="result-filter-student" onchange="loadResults()"><option value="all">All Students</option></select></div><button class="btn btn-ghost btn-sm" onclick="exportResults()">⬇ Export CSV</button></div>
-      <div class="table-wrap"><table><thead><tr><th>Student</th><th>Task</th><th>Type</th><th>Score</th><th>Status</th><th>Submitted</th><th>Details</th></tr></thead><tbody id="results-tbody"><tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr></tbody></table></div>
+    <!-- Generation history -->
+    <div class="gen-history" id="gen-history" style="display:none">
+      <div class="gen-history-title"><span>🕓</span> Previously Generated (this session)</div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Title</th><th>Type</th><th>Band</th><th>Generated</th><th>Action</th></tr></thead>
+        <tbody id="gen-history-tbody"></tbody></table>
+      </div>
     </div>
 
-    <!-- Notifications Page -->
-    <div class="page" id="page-notifications"><div class="empty-state"><div class="empty-icon">🔔</div><div class="empty-title">Notifications area</div><div class="empty-sub">(full implementation works, but tasks are our focus)</div></div></div>
   </div>
 </div>
 
-<!-- Modals -->
-<div class="modal-overlay" id="task-modal"><div class="modal"><div class="modal-hdr"><div class="modal-title" id="task-modal-title">New Task</div><button class="modal-close" onclick="closeModal('task-modal')">✕</button></div>
-  <div class="form-row"><div class="form-group"><label>Task Date</label><input type="date" class="form-input" id="task-date"></div><div class="form-group"><label>Due Time</label><input type="time" class="form-input" id="task-due-time" value="23:59"></div></div>
-  <div class="form-group"><label>Title</label><input type="text" class="form-input" id="task-title" placeholder="e.g. IELTS Writing Task 2 — Opinion Essay"></div>
-  <div class="form-group"><label>Task Type</label><div class="type-pills" id="task-type-pills"><div class="type-pill selected" data-type="writing" onclick="selectType(this)">✍️ Writing</div><div class="type-pill" data-type="reading" onclick="selectType(this)">📖 Reading</div><div class="type-pill" data-type="listening" onclick="selectType(this)">🎧 Listening</div><div class="type-pill" data-type="speaking" onclick="selectType(this)">🎤 Speaking</div><div class="type-pill" data-type="vocabulary" onclick="selectType(this)">📚 Vocabulary</div><div class="type-pill" data-type="grammar" onclick="selectType(this)">🔤 Grammar</div></div></div>
-  <div class="form-group"><label>IELTS Band Target</label><select class="form-select" id="task-band"><option value="">Any level</option><option value="5.0">Band 5.0</option><option value="5.5">Band 5.5</option><option value="6.0">Band 6.0</option><option value="6.5">Band 6.5</option><option value="7.0">Band 7.0</option><option value="7.5">Band 7.5</option><option value="8.0">Band 8.0+</option></select></div>
-  <div class="form-group"><label>Instructions</label><textarea class="form-textarea" id="task-instructions" placeholder="Write the task instructions here…" style="min-height:100px"></textarea></div>
-  <div class="form-group"><label>Resource Link (optional)</label><input type="url" class="form-input" id="task-link" placeholder="https://…"></div>
-  <div class="form-group"><label>Max Score</label><input type="number" class="form-input" id="task-points" value="100"></div>
-  <input type="hidden" id="task-editing-id">
-  <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px"><button class="btn btn-ghost" onclick="closeModal('task-modal')">Cancel</button><button class="btn btn-violet" id="save-task-btn" onclick="saveTask()">Save Task</button></div>
-</div></div>
+<!-- Tasks -->
+<div class="page" id="page-tasks">
+  <div class="section-hdr">
+    <div style="display:flex;gap:10px;align-items:center">
+      <select class="form-select" style="width:160px;padding:8px 12px" id="task-filter-date" onchange="loadTasks()"><option value="all">All Dates</option><option value="today">Today</option><option value="week">This Week</option><option value="past">Past</option></select>
+      <select class="form-select" style="width:150px;padding:8px 12px" id="task-filter-type" onchange="loadTasks()"><option value="all">All Types</option><option value="writing">Writing</option><option value="reading">Reading</option><option value="listening">Listening</option><option value="speaking">Speaking</option><option value="vocabulary">Vocabulary</option><option value="grammar">Grammar</option></select>
+      <button class="btn btn-ghost btn-sm" onclick="loadTasks()">⟳ Refresh</button>
+    </div>
+    <button class="btn btn-violet" onclick="openTaskModal()">+ New Task</button>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>Title</th><th>Type</th><th>Date</th><th>Due Time</th><th>Completions</th><th>Avg Score</th><th>Actions</th></tr></thead><tbody id="tasks-tbody"><tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr></tbody></table></div>
+</div>
+
+<!-- Results -->
+<div class="page" id="page-results">
+  <div class="section-hdr">
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <select class="form-select" style="width:200px" id="result-filter-task" onchange="loadResults()"><option value="all">All Tasks</option></select>
+      <select class="form-select" style="width:180px" id="result-filter-student" onchange="loadResults()"><option value="all">All Students</option></select>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="exportResults()">⬇ Export CSV</button>
+  </div>
+  <div class="table-wrap"><table><thead><tr><th>Student</th><th>Task</th><th>Type</th><th>Score</th><th>Status</th><th>Submitted</th><th>Details</th></tr></thead><tbody id="results-tbody"><tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr></tbody></table></div>
+</div>
+
+<!-- Notifications -->
+<div class="page" id="page-notifications">
+  <div class="empty-state"><div class="empty-icon">🔔</div><div class="empty-title">Notifications</div><div class="empty-sub">Coming soon</div></div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- Task Modal -->
+
+<div class="modal-overlay" id="task-modal">
+  <div class="modal">
+    <div class="modal-hdr"><div class="modal-title" id="task-modal-title">New Task</div><button class="modal-close" onclick="closeModal('task-modal')">✕</button></div>
+    <div class="form-row">
+      <div class="form-group"><label>Task Date</label><input type="date" class="form-input" id="task-date"></div>
+      <div class="form-group"><label>Due Time</label><input type="time" class="form-input" id="task-due-time" value="23:59"></div>
+    </div>
+    <div class="form-group"><label>Title</label><input type="text" class="form-input" id="task-title" placeholder="e.g. IELTS Writing Task 2 — Opinion Essay"></div>
+    <div class="form-group"><label>Task Type</label>
+      <div class="type-pills" id="task-type-pills">
+        <div class="type-pill selected" data-type="writing" onclick="selectType(this)">✍️ Writing</div>
+        <div class="type-pill" data-type="reading" onclick="selectType(this)">📖 Reading</div>
+        <div class="type-pill" data-type="listening" onclick="selectType(this)">🎧 Listening</div>
+        <div class="type-pill" data-type="speaking" onclick="selectType(this)">🎤 Speaking</div>
+        <div class="type-pill" data-type="vocabulary" onclick="selectType(this)">📚 Vocabulary</div>
+        <div class="type-pill" data-type="grammar" onclick="selectType(this)">🔤 Grammar</div>
+      </div>
+    </div>
+    <div class="form-group"><label>IELTS Band Target</label>
+      <select class="form-select" id="task-band">
+        <option value="">Any level</option>
+        <option value="5.0">Band 5.0</option><option value="5.5">Band 5.5</option>
+        <option value="6.0">Band 6.0</option><option value="6.5">Band 6.5</option>
+        <option value="7.0">Band 7.0</option><option value="7.5">Band 7.5</option>
+        <option value="8.0">Band 8.0+</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Instructions</label><textarea class="form-textarea" id="task-instructions" placeholder="Write the task instructions here…" style="min-height:100px"></textarea></div>
+    <div class="form-group"><label>Resource Link (optional)</label><input type="url" class="form-input" id="task-link" placeholder="https://…"></div>
+    <div class="form-group"><label>Max Score</label><input type="number" class="form-input" id="task-points" value="100"></div>
+    <input type="hidden" id="task-editing-id">
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-ghost" onclick="closeModal('task-modal')">Cancel</button>
+      <button class="btn btn-violet" id="save-task-btn" onclick="saveTask()">Save Task</button>
+    </div>
+  </div>
+</div>
 
 <div id="toast"><span id="toast-icon">✓</span><span id="toast-msg">Done</span></div>
 
 <script>
-// Supabase client
+// ─────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────
 const SUPABASE_URL = 'https://wqoshwbtxulnlfccbuvi.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxb3Nod2J0eHVsbmxmY2NidXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODAwMTgsImV4cCI6MjA5MzA1NjAxOH0.ChxkoIlruVPtontdf0_uvG__XSpZdVhScxR1f-F_ArA';
+
+// ⚠️ Paste your Anthropic API key here (or set via env for production)
+const ANTHROPIC_KEY = 'YOUR_ANTHROPIC_API_KEY_HERE';
+
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentTeacher = null;
 let allStudents = [];
 let allTasks = [];
+let generatedTaskData = null;
+let uploadedFileContent = null;
+let uploadedFileName = null;
+let generationHistory = [];
 
-// Helper functions
-function showToast(msg, type='success'){ const t=document.getElementById('toast'); document.getElementById('toast-icon').innerText=type==='error'?'⚠️':'✓'; document.getElementById('toast-msg').innerText=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+// ─────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────
+function showToast(msg, type='success'){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-icon').innerText = type==='error' ? '⚠️' : '✓';
+  document.getElementById('toast-msg').innerText = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3500);
+}
 
+function typeBadge(t){
+  const map={writing:'badge-violet',reading:'badge-blue',listening:'badge-green',speaking:'badge-orange',vocabulary:'badge-blue',grammar:'badge-muted'};
+  const icons={writing:'✍️',reading:'📖',listening:'🎧',speaking:'🎤',vocabulary:'📚',grammar:'🔤'};
+  return `<span class="badge ${map[t]||'badge-muted'}">${icons[t]||'📋'} ${t||'task'}</span>`;
+}
+function statusBadge(s){
+  if(s==='completed') return '<span class="badge badge-green">✓ Completed</span>';
+  if(s==='submitted') return '<span class="badge badge-blue">↑ Submitted</span>';
+  if(s==='late')      return '<span class="badge badge-orange">⚠ Late</span>';
+  return `<span class="badge badge-muted">${s||'pending'}</span>`;
+}
+function timeAgo(iso){
+  if(!iso) return '—';
+  const diff=(Date.now()-new Date(iso).getTime())/1000;
+  if(diff<60) return 'Just now';
+  if(diff<3600) return Math.floor(diff/60)+'m ago';
+  if(diff<86400) return Math.floor(diff/3600)+'h ago';
+  if(diff<604800) return Math.floor(diff/86400)+'d ago';
+  return new Date(iso).toLocaleDateString();
+}
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+
+// ─────────────────────────────────────────
 // AUTH
+// ─────────────────────────────────────────
 async function doLogin(){
   const email=document.getElementById('login-email').value.trim();
   const pwd=document.getElementById('login-pass').value;
@@ -262,108 +556,119 @@ async function doLogin(){
   errDiv.style.display='none';
   if(!email||!pwd){ errDiv.innerText='Please enter email and password'; errDiv.style.display='block'; return; }
   const btn=document.getElementById('login-btn'); btn.disabled=true; btn.innerText='Signing in…';
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pwd });
+  const {data,error}=await sb.auth.signInWithPassword({email,password:pwd});
   btn.disabled=false; btn.innerText='Sign In →';
   if(error){ errDiv.innerText=error.message; errDiv.style.display='block'; return; }
   currentTeacher=data.user;
-  document.getElementById('login-view').classList.add('hidden');
-  document.getElementById('main-view').classList.remove('hidden');
-  document.getElementById('tb-name').innerText=email.split('@')[0];
-  document.getElementById('tb-avatar').innerText=email[0].toUpperCase();
-  document.getElementById('today-date').innerText=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  loadDashboard(); loadStudents(); loadTasks();
+  bootApp(data.user);
 }
 async function doLogout(){ await sb.auth.signOut(); location.reload(); }
 
-// Navigation
+function bootApp(user){
+  document.getElementById('login-view').classList.add('hidden');
+  document.getElementById('main-view').classList.remove('hidden');
+  document.getElementById('tb-name').innerText=user.email.split('@')[0];
+  document.getElementById('tb-avatar').innerText=user.email[0].toUpperCase();
+  document.getElementById('today-date').innerText=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  loadDashboard(); loadStudents(); loadTasks();
+}
+
+// ─────────────────────────────────────────
+// NAV
+// ─────────────────────────────────────────
 function showPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===page));
-  document.getElementById('page-title').innerText=page==='dashboard'?'Dashboard':page==='students'?'Students':page==='tasks'?'Daily Tasks':page==='results'?'Results':'Notifications';
+  const titles={dashboard:'Dashboard',students:'Students','ai-generator':'AI Task Generator',tasks:'Daily Tasks',results:'Results',notifications:'Notifications'};
+  document.getElementById('page-title').innerText=titles[page]||page;
   if(page==='tasks') loadTasks();
-  if(page==='results') { if(!allTasks.length) loadTasks(); loadResults(); }
+  if(page==='results'){ if(!allTasks.length) loadTasks(); loadResults(); }
 }
 
-// Dashboard
+// ─────────────────────────────────────────
+// DASHBOARD
+// ─────────────────────────────────────────
 async function loadDashboard(){
-  const {count:studentCount}=await sb.from('profiles').select('*',{count:'exact',head:true}); document.getElementById('stat-students').innerText=studentCount??'—';
-  const weekStart=new Date(); weekStart.setDate(weekStart.getDate()-weekStart.getDay());
-  const {count:taskCount}=await sb.from('tasks').select('*',{count:'exact',head:true}).gte('task_date',weekStart.toISOString().split('T')[0]); document.getElementById('stat-tasks').innerText=taskCount??'—';
+  const {count:sc}=await sb.from('profiles').select('*',{count:'exact',head:true});
+  document.getElementById('stat-students').innerText=sc??'—';
+  const w=new Date(); w.setDate(w.getDate()-w.getDay());
+  const {count:tc}=await sb.from('tasks').select('*',{count:'exact',head:true}).gte('task_date',w.toISOString().split('T')[0]);
+  document.getElementById('stat-tasks').innerText=tc??'—';
   const today=new Date().toISOString().split('T')[0];
-  const {count:todayCount}=await sb.from('task_submissions').select('*',{count:'exact',head:true}).gte('submitted_at',today); document.getElementById('stat-today').innerText=todayCount??'—';
-  const {data:scoreData}=await sb.from('task_submissions').select('score').not('score','is',null);
-  if(scoreData?.length){ const avg=Math.round(scoreData.reduce((a,b)=>a+(b.score||0),0)/scoreData.length); document.getElementById('stat-avg').innerText=avg+'%'; } else document.getElementById('stat-avg').innerText='—';
+  const {count:dc}=await sb.from('task_submissions').select('*',{count:'exact',head:true}).gte('submitted_at',today);
+  document.getElementById('stat-today').innerText=dc??'—';
+  const {data:sd}=await sb.from('task_submissions').select('score').not('score','is',null);
+  if(sd?.length){ document.getElementById('stat-avg').innerText=Math.round(sd.reduce((a,b)=>a+(b.score||0),0)/sd.length)+'%'; }
+  else document.getElementById('stat-avg').innerText='—';
 
-  const {data:recent}=await sb.from('task_submissions').select('*, profiles(email), tasks(title, task_type)').order('submitted_at',{ascending:false}).limit(8);
-  const recentTbody=document.getElementById('recent-tbody');
-  if(!recent?.length) recentTbody.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No submissions yet</div></div></td></tr>';
-  else recentTbody.innerHTML=recent.map(r=>`<tr><td><strong>${r.profiles?.email?.split('@')[0]||'Unknown'}</strong><br><span style="font-size:11px">${r.profiles?.email||''}</span></td><td>${r.tasks?.title||'Task'}</td><td>${r.score!==null?`<span style="font-weight:700;color:${r.score>=80?'#4ade80':r.score>=60?'#fb923c':'#f87171'}">${r.score}%</span>`:'—'}</td><td class="muted">${timeAgo(r.submitted_at)}</td><td>${statusBadge(r.status)}</td></tr>`).join('');
+  const {data:recent}=await sb.from('task_submissions').select('*,profiles(email),tasks(title,task_type)').order('submitted_at',{ascending:false}).limit(8);
+  const rb=document.getElementById('recent-tbody');
+  if(!recent?.length) rb.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No submissions yet</div></div></td></tr>';
+  else rb.innerHTML=recent.map(r=>`<tr><td><strong>${r.profiles?.email?.split('@')[0]||'Unknown'}</strong><br><span style="font-size:11px">${r.profiles?.email||''}</span></td><td>${r.tasks?.title||'Task'}</td><td>${r.score!==null?`<span style="font-weight:700;color:${r.score>=80?'#4ade80':r.score>=60?'#fb923c':'#f87171'}">${r.score}%</span>`:'—'}</td><td class="muted">${timeAgo(r.submitted_at)}</td><td>${statusBadge(r.status)}</td></tr>`).join('');
 
-  const {data:todayTasks}=await sb.from('tasks').select('*, task_submissions(count)').eq('task_date',today).order('created_at',{ascending:false});
-  const todayTbody=document.getElementById('today-tasks-tbody');
-  if(!todayTasks?.length) todayTbody.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No tasks today</div></div></td></tr>';
-  else todayTbody.innerHTML=todayTasks.map(t=>`<tr><td><strong>${t.title}</strong></td><td>${typeBadge(t.task_type)}</td><td>${t.task_submissions?.[0]?.count||0}</td><td class="muted">${t.due_time||'23:59'}</td><td><button class="btn btn-ghost btn-sm" onclick='editTask(${JSON.stringify(t).replace(/"/g,'&quot;')})'>Edit</button> <button class="btn btn-red btn-sm" onclick="deleteTask('${t.id}')">Delete</button></td></tr>`).join('');
+  const {data:todayT}=await sb.from('tasks').select('*,task_submissions(count)').eq('task_date',today).order('created_at',{ascending:false});
+  const tt=document.getElementById('today-tasks-tbody');
+  if(!todayT?.length) tt.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No tasks today</div></div></td></tr>';
+  else tt.innerHTML=todayT.map(t=>`<tr><td><strong>${t.title}</strong></td><td>${typeBadge(t.task_type)}</td><td>${t.task_submissions?.[0]?.count||0}</td><td class="muted">${t.due_time||'23:59'}</td><td><button class="btn btn-ghost btn-sm" onclick='editTask(${JSON.stringify(t).replace(/"/g,"&quot;")})'>Edit</button> <button class="btn btn-red btn-sm" onclick="deleteTask('${t.id}')">Delete</button></td></tr>`).join('');
 }
 
-// Students
+// ─────────────────────────────────────────
+// STUDENTS
+// ─────────────────────────────────────────
 async function loadStudents(){
   const {data:profiles}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
   allStudents=profiles||[];
   const {data:subs}=await sb.from('task_submissions').select('student_id,score,submitted_at');
-  const statsMap={};
-  (subs||[]).forEach(s=>{if(!statsMap[s.student_id])statsMap[s.student_id]={count:0,total:0,last:null}; statsMap[s.student_id].count++; if(s.score)statsMap[s.student_id].total+=s.score; if(!statsMap[s.student_id].last||s.submitted_at>statsMap[s.student_id].last)statsMap[s.student_id].last=s.submitted_at;});
-  allStudents=allStudents.map(s=>({...s, taskCount:statsMap[s.id]?.count||0, avgScore:statsMap[s.id]?.count?Math.round(statsMap[s.id].total/statsMap[s.id].count):null, lastActive:statsMap[s.id]?.last||null}));
+  const sm={};
+  (subs||[]).forEach(s=>{
+    if(!sm[s.student_id]) sm[s.student_id]={count:0,total:0,last:null};
+    sm[s.student_id].count++;
+    if(s.score) sm[s.student_id].total+=s.score;
+    if(!sm[s.student_id].last||s.submitted_at>sm[s.student_id].last) sm[s.student_id].last=s.submitted_at;
+  });
+  allStudents=allStudents.map(s=>({...s,taskCount:sm[s.id]?.count||0,avgScore:sm[s.id]?.count?Math.round(sm[s.id].total/sm[s.id].count):null,lastActive:sm[s.id]?.last||null}));
   document.getElementById('student-count').innerText=`${allStudents.length} students`;
   renderStudents(allStudents);
-  const sel=document.getElementById('result-filter-student'); if(sel) sel.innerHTML='<option value="all">All Students</option>'+allStudents.map(s=>`<option value="${s.id}">${s.email?.split('@')[0]||s.id}</option>`).join('');
+  const sel=document.getElementById('result-filter-student');
+  if(sel) sel.innerHTML='<option value="all">All Students</option>'+allStudents.map(s=>`<option value="${s.id}">${s.email?.split('@')[0]||s.id}</option>`).join('');
 }
 function renderStudents(students){
-  const tbody=document.getElementById('students-tbody');
-  if(!students.length){ tbody.innerHTML='<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">No students yet</div></div></td></tr>'; return; }
-  tbody.innerHTML=students.map(s=>`<tr><td><strong>${s.full_name||s.email?.split('@')[0]||'Student'}</strong></td><td class="muted">${s.email||'—'}</td><td class="muted">${s.created_at?new Date(s.created_at).toLocaleDateString():'—'}</td><td><span style="font-weight:600">${s.taskCount}</span></td><td>${s.avgScore!==null?`<span style="font-weight:700;color:${s.avgScore>=80?'#4ade80':s.avgScore>=60?'#fb923c':'#f87171'}">${s.avgScore}%</span>`:'—'}</td><td class="muted">${s.lastActive?timeAgo(s.lastActive):'Never'}</td><td><button class="btn btn-ghost btn-sm" onclick="alert('Student detail view')">View</button></td></tr>`).join('');
+  const tb=document.getElementById('students-tbody');
+  if(!students.length){ tb.innerHTML='<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">No students yet</div></div></td></tr>'; return; }
+  tb.innerHTML=students.map(s=>`<tr><td><strong>${s.full_name||s.email?.split('@')[0]||'Student'}</strong></td><td class="muted">${s.email||'—'}</td><td class="muted">${s.created_at?new Date(s.created_at).toLocaleDateString():'—'}</td><td><span style="font-weight:600">${s.taskCount}</span></td><td>${s.avgScore!==null?`<span style="font-weight:700;color:${s.avgScore>=80?'#4ade80':s.avgScore>=60?'#fb923c':'#f87171'}">${s.avgScore}%</span>`:'—'}</td><td class="muted">${s.lastActive?timeAgo(s.lastActive):'Never'}</td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>`).join('');
 }
 function filterStudents(q){ renderStudents(allStudents.filter(s=>(s.email||'').toLowerCase().includes(q.toLowerCase())||(s.full_name||'').toLowerCase().includes(q.toLowerCase()))); }
 
-// Tasks – FIXED with debugging
+// ─────────────────────────────────────────
+// TASKS
+// ─────────────────────────────────────────
 async function loadTasks(){
   const filter=document.getElementById('task-filter-date')?.value||'all';
-  const typeFilter=document.getElementById('task-filter-type')?.value||'all';
-  const tbody=document.getElementById('tasks-tbody');
-  tbody.innerHTML=`<tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading tasks…</p></div></td></tr>`;
-
-  let query=sb.from('tasks').select('*').order('task_date',{ascending:false});
+  const typeF=document.getElementById('task-filter-type')?.value||'all';
+  const tb=document.getElementById('tasks-tbody');
+  tb.innerHTML=`<tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading tasks…</p></div></td></tr>`;
+  let q=sb.from('tasks').select('*').order('task_date',{ascending:false});
   const today=new Date().toISOString().split('T')[0];
-  if(filter==='today') query=query.eq('task_date',today);
-  else if(filter==='week'){ const w=new Date(); w.setDate(w.getDate()-7); query=query.gte('task_date',w.toISOString().split('T')[0]); }
-  else if(filter==='past') query=query.lt('task_date',today);
-  if(typeFilter!=='all') query=query.eq('task_type',typeFilter);
-
-  const {data:tasks, error}=await query;
-  if(error){ console.error('Tasks fetch error:',error); tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">❌</div><div class="empty-title">Error loading tasks</div><div class="empty-sub">${error.message}</div></div></td></tr>`; return; }
-
-  console.log(`🔍 Loaded ${tasks?.length||0} tasks from Supabase`, tasks);
+  if(filter==='today') q=q.eq('task_date',today);
+  else if(filter==='week'){ const w=new Date(); w.setDate(w.getDate()-7); q=q.gte('task_date',w.toISOString().split('T')[0]); }
+  else if(filter==='past') q=q.lt('task_date',today);
+  if(typeF!=='all') q=q.eq('task_type',typeF);
+  const {data:tasks,error}=await q;
+  if(error){ tb.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">❌</div><div class="empty-title">Error loading tasks</div><div class="empty-sub">${error.message}</div></div></td></tr>`; return; }
   allTasks=tasks||[];
-
-  // Update result filter
-  const sel=document.getElementById('result-filter-task'); if(sel) sel.innerHTML='<option value="all">All Tasks</option>'+allTasks.map(t=>`<option value="${t.id}">${t.title}</option>`).join('');
-
-  if(!allTasks.length){ tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No tasks found</div><div class="empty-sub">Click "+ New Task" to create one</div></div></td></tr>`; return; }
-
-  // Get submission counts
+  const sel=document.getElementById('result-filter-task');
+  if(sel) sel.innerHTML='<option value="all">All Tasks</option>'+allTasks.map(t=>`<option value="${t.id}">${t.title}</option>`).join('');
+  if(!allTasks.length){ tb.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No tasks found</div><div class="empty-sub">Click "+ New Task" to create one</div></div></td></tr>`; return; }
   const ids=allTasks.map(t=>t.id);
-  let countMap={};
+  let cm={};
   if(ids.length){
     const {data:counts}=await sb.from('task_submissions').select('task_id,score').in('task_id',ids);
-    (counts||[]).forEach(c=>{ if(!countMap[c.task_id])countMap[c.task_id]={n:0,total:0}; countMap[c.task_id].n++; if(c.score)countMap[c.task_id].total+=c.score; });
+    (counts||[]).forEach(c=>{ if(!cm[c.task_id]) cm[c.task_id]={n:0,total:0}; cm[c.task_id].n++; if(c.score) cm[c.task_id].total+=c.score; });
   }
-
-  tbody.innerHTML=allTasks.map(t=>{
-    const st=countMap[t.id]||{n:0,total:0};
-    const avg=st.n?Math.round(st.total/st.n)+'%':'—';
-    return `<tr><td><strong>${t.title}</strong>${t.band_target?`<br><span style="font-size:11px;color:var(--muted)">Band ${t.band_target}</span>`:''}</td><td>${typeBadge(t.task_type)}</td><td class="muted">${t.task_date||'—'}</td><td class="muted">${t.due_time||'23:59'}</td><td>${st.n}</td><td>${avg}</td><td><button class="btn btn-ghost btn-sm" onclick='editTask(${JSON.stringify(t).replace(/"/g,'&quot;')})'>✏️ Edit</button> <button class="btn btn-red btn-sm" onclick="deleteTask('${t.id}')">🗑</button></td></tr>`;
-  }).join('');
+  tb.innerHTML=allTasks.map(t=>{ const st=cm[t.id]||{n:0,total:0}; return `<tr><td><strong>${t.title}</strong>${t.band_target?`<br><span style="font-size:11px;color:var(--muted)">Band ${t.band_target}</span>`:''}</td><td>${typeBadge(t.task_type)}</td><td class="muted">${t.task_date||'—'}</td><td class="muted">${t.due_time||'23:59'}</td><td>${st.n}</td><td>${st.n?Math.round(st.total/st.n)+'%':'—'}</td><td><button class="btn btn-ghost btn-sm" onclick='editTask(${JSON.stringify(t).replace(/"/g,"&quot;")})'>✏️ Edit</button> <button class="btn btn-red btn-sm" onclick="deleteTask('${t.id}')">🗑</button></td></tr>`; }).join('');
 }
+
 function openTaskModal(task){
   document.getElementById('task-editing-id').value=task?.id||'';
   document.getElementById('task-modal-title').innerText=task?'Edit Task':'New Task';
@@ -380,12 +685,12 @@ function openTaskModal(task){
 function editTask(task){ openTaskModal(task); }
 async function saveTask(){
   const id=document.getElementById('task-editing-id').value;
-  const selType=document.querySelector('#task-type-pills .type-pill.selected');
+  const selT=document.querySelector('#task-type-pills .type-pill.selected');
   const payload={
     title:document.getElementById('task-title').value.trim(),
     task_date:document.getElementById('task-date').value,
     due_time:document.getElementById('task-due-time').value,
-    task_type:selType?.dataset.type||'writing',
+    task_type:selT?.dataset.type||'writing',
     instructions:document.getElementById('task-instructions').value.trim(),
     resource_link:document.getElementById('task-link').value.trim(),
     max_points:parseInt(document.getElementById('task-points').value)||100,
@@ -413,42 +718,267 @@ async function deleteTask(id){
 }
 function selectType(el){ document.querySelectorAll('#task-type-pills .type-pill').forEach(p=>p.classList.remove('selected')); el.classList.add('selected'); }
 
-// Results
+// ─────────────────────────────────────────
+// RESULTS
+// ─────────────────────────────────────────
 async function loadResults(){
-  const taskF=document.getElementById('result-filter-task')?.value||'all';
-  const studentF=document.getElementById('result-filter-student')?.value||'all';
-  const tbody=document.getElementById('results-tbody');
-  tbody.innerHTML=`<tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr>`;
-  let query=sb.from('task_submissions').select('*, profiles(email,full_name), tasks(title,task_type)').order('submitted_at',{ascending:false}).limit(100);
-  if(taskF!=='all') query=query.eq('task_id',taskF);
-  if(studentF!=='all') query=query.eq('student_id',studentF);
-  const {data:results}=await query;
-  if(!results||!results.length){ tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">No results found</div></div></td></tr>`; return; }
-  tbody.innerHTML=results.map(r=>`<tr><td><strong>${r.profiles?.full_name||r.profiles?.email?.split('@')[0]||'—'}</strong><br><span style="font-size:11px">${r.profiles?.email||''}</span></td><td>${r.tasks?.title||'—'}</td><td>${typeBadge(r.tasks?.task_type)}</td><td>${r.score!==null?`<span style="font-weight:700;color:${r.score>=80?'#4ade80':r.score>=60?'#fb923c':'#f87171'}">${r.score}%</span>`:'—'}</td><td>${statusBadge(r.status)}</td><td class="muted">${timeAgo(r.submitted_at)}</td><td><button class="btn btn-ghost btn-sm" onclick="alert('Submission detail')">Details</button></td></tr>`).join('');
+  const tF=document.getElementById('result-filter-task')?.value||'all';
+  const sF=document.getElementById('result-filter-student')?.value||'all';
+  const tb=document.getElementById('results-tbody');
+  tb.innerHTML=`<tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr>`;
+  let q=sb.from('task_submissions').select('*,profiles(email,full_name),tasks(title,task_type)').order('submitted_at',{ascending:false}).limit(100);
+  if(tF!=='all') q=q.eq('task_id',tF);
+  if(sF!=='all') q=q.eq('student_id',sF);
+  const {data:results}=await q;
+  if(!results?.length){ tb.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">No results found</div></div></td></tr>`; return; }
+  tb.innerHTML=results.map(r=>`<tr><td><strong>${r.profiles?.full_name||r.profiles?.email?.split('@')[0]||'—'}</strong><br><span style="font-size:11px">${r.profiles?.email||''}</span></td><td>${r.tasks?.title||'—'}</td><td>${typeBadge(r.tasks?.task_type)}</td><td>${r.score!==null?`<span style="font-weight:700;color:${r.score>=80?'#4ade80':r.score>=60?'#fb923c':'#f87171'}">${r.score}%</span>`:'—'}</td><td>${statusBadge(r.status)}</td><td class="muted">${timeAgo(r.submitted_at)}</td><td><button class="btn btn-ghost btn-sm">Details</button></td></tr>`).join('');
 }
 function exportResults(){
   const rows=[['Student','Email','Task','Type','Score','Status','Submitted']];
   document.querySelectorAll('#results-tbody tr').forEach(tr=>{
     const cells=tr.querySelectorAll('td');
-    if(cells.length>1) rows.push([cells[0]?.querySelector('strong')?.textContent||'', cells[0]?.querySelector('span')?.textContent||'', cells[1]?.textContent?.trim()||'', cells[2]?.textContent?.trim()||'', cells[3]?.textContent?.trim()||'', cells[4]?.textContent?.trim()||'', cells[5]?.textContent?.trim()||'']);
+    if(cells.length>1) rows.push([cells[0]?.querySelector('strong')?.textContent||'',cells[0]?.querySelector('span')?.textContent||'',cells[1]?.textContent?.trim()||'',cells[2]?.textContent?.trim()||'',cells[3]?.textContent?.trim()||'',cells[4]?.textContent?.trim()||'',cells[5]?.textContent?.trim()||'']);
   });
   const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
   const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv); a.download='ielts-results-'+new Date().toISOString().split('T')[0]+'.csv'; a.click(); showToast('Exported CSV');
 }
 
-// UI helpers
-function typeBadge(t){ const map={writing:'badge-violet',reading:'badge-blue',listening:'badge-green',speaking:'badge-orange',vocabulary:'badge-blue',grammar:'badge-muted'}; const icons={writing:'✍️',reading:'📖',listening:'🎧',speaking:'🎤',vocabulary:'📚',grammar:'🔤'}; return `<span class="badge ${map[t]||'badge-muted'}">${icons[t]||'📋'} ${t||'task'}</span>`; }
-function statusBadge(s){ if(s==='completed')return '<span class="badge badge-green">✓ Completed</span>'; if(s==='submitted')return '<span class="badge badge-blue">↑ Submitted</span>'; if(s==='late')return '<span class="badge badge-orange">⚠ Late</span>'; return '<span class="badge badge-muted">'+(s||'pending')+'</span>'; }
-function timeAgo(iso){ if(!iso)return '—'; const diff=(Date.now()-new Date(iso).getTime())/1000; if(diff<60)return 'Just now'; if(diff<3600)return Math.floor(diff/60)+'m ago'; if(diff<86400)return Math.floor(diff/3600)+'h ago'; if(diff<604800)return Math.floor(diff/86400)+'d ago'; return new Date(iso).toLocaleDateString(); }
-function openModal(id){ document.getElementById(id).classList.add('show'); }
-function closeModal(id){ document.getElementById(id).classList.remove('show'); }
-document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+// ═══════════════════════════════════════════════════════════
+//  AI TASK GENERATOR
+// ═══════════════════════════════════════════════════════════
 
-init();
-async function init(){
-  const {data:{session}}=await sb.auth.getSession();
-  if(session){ currentTeacher=session.user; document.getElementById('login-view').classList.add('hidden'); document.getElementById('main-view').classList.remove('hidden'); document.getElementById('tb-name').innerText=session.user.email.split('@')[0]; document.getElementById('tb-avatar').innerText=session.user.email[0].toUpperCase(); document.getElementById('today-date').innerText=new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); loadDashboard(); loadStudents(); loadTasks(); }
+function handleFileSelect(event){
+  const file = event.target.files[0];
+  if(file) loadFileContent(file);
 }
+
+function handleFileDrop(event){
+  event.preventDefault();
+  document.getElementById('upload-zone').classList.remove('dragover');
+  const file = event.dataTransfer.files[0];
+  if(file) loadFileContent(file);
+}
+
+function loadFileContent(file){
+  if(!file.name.match(/\.(html?|txt)$/i)){
+    showToast('Please upload an HTML or TXT file', 'error');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    uploadedFileContent = e.target.result;
+    uploadedFileName = file.name;
+
+    // Update UI
+    document.getElementById('file-name-text').innerText = file.name;
+    document.getElementById('file-name-display').style.display = 'inline-flex';
+    document.getElementById('chip-filename').innerText = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
+    document.getElementById('file-controls').style.display = 'block';
+    document.getElementById('upload-zone').style.opacity = '0.5';
+
+    // Hide previous result
+    document.getElementById('ai-result-card').classList.remove('show');
+    generatedTaskData = null;
+  };
+  reader.readAsText(file);
+}
+
+function clearFile(){
+  uploadedFileContent = null;
+  uploadedFileName = null;
+  generatedTaskData = null;
+  document.getElementById('html-file-input').value = '';
+  document.getElementById('file-controls').style.display = 'none';
+  document.getElementById('file-name-display').style.display = 'none';
+  document.getElementById('upload-zone').style.opacity = '1';
+  document.getElementById('ai-result-card').classList.remove('show');
+  document.getElementById('ai-thinking').classList.remove('show');
+}
+
+async function generateTask(){
+  if(!uploadedFileContent){ showToast('Please upload a file first', 'error'); return; }
+  if(ANTHROPIC_KEY === 'YOUR_ANTHROPIC_API_KEY_HERE'){
+    showToast('Add your Anthropic API key to the code first', 'error');
+    return;
+  }
+
+  const extraContext = document.getElementById('ai-extra-context').value.trim();
+  const btn = document.getElementById('generate-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="thinking-dots"><span></span><span></span><span></span></div> Analysing…';
+
+  document.getElementById('ai-result-card').classList.remove('show');
+  document.getElementById('ai-thinking').classList.add('show');
+  document.getElementById('thinking-msg').innerText = 'Claude is reading your file and generating an IELTS task…';
+
+  // Strip HTML to plain text (keep structure but remove tags)
+  const plain = uploadedFileContent
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s{3,}/g, '\n\n')
+    .trim()
+    .slice(0, 6000); // keep within token budget
+
+  const systemPrompt = `You are an expert IELTS teacher and task designer. 
+Given content from an uploaded file, create a well-structured IELTS daily task.
+You MUST return ONLY valid JSON — no markdown, no extra text.
+Return exactly this JSON shape:
+{
+  "title": "Short descriptive task title",
+  "task_type": "writing|reading|listening|speaking|vocabulary|grammar",
+  "band_target": "5.0|5.5|6.0|6.5|7.0|7.5|8.0",
+  "instructions": "Clear, detailed task instructions for the student (2-5 sentences). Include what to do, word count if writing, time suggestion.",
+  "skill_focus": "One sentence describing the main IELTS skill being practised",
+  "max_points": 100,
+  "task_date": "${new Date().toISOString().split('T')[0]}",
+  "due_time": "23:59"
+}`;
+
+  const userMsg = `Here is the content from the uploaded file:\n\n---\n${plain}\n---\n\n${extraContext ? 'Additional context from teacher: ' + extraContext + '\n\n' : ''}Please create an IELTS task based on this content.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+
+    if(!response.ok){
+      const err = await response.json();
+      throw new Error(err.error?.message || 'API error ' + response.status);
+    }
+
+    const data = await response.json();
+    const raw = data.content.map(b => b.text || '').join('').trim();
+
+    // Parse JSON (strip any accidental markdown fences)
+    const clean = raw.replace(/```json|```/g, '').trim();
+    generatedTaskData = JSON.parse(clean);
+
+    document.getElementById('ai-thinking').classList.remove('show');
+    renderGeneratedTask(generatedTaskData);
+
+    // Add to history
+    generationHistory.unshift({...generatedTaskData, generatedAt: new Date()});
+    renderHistory();
+
+  } catch(err) {
+    document.getElementById('ai-thinking').classList.remove('show');
+    showToast('AI Error: ' + err.message, 'error');
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<span>✦</span> Generate IELTS Task';
+}
+
+function renderGeneratedTask(t){
+  const skillIcons = {writing:'✍️',reading:'📖',listening:'🎧',speaking:'🎤',vocabulary:'📚',grammar:'🔤'};
+  document.getElementById('gen-preview').innerHTML = `
+    <div class="gen-field"><div class="gen-label">Title</div><div class="gen-value big">${t.title}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="gen-field"><div class="gen-label">Type</div><div class="gen-value">${typeBadge(t.task_type)}</div></div>
+      <div class="gen-field"><div class="gen-label">Band Target</div><div class="gen-value"><span class="badge badge-gold" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:#fbbf24">🎯 Band ${t.band_target||'—'}</span></div></div>
+      <div class="gen-field"><div class="gen-label">Max Score</div><div class="gen-value"><span class="badge badge-muted">${t.max_points} pts</span></div></div>
+    </div>
+    <div class="gen-field"><div class="gen-label">Skill Focus</div><div class="gen-value" style="color:var(--muted)">${t.skill_focus||''}</div></div>
+    <div class="gen-field" style="margin-top:8px"><div class="gen-label">Instructions for Students</div><div class="gen-value instructions">${t.instructions}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+      <div class="gen-field"><div class="gen-label">Task Date</div><div class="gen-value">${t.task_date||new Date().toISOString().split('T')[0]}</div></div>
+      <div class="gen-field"><div class="gen-label">Due Time</div><div class="gen-value">${t.due_time||'23:59'}</div></div>
+    </div>
+  `;
+  document.getElementById('ai-result-card').classList.add('show');
+}
+
+async function publishGeneratedTask(){
+  if(!generatedTaskData){ showToast('Nothing to publish', 'error'); return; }
+  const payload = {
+    title: generatedTaskData.title,
+    task_date: generatedTaskData.task_date || new Date().toISOString().split('T')[0],
+    due_time: generatedTaskData.due_time || '23:59',
+    task_type: generatedTaskData.task_type || 'writing',
+    instructions: generatedTaskData.instructions,
+    max_points: generatedTaskData.max_points || 100,
+    band_target: generatedTaskData.band_target || null,
+    created_by: currentTeacher.id
+  };
+  const {error} = await sb.from('tasks').insert(payload);
+  if(error){ showToast('Error publishing: '+error.message, 'error'); return; }
+  showToast('✦ AI task published successfully!');
+  loadTasks(); loadDashboard();
+  // Mark as published in history
+  generationHistory[0].published = true;
+  renderHistory();
+}
+
+function openTaskModalWithGenerated(){
+  if(!generatedTaskData) return;
+  openTaskModal({
+    title: generatedTaskData.title,
+    task_date: generatedTaskData.task_date || new Date().toISOString().split('T')[0],
+    due_time: generatedTaskData.due_time || '23:59',
+    task_type: generatedTaskData.task_type || 'writing',
+    instructions: generatedTaskData.instructions,
+    max_points: generatedTaskData.max_points || 100,
+    band_target: generatedTaskData.band_target || '',
+  });
+}
+
+function regenerateTask(){
+  generatedTaskData = null;
+  document.getElementById('ai-result-card').classList.remove('show');
+  generateTask();
+}
+
+function renderHistory(){
+  if(!generationHistory.length) return;
+  document.getElementById('gen-history').style.display='block';
+  document.getElementById('gen-history-tbody').innerHTML = generationHistory.map((h,i)=>`
+    <tr>
+      <td><strong>${h.title}</strong></td>
+      <td>${typeBadge(h.task_type)}</td>
+      <td><span class="badge badge-muted">Band ${h.band_target||'—'}</span></td>
+      <td class="muted">${timeAgo(h.generatedAt)}</td>
+      <td>${h.published?'<span class="badge badge-green">✓ Published</span>':`<button class="btn btn-ghost btn-sm" onclick="rePublish(${i})">Publish</button>`}</td>
+    </tr>
+  `).join('');
+}
+
+async function rePublish(index){
+  const t = generationHistory[index];
+  const {error} = await sb.from('tasks').insert({
+    title:t.title, task_date:t.task_date||new Date().toISOString().split('T')[0],
+    due_time:t.due_time||'23:59', task_type:t.task_type||'writing',
+    instructions:t.instructions, max_points:t.max_points||100,
+    band_target:t.band_target||null, created_by:currentTeacher.id
+  });
+  if(error){ showToast('Error: '+error.message,'error'); return; }
+  generationHistory[index].published=true;
+  renderHistory();
+  showToast('Task published!');
+  loadTasks();
+}
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+(async () => {
+  const {data:{session}} = await sb.auth.getSession();
+  if(session){ currentTeacher=session.user; bootApp(session.user); }
+})();
 </script>
+
 </body>
 </html>
