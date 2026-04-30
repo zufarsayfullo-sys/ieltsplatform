@@ -25,6 +25,7 @@
             margin: 0 auto;
         }
 
+        /* cards */
         .card {
             background: #1e293b;
             border-radius: 28px;
@@ -57,49 +58,122 @@
             color: #facc15;
         }
 
-        /* top bar */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
-        }
-        .avatar-container {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        .avatar-clickable {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: #334155;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            overflow: hidden;
-            border: 2px solid #facc15;
-            transition: transform 0.1s;
-        }
-        .avatar-clickable:hover {
-            transform: scale(1.02);
-        }
-        .avatar-clickable img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .avatar-initials {
-            font-weight: bold;
-            font-size: 1.2rem;
-            color: #facc15;
+        h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #e2e8f0;
         }
 
-        /* leaderboard & tasks styles (same as before) */
-        /* ... (keeping existing styles) ... */
+        /* inputs & buttons */
+        input, button {
+            font-family: inherit;
+            border-radius: 16px;
+            border: none;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        input {
+            background: #334155;
+            color: #f1f5f9;
+            border: 1px solid #475569;
+            width: 100%;
+            margin-bottom: 0.8rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #facc15;
+            box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2);
+        }
+
+        button {
+            background: #facc15;
+            color: #0f172a;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background: #eab308;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #475569;
+            color: #f1f5f9;
+        }
+        .btn-secondary:hover {
+            background: #334155;
+        }
+
+        /* task cards */
+        .task-card {
+            background: #334155;
+            border-radius: 20px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+            border: 1px solid #475569;
+        }
+
+        .task-card:hover {
+            background: #3b4252;
+            transform: translateX(4px);
+        }
+
+        .task-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #facc15;
+            margin-bottom: 0.3rem;
+        }
+
+        .task-skill {
+            display: inline-block;
+            background: #1e293b;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            margin-bottom: 0.6rem;
+        }
+
+        .task-desc {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .completed-badge {
+            background: #10b981;
+            color: white;
+            display: inline-block;
+            padding: 0.3rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        button.complete-btn {
+            background: #10b981;
+            color: white;
+            margin-top: 0.5rem;
+            width: auto;
+            padding: 0.5rem 1.2rem;
+        }
+
+        button.complete-btn:hover {
+            background: #059669;
+        }
+
+        /* leaderboard */
         .leaderboard-grid {
             display: grid;
             grid-template-columns: 1fr 1.2fr 1fr;
@@ -130,12 +204,6 @@
             justify-content: center;
             font-weight: bold;
             font-size: 1.2rem;
-            overflow: hidden;
-        }
-        .podium-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
         .first .podium-avatar {
             width: 70px;
@@ -160,6 +228,9 @@
             font-size: 0.75rem;
             text-transform: uppercase;
         }
+        .lb-rank {
+            font-weight: 600;
+        }
         .lb-name {
             display: flex;
             align-items: center;
@@ -173,24 +244,21 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-        }
-        .lb-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
         .lb-score {
             text-align: right;
             font-weight: 700;
             color: #facc15;
         }
+        /* date strip */
         .date-strip {
             display: flex;
             gap: 0.5rem;
             overflow-x: auto;
             padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             scrollbar-width: thin;
         }
         .date-chip {
@@ -205,10 +273,15 @@
             transition: all 0.2s;
             color: #cbd5e1;
         }
-        .date-chip:hover, .date-chip.active {
+        .date-chip:hover {
+            background: #475569;
+            border-color: #facc15;
+        }
+        .date-chip.active {
             background: #facc15;
             color: #0f172a;
             border-color: #facc15;
+            font-weight: 600;
         }
         .date-chip.has-task {
             border-left: 3px solid #10b981;
@@ -224,67 +297,55 @@
             flex: 2;
             margin-bottom: 0;
         }
-        .task-card {
-            background: #334155;
-            border-radius: 20px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .task-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #facc15;
-        }
-        .task-skill {
-            display: inline-block;
-            background: #1e293b;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
-        }
-        .complete-btn {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            cursor: pointer;
-        }
-        .completed-badge {
-            background: #10b981;
-            color: white;
-            padding: 0.3rem 0.9rem;
-            border-radius: 40px;
-            font-size: 0.75rem;
-        }
         .alert {
             padding: 0.8rem 1rem;
+            border-radius: 16px;
             background: #2d3748;
             color: #facc15;
-            border-radius: 16px;
-        }
-        .btn-secondary {
-            background: #475569;
-            color: #f1f5f9;
-            padding: 0.5rem 1rem;
-            border-radius: 40px;
-            border: none;
-            cursor: pointer;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
         }
         .auth-links {
             margin-top: 1rem;
             text-align: center;
+            font-size: 0.85rem;
         }
         .auth-links a {
             color: #facc15;
+            text-decoration: none;
             cursor: pointer;
+        }
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.7rem;
+            color: #64748b;
         }
         @media (max-width: 780px) {
             .leaderboard-grid {
                 grid-template-columns: 1fr;
+                gap: 0.8rem;
             }
             .podium-card.first {
                 order: -1;
+            }
+        }
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+            .card {
+                padding: 1.2rem;
+            }
+            .lb-header, .lb-row {
+                grid-template-columns: 50px 1fr 80px;
+            }
+            .date-chip {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
             }
         }
     </style>
@@ -292,12 +353,12 @@
 <body>
 <div class="container">
 
-    <!-- AUTH CARD -->
+    <!-- AUTH CARD (login) -->
     <div id="authCard" class="card">
         <h1>📚 IELTS Daily</h1>
         <p style="margin-bottom: 1.2rem; color: #94a3b8;">Student · Daily Tasks</p>
-        <input type="email" id="email" placeholder="Email address">
-        <input type="password" id="password" placeholder="Password">
+        <input type="email" id="email" placeholder="Email address" autocomplete="email">
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
         <button id="loginBtn" style="width: 100%;">Sign In</button>
         <div class="auth-links">
             <a id="showSignupBtn">Create account</a> &nbsp;|&nbsp;
@@ -311,30 +372,32 @@
         <!-- Leaderboard Card -->
         <div class="card">
             <h2>🏆 Leaderboard (Avg Score)</h2>
-            <div id="leaderboardContainer"></div>
+            <div id="leaderboardContainer">
+                <div class="alert">Loading leaderboard...</div>
+            </div>
         </div>
 
         <!-- Tasks Card -->
         <div class="card">
-            <div class="top-bar">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
                 <h1>📖 Daily Tasks</h1>
-                <div class="avatar-container">
-                    <div class="avatar-clickable" id="avatarBtn" title="Click to change avatar">
-                        <span id="avatarInitials" class="avatar-initials">?</span>
-                    </div>
-                    <button id="logoutBtn" class="btn-secondary">Sign Out</button>
-                </div>
+                <button id="logoutBtn" class="btn-secondary" style="padding: 0.4rem 1rem;">Sign Out</button>
             </div>
+            
+            <!-- DATE STRIP (easy navigation) -->
             <div class="date-strip" id="dateStrip"></div>
+
             <div class="date-picker-wrapper">
                 <input type="date" id="datePicker">
                 <button id="loadTasksBtn">Load Tasks</button>
             </div>
-            <div id="taskList"></div>
+            <div id="taskList">
+                <div class="alert">⬅️ Select a date and click “Load Tasks”</div>
+            </div>
         </div>
     </div>
 
-    <footer style="text-align:center; margin-top:2rem; font-size:0.7rem;">© IELTS Daily — keep practicing</footer>
+    <footer>© IELTS Daily — keep practicing</footer>
 </div>
 
 <script>
@@ -343,206 +406,285 @@
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let currentUser = null;
     let allTasks = [];
-    let taskDates = new Set();
+    let taskDates = new Set(); // for highlighting chips with tasks
 
     // DOM elements
     const authCard = document.getElementById('authCard');
     const dashboard = document.getElementById('dashboard');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loadTasksBtn = document.getElementById('loadTasksBtn');
+    const datePicker = document.getElementById('datePicker');
+    const taskListDiv = document.getElementById('taskList');
+    const authMsgDiv = document.getElementById('authMsg');
     const leaderboardContainer = document.getElementById('leaderboardContainer');
     const dateStripDiv = document.getElementById('dateStrip');
-    const taskListDiv = document.getElementById('taskList');
-    const datePicker = document.getElementById('datePicker');
-    const avatarBtn = document.getElementById('avatarBtn');
-    const avatarInitialsSpan = document.getElementById('avatarInitials');
 
-    // Helper
-    function escapeHtml(str) { return String(str).replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
-
-    // ========== AVATAR ==========
-    async function updateAvatarDisplay() {
-        if (!currentUser) return;
-        let avatarUrl = currentUser.user_metadata?.avatar_url || null;
-        if (avatarUrl) {
-            avatarBtn.innerHTML = `<img src="${avatarUrl}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`;
-        } else {
-            const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
-            const initials = name.charAt(0).toUpperCase();
-            avatarBtn.innerHTML = `<span class="avatar-initials">${initials}</span>`;
-        }
+    // Helper: show auth message
+    function showAuthMessage(msg, isError = true) {
+        authMsgDiv.innerHTML = `<div style="background: ${isError ? '#7f1a1a' : '#14532d'}; padding: 0.6rem; border-radius: 12px;">${msg}</div>`;
+        setTimeout(() => { if (authMsgDiv) authMsgDiv.innerHTML = ''; }, 4000);
     }
 
-    async function uploadAvatar(file) {
-        if (!file) return;
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${currentUser.id}/avatar.${fileExt}`;
-        const { error: uploadError } = await sb.storage.from('avatars').upload(fileName, file, { upsert: true });
-        if (uploadError) { alert("Upload error: " + uploadError.message); return; }
-        const { data: urlData } = sb.storage.from('avatars').getPublicUrl(fileName);
-        const avatarUrl = urlData.publicUrl + '?t=' + Date.now();
-
-        // Update user metadata
-        const { error: metaError } = await sb.auth.updateUser({ data: { avatar_url: avatarUrl } });
-        if (metaError) { alert("Failed to update profile: " + metaError.message); return; }
-        // Update all existing task_completions rows for this user (so leaderboard shows new avatar)
-        await sb.from('task_completions').update({ user_avatar: avatarUrl }).eq('user_id', currentUser.id);
-
-        // Refresh session data
-        const { data: { user } } = await sb.auth.getUser();
-        currentUser = user;
-        await updateAvatarDisplay();
-        await renderLeaderboard();   // leaderboard also uses user_avatar
-        alert("Avatar updated!");
+    // Escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
     }
 
-    function openAvatarPicker() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.onchange = (e) => uploadAvatar(e.target.files[0]);
-        input.click();
-    }
-
-    // ========== LEADERBOARD ==========
-    async function renderLeaderboard() {
-        const { data: completions, error } = await sb.from('task_completions').select('user_id, user_name, user_avatar, score');
-        if (error) { leaderboardContainer.innerHTML = `<div class="alert">❌ Could not load leaderboard</div>`; return; }
-        if (!completions || completions.length === 0) { leaderboardContainer.innerHTML = `<div class="alert">📭 No scores yet. Complete tasks to appear!</div>`; return; }
-        const userMap = new Map();
-        for (const c of completions) {
-            if (c.score === null) continue;
-            if (!userMap.has(c.user_id)) {
-                userMap.set(c.user_id, { name: c.user_name || 'Student', avatar: c.user_avatar, scores: [] });
-            }
-            userMap.get(c.user_id).scores.push(c.score);
-        }
-        let leaderboard = [];
-        for (const [id, data] of userMap.entries()) {
-            const avg = data.scores.reduce((a,b)=>a+b,0) / data.scores.length;
-            leaderboard.push({ user_id: id, name: data.name, avatar: data.avatar, avgScore: Math.round(avg) });
-        }
-        leaderboard.sort((a,b)=>b.avgScore - a.avgScore);
-        if (leaderboard.length === 0) { leaderboardContainer.innerHTML = `<div class="alert">📭 No valid scores.</div>`; return; }
-
-        const top3 = leaderboard.slice(0,3);
-        const podiumHtml = `
-            <div class="leaderboard-grid">
-                ${top3[1] ? `<div class="podium-card second"><div class="podium-avatar">${top3[1].avatar ? `<img src="${top3[1].avatar}">` : (top3[1].name.charAt(0)||'?')}</div><div>${escapeHtml(top3[1].name)}</div><div style="font-size:1.5rem;font-weight:bold;color:#facc15;">${top3[1].avgScore}%</div></div>` : '<div></div>'}
-                ${top3[0] ? `<div class="podium-card first"><div class="podium-avatar" style="width:70px;height:70px;">${top3[0].avatar ? `<img src="${top3[0].avatar}">` : (top3[0].name.charAt(0)||'?')}</div><div>${escapeHtml(top3[0].name)}</div><div style="font-size:1.8rem;font-weight:bold;color:#facc15;">${top3[0].avgScore}%</div></div>` : '<div></div>'}
-                ${top3[2] ? `<div class="podium-card third"><div class="podium-avatar">${top3[2].avatar ? `<img src="${top3[2].avatar}">` : (top3[2].name.charAt(0)||'?')}</div><div>${escapeHtml(top3[2].name)}</div><div style="font-size:1.5rem;font-weight:bold;color:#facc15;">${top3[2].avgScore}%</div></div>` : '<div></div>'}
-            </div>
-            <div class="lb-list">
-                <div class="lb-header"><div>Rank</div><div>Student</div><div>Avg Score</div></div>
-                ${leaderboard.map((u, idx) => `<div class="lb-row"><div>${idx+1}</div><div class="lb-name"><div class="lb-avatar">${u.avatar ? `<img src="${u.avatar}">` : (u.name.charAt(0)||'?')}</div><span>${escapeHtml(u.name)}${u.user_id === currentUser?.id ? ' <span style="font-size:0.7rem;color:#facc15;">(You)</span>' : ''}</span></div><div class="lb-score">${u.avgScore}%</div></div>`).join('')}
-            </div>
-        `;
-        leaderboardContainer.innerHTML = podiumHtml;
-    }
-
-    // ========== DATE STRIP & TASKS ==========
-    async function loadAllTaskDates() {
-        const { data: tasks } = await sb.from('tasks').select('task_date');
-        taskDates.clear();
-        (tasks || []).forEach(t => taskDates.add(t.task_date));
-    }
-
+    // ========== DATE STRIP (build chips) ==========
     function buildDateStrip(selectedDate) {
+        if (!dateStripDiv) return;
         const today = new Date();
-        let chips = [];
+        // create dates from -7 to +7 days from today
+        const chips = [];
         for (let i = -7; i <= 7; i++) {
             const d = new Date(today);
             d.setDate(today.getDate() + i);
             const dateStr = d.toISOString().slice(0,10);
-            const display = `${d.getDate()} ${d.toLocaleString('default',{month:'short'})}`;
-            chips.push({ dateStr, display, hasTask: taskDates.has(dateStr), active: dateStr === selectedDate });
+            const displayDay = d.getDate();
+            const displayMonth = d.toLocaleString('default', { month: 'short' });
+            const hasTask = taskDates.has(dateStr);
+            const isActive = (dateStr === selectedDate);
+            chips.push({ dateStr, display: `${displayDay} ${displayMonth}`, hasTask, isActive });
         }
-        dateStripDiv.innerHTML = chips.map(c => `<div class="date-chip ${c.active ? 'active' : ''} ${c.hasTask ? 'has-task' : ''}" data-date="${c.dateStr}">${c.display}</div>`).join('');
+        dateStripDiv.innerHTML = chips.map(chip => `
+            <div class="date-chip ${chip.isActive ? 'active' : ''} ${chip.hasTask ? 'has-task' : ''}" data-date="${chip.dateStr}">
+                ${chip.display}
+            </div>
+        `).join('');
+        // attach click handlers
         document.querySelectorAll('.date-chip').forEach(chip => {
             chip.addEventListener('click', () => {
                 const newDate = chip.dataset.date;
                 datePicker.value = newDate;
                 loadTasksForDate(newDate);
+                // update active class
                 document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
                 chip.classList.add('active');
             });
         });
     }
 
+    // ========== LEADERBOARD (average score) ==========
+    async function renderLeaderboard() {
+        const { data: completions, error } = await sb.from('task_completions').select('user_id, user_name, user_avatar, score');
+        if (error) {
+            leaderboardContainer.innerHTML = `<div class="alert">❌ Could not load leaderboard</div>`;
+            return;
+        }
+        if (!completions || completions.length === 0) {
+            leaderboardContainer.innerHTML = `<div class="alert">📭 No scores yet. Complete tasks to appear!</div>`;
+            return;
+        }
+
+        const userMap = new Map();
+        for (const c of completions) {
+            if (c.score === null || c.score === undefined) continue;
+            if (!userMap.has(c.user_id)) {
+                userMap.set(c.user_id, {
+                    name: c.user_name || 'Student',
+                    avatar: c.user_avatar,
+                    scores: []
+                });
+            }
+            userMap.get(c.user_id).scores.push(c.score);
+        }
+        let leaderboard = [];
+        for (const [userId, data] of userMap.entries()) {
+            const avg = data.scores.reduce((a,b)=>a+b,0) / data.scores.length;
+            leaderboard.push({
+                user_id: userId,
+                name: data.name,
+                avatar: data.avatar,
+                avgScore: Math.round(avg)
+            });
+        }
+        leaderboard.sort((a,b) => b.avgScore - a.avgScore);
+        if (leaderboard.length === 0) {
+            leaderboardContainer.innerHTML = `<div class="alert">📭 No valid scores yet.</div>`;
+            return;
+        }
+
+        const top3 = leaderboard.slice(0,3);
+        const podiumHtml = `
+            <div class="leaderboard-grid">
+                ${top3[1] ? `
+                <div class="podium-card second">
+                    <div class="podium-avatar">${top3[1].avatar ? `<img src="${top3[1].avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : (top3[1].name.charAt(0) || '?')}</div>
+                    <div>${escapeHtml(top3[1].name)}</div>
+                    <div style="font-size:1.5rem; font-weight:bold; color:#facc15;">${top3[1].avgScore}%</div>
+                    <div style="font-size:0.7rem;">avg score</div>
+                </div>
+                ` : '<div></div>'}
+                ${top3[0] ? `
+                <div class="podium-card first">
+                    <div class="podium-avatar" style="width:70px;height:70px;">${top3[0].avatar ? `<img src="${top3[0].avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : (top3[0].name.charAt(0) || '?')}</div>
+                    <div>${escapeHtml(top3[0].name)}</div>
+                    <div style="font-size:1.8rem; font-weight:bold; color:#facc15;">${top3[0].avgScore}%</div>
+                    <div style="font-size:0.7rem;">avg score</div>
+                </div>
+                ` : '<div></div>'}
+                ${top3[2] ? `
+                <div class="podium-card third">
+                    <div class="podium-avatar">${top3[2].avatar ? `<img src="${top3[2].avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : (top3[2].name.charAt(0) || '?')}</div>
+                    <div>${escapeHtml(top3[2].name)}</div>
+                    <div style="font-size:1.5rem; font-weight:bold; color:#facc15;">${top3[2].avgScore}%</div>
+                    <div style="font-size:0.7rem;">avg score</div>
+                </div>
+                ` : '<div></div>'}
+            </div>
+            <div class="lb-list">
+                <div class="lb-header"><div>Rank</div><div>Student</div><div>Avg Score</div></div>
+                ${leaderboard.map((u, idx) => `
+                    <div class="lb-row">
+                        <div class="lb-rank">${idx+1}</div>
+                        <div class="lb-name">
+                            <div class="lb-avatar">${u.avatar ? `<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : (u.name.charAt(0) || '?')}</div>
+                            <span>${escapeHtml(u.name)}</span>
+                            ${u.user_id === currentUser?.id ? ' <span style="font-size:0.7rem;color:#facc15;">(You)</span>' : ''}
+                        </div>
+                        <div class="lb-score">${u.avgScore}%</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        leaderboardContainer.innerHTML = podiumHtml;
+    }
+
+    // ========== LOAD TASKS ==========
     async function loadTasksForDate(date) {
         if (!date) return;
         taskListDiv.innerHTML = '<div class="alert">⏳ Loading tasks...</div>';
         const { data: tasks, error } = await sb.from('tasks').select('*').eq('task_date', date);
-        if (error) { taskListDiv.innerHTML = `<div class="alert">❌ ${error.message}</div>`; return; }
-        if (!tasks.length) { taskListDiv.innerHTML = '<div class="alert">📭 No tasks for this date.</div>'; return; }
+        if (error) {
+            taskListDiv.innerHTML = `<div class="alert">❌ Error: ${error.message}</div>`;
+            return;
+        }
+        if (!tasks || tasks.length === 0) {
+            taskListDiv.innerHTML = '<div class="alert">📭 No tasks for this date. Check back later!</div>';
+            return;
+        }
+
+        // Get completions for current user
         const { data: completions } = await sb.from('task_completions').select('task_id, score').eq('user_id', currentUser.id);
-        const completedMap = new Map((completions||[]).map(c => [c.task_id, c.score]));
-        taskListDiv.innerHTML = tasks.map(task => `
-            <div class="task-card">
-                <div class="task-skill">${task.skill || 'General'}</div>
-                <div class="task-title">${escapeHtml(task.title)}</div>
-                ${task.description ? `<div style="font-size:0.85rem;color:#cbd5e1;margin-top:0.3rem;">${escapeHtml(task.description.substring(0,150))}${task.description.length>150?'…':''}</div>` : ''}
-                <div style="margin-top:0.6rem;">
-                    ${completedMap.has(task.id) ? `<span class="completed-badge">✅ Completed (${completedMap.get(task.id)}%)</span>` : `<button class="complete-btn" data-task-id="${task.id}">✓ Mark as Completed</button>`}
+        const completedMap = new Map();
+        (completions || []).forEach(c => completedMap.set(c.task_id, c.score));
+
+        let html = '';
+        for (const task of tasks) {
+            const completed = completedMap.has(task.id);
+            const score = completedMap.get(task.id);
+            html += `
+                <div class="task-card">
+                    <div class="task-skill">${task.skill || 'General'}</div>
+                    <div class="task-title">${escapeHtml(task.title)}</div>
+                    ${task.description ? `<div class="task-desc">${escapeHtml(task.description.substring(0, 200))}${task.description.length > 200 ? '…' : ''}</div>` : ''}
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        ${completed ? `<span class="completed-badge">✅ Completed (${score}%)</span>` : `<button class="complete-btn" data-task-id="${task.id}">✓ Mark as Completed</button>`}
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }
+        taskListDiv.innerHTML = html;
+
+        // Attach complete button events
         document.querySelectorAll('.complete-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
+            btn.addEventListener('click', async (e) => {
                 const taskId = btn.dataset.taskId;
                 const score = prompt("Enter your score (0-100):", "75");
                 if (score === null) return;
-                const num = parseInt(score);
-                if (isNaN(num) || num < 0 || num > 100) { alert("Score must be 0-100"); return; }
+                const numScore = parseInt(score);
+                if (isNaN(numScore) || numScore < 0 || numScore > 100) {
+                    alert("Score must be between 0 and 100");
+                    return;
+                }
                 const { error } = await sb.from('task_completions').insert({
-                    task_id: taskId, user_id: currentUser.id, score: num,
-                    user_name: currentUser.user_metadata?.full_name || currentUser.email.split('@')[0],
-                    user_avatar: currentUser.user_metadata?.avatar_url || null,
+                    task_id: taskId,
+                    user_id: currentUser.id,
+                    score: numScore,
                     completed_at: new Date().toISOString()
                 });
-                if (error) alert("Error: " + error.message);
-                else { alert(`✅ Score ${num}% saved!`); loadTasksForDate(date); renderLeaderboard(); }
+                if (error) {
+                    alert("Error: " + error.message);
+                } else {
+                    alert(`✅ Score ${numScore}% saved!`);
+                    await loadTasksForDate(date);
+                    await renderLeaderboard();
+                }
             });
         });
     }
 
+    // ========== LOAD ALL TASK DATES (for chip highlighting) ==========
+    async function loadAllTaskDates() {
+        const { data: tasks, error } = await sb.from('tasks').select('task_date').order('task_date');
+        if (error) return;
+        taskDates.clear();
+        (tasks || []).forEach(t => taskDates.add(t.task_date));
+    }
+
+    // ========== HANDLE DATE CHANGE ==========
     async function onDateChange(date) {
         if (!date) return;
         datePicker.value = date;
         await loadTasksForDate(date);
+        // rebuild date strip with active selection
         buildDateStrip(date);
     }
 
     // ========== AUTH ==========
     async function login() {
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        if (!email || !password) { showAuthMessage('Enter email and password'); return; }
-        const btn = document.getElementById('loginBtn'); btn.disabled = true; btn.textContent = 'Signing in...';
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        if (!email || !password) {
+            showAuthMessage('Please enter email and password');
+            return;
+        }
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Signing in...';
         const { error } = await sb.auth.signInWithPassword({ email, password });
-        btn.disabled = false; btn.textContent = 'Sign In';
-        if (error) showAuthMessage(error.message);
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Sign In';
+        if (error) {
+            showAuthMessage(error.message);
+        }
     }
-    async function logout() { await sb.auth.signOut(); }
+
+    async function logout() {
+        await sb.auth.signOut();
+    }
+
     async function signup() {
-        const email = prompt("Enter email:");
+        const email = prompt("Enter your email address:");
         if (!email) return;
-        const pass = prompt("Password (min 6 chars):");
-        if (!pass || pass.length<6) { alert("Password too short"); return; }
-        const name = prompt("Full name (optional):", email.split('@')[0]);
-        const { error } = await sb.auth.signUp({ email, password: pass, options: { data: { full_name: name } } });
-        if (error) alert(error.message);
-        else alert("Account created! Please check email to confirm.");
+        const password = prompt("Create a password (min 6 characters):");
+        if (!password || password.length < 6) {
+            alert("Password must be at least 6 characters");
+            return;
+        }
+        const name = prompt("Your full name (optional):", email.split('@')[0]);
+        const { error } = await sb.auth.signUp({
+            email, password,
+            options: { data: { full_name: name || email.split('@')[0] } }
+        });
+        if (error) alert("Signup error: " + error.message);
+        else alert("Account created! Please check your email to confirm (or disable email confirmation in Supabase).");
     }
+
     async function resetPassword() {
-        const email = prompt("Enter your email:");
+        const email = prompt("Enter your email address to receive a reset link:");
         if (!email) return;
         const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
-        if (error) alert(error.message);
-        else alert("Reset link sent!");
-    }
-    function showAuthMessage(msg) {
-        const d = document.getElementById('authMsg');
-        d.innerHTML = `<div style="background:#7f1a1a;padding:0.6rem;border-radius:12px;">${msg}</div>`;
-        setTimeout(() => d.innerHTML = '', 4000);
+        if (error) alert("Error: " + error.message);
+        else alert("Password reset link sent! Check your email.");
     }
 
     async function updateUIForUser(user) {
@@ -550,33 +692,42 @@
             currentUser = user;
             authCard.style.display = 'none';
             dashboard.style.display = 'block';
-            await loadAllTaskDates();
             const today = new Date().toISOString().slice(0,10);
+            await loadAllTaskDates();
             datePicker.value = today;
             await loadTasksForDate(today);
             await renderLeaderboard();
             buildDateStrip(today);
-            await updateAvatarDisplay();
-            avatarBtn.addEventListener('click', openAvatarPicker);
         } else {
             currentUser = null;
             authCard.style.display = 'block';
             dashboard.style.display = 'none';
+            emailInput.value = '';
+            passwordInput.value = '';
         }
     }
 
-    sb.auth.onAuthStateChange((event, session) => updateUIForUser(session?.user || null));
+    // Auth state listener
+    sb.auth.onAuthStateChange((event, session) => {
+        updateUIForUser(session?.user || null);
+    });
+
+    // Initial session check
     (async () => {
         const { data: { user } } = await sb.auth.getUser();
         await updateUIForUser(user);
     })();
 
-    document.getElementById('loginBtn').addEventListener('click', login);
-    document.getElementById('logoutBtn').addEventListener('click', logout);
-    document.getElementById('loadTasksBtn').addEventListener('click', () => onDateChange(datePicker.value));
+    // Event listeners
+    loginBtn.addEventListener('click', login);
+    logoutBtn.addEventListener('click', logout);
+    loadTasksBtn.addEventListener('click', () => {
+        const date = datePicker.value;
+        if (date) onDateChange(date);
+    });
     datePicker.addEventListener('change', (e) => onDateChange(e.target.value));
-    document.getElementById('showSignupBtn').addEventListener('click', signup);
-    document.getElementById('showResetBtn').addEventListener('click', resetPassword);
+    document.getElementById('showSignupBtn')?.addEventListener('click', signup);
+    document.getElementById('showResetBtn')?.addEventListener('click', resetPassword);
 </script>
 </body>
 </html>
