@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard · IELTS Platform</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#07080d;--s1:#0d0f18;--s2:#131720;--s3:#1a1f2e;
+  --txt:#eef0f6;--muted:#7a7f94;--muted2:#4a4f62;
+  --bdr:rgba(255,255,255,0.07);--bdr2:rgba(255,255,255,0.12);
+  --violet:#7c6bcd;--violet2:#a99de8;--lilac:#c4b8f8;
+  --green:#22c55e;--red:#ef4444;--orange:#f97316;--blue:#3b82f6;
+  --gold:#f59e0b;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 40% at 15% 20%,rgba(124,107,205,0.08) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 50% at 85% 80%,rgba(59,130,246,0.06) 0%,transparent 60%)}
+
+/* ── LAYOUT ── */
+#app{position:relative;z-index:1;min-height:100vh}
+.hidden{display:none!important}
+
+/* ── LOGIN ── */
+#login-view{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+}
+.login-card{
+  background:rgba(13,15,24,0.95);border:1px solid var(--bdr2);
+  border-radius:24px;padding:52px;max-width:420px;width:100%;
+  box-shadow:0 40px 80px rgba(0,0,0,0.6);
+}
+.login-logo{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;
+  letter-spacing:5px;text-transform:uppercase;color:var(--muted2);margin-bottom:40px}
+.login-h{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;margin-bottom:6px}
+.login-sub{font-size:14px;color:var(--muted);margin-bottom:36px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.field input{
+  width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--bdr2);
+  border-radius:10px;padding:13px 16px;font-family:'Inter',sans-serif;
+  font-size:15px;color:var(--txt);outline:none;transition:all 0.18s;
+}
+.field input:focus{border-color:var(--violet2);background:rgba(124,107,205,0.06)}
+.field input::placeholder{color:var(--muted2)}
+.btn-primary{
+  width:100%;background:linear-gradient(135deg,var(--violet),#4a3a9a);
+  color:#fff;border:none;border-radius:12px;padding:14px;
+  font-family:'Inter',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;margin-top:8px;
+}
+.btn-primary:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:0.5;cursor:default;transform:none}
+.login-err{
+  background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);
+  border-radius:8px;padding:10px 14px;font-size:13px;color:#fca5a5;margin-bottom:16px;
+}
+.teacher-note{
+  margin-top:20px;padding:12px 16px;border-radius:10px;
+  background:rgba(124,107,205,0.08);border:1px solid rgba(124,107,205,0.2);
+  font-size:12px;color:var(--muted);line-height:1.6;text-align:center;
+}
+
+/* ── MAIN LAYOUT ── */
+#main-view{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:240px;flex-shrink:0;background:var(--s1);
+  border-right:1px solid var(--bdr);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;height:100vh;z-index:100;
+}
+.sb-logo{
+  padding:28px 24px 20px;
+  font-family:'Syne',sans-serif;font-size:12px;font-weight:800;
+  letter-spacing:4px;text-transform:uppercase;color:var(--muted2);
+  border-bottom:1px solid var(--bdr);
+}
+.sb-logo span{display:block;font-size:18px;font-weight:800;color:var(--violet2);letter-spacing:0;margin-top:4px}
+.sb-nav{padding:16px 12px;flex:1}
+.sb-section{font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--muted2);font-weight:600;padding:0 12px;margin:16px 0 6px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;cursor:pointer;
+  font-size:14px;font-weight:500;color:var(--muted);
+  transition:all 0.15s;margin-bottom:2px;
+}
+.nav-item:hover{background:rgba(255,255,255,0.04);color:var(--txt)}
+.nav-item.active{background:rgba(124,107,205,0.15);color:var(--violet2)}
+.nav-item .icon{font-size:16px;width:20px;text-align:center}
+.sb-bottom{
+  padding:16px;border-top:1px solid var(--bdr);
+}
+.teacher-badge{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  background:rgba(255,255,255,0.03);border-radius:10px;
+}
+.tb-avatar{
+  width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--violet),#4a3a9a);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;flex-shrink:0;
+}
+.tb-info{flex:1;min-width:0}
+.tb-name{font-size:12px;font-weight:600;color:var(--txt);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-role{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.logout-btn{
+  background:transparent;border:none;color:var(--muted);
+  cursor:pointer;font-size:16px;padding:4px;transition:color 0.15s;flex-shrink:0;
+}
+.logout-btn:hover{color:var(--red)}
+
+/* ── MAIN CONTENT ── */
+.main-content{margin-left:240px;flex:1;min-height:100vh}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 40px;border-bottom:1px solid var(--bdr);
+  background:rgba(7,8,13,0.8);backdrop-filter:blur(16px);
+  position:sticky;top:0;z-index:50;
+}
+.page-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.notif-badge{
+  background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);
+  color:#fca5a5;border-radius:20px;padding:5px 12px;
+  font-size:12px;font-weight:600;
+}
+
+/* ── PAGE PANELS ── */
+.page{display:none;padding:32px 40px}
+.page.active{display:block}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.stat-card{
+  background:var(--s1);border:1px solid var(--bdr);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--sc)}
+.sc-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:10px}
+.sc-val{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;margin-bottom:4px}
+.sc-sub{font-size:12px;color:var(--muted)}
+
+/* ── TABLES ── */
+.section-hdr{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;
+}
+.section-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
+.table-wrap{
+  background:var(--s1);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;
+  margin-bottom:28px;
+}
+table{width:100%;border-collapse:collapse}
+thead tr{background:rgba(255,255,255,0.03);border-bottom:1px solid var(--bdr)}
+th{
+  padding:12px 18px;text-align:left;font-size:11px;font-weight:600;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);
+}
+tbody tr{border-bottom:1px solid var(--bdr);transition:background 0.15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,0.02)}
+td{padding:14px 18px;font-size:14px;color:var(--txt)}
+td.muted{color:var(--muted)}
+
+/* ── BADGES ── */
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.5px;
+}
+.badge-green{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);color:#4ade80}
+.badge-red{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fca5a5}
+.badge-orange{background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.25);color:#fb923c}
+.badge-blue{background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.25);color:#93c5fd}
+.badge-violet{background:rgba(124,107,205,0.15);border:1px solid rgba(124,107,205,0.3);color:var(--violet2)}
+.badge-muted{background:rgba(255,255,255,0.05);border:1px solid var(--bdr);color:var(--muted)}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 18px;border-radius:9px;font-family:'Inter',sans-serif;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all 0.18s;border:none;
+}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:7px}
+.btn-violet{background:linear-gradient(135deg,var(--violet),#4a3a9a);color:#fff}
+.btn-violet:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,0.04);border:1px solid var(--bdr2);color:var(--muted)}
+.btn-ghost:hover{background:rgba(255,255,255,0.08);color:var(--txt)}
+.btn-red{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.25);color:#fca5a5}
+.btn-red:hover{background:rgba(239,68,68,0.2)}
+.btn-green{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);color:#4ade80}
+.btn-green:hover{background:rgba(34,197,94,0.2)}
+
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.8);
+  backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:24px;
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:var(--s1);border:1px solid var(--bdr2);border-radius:20px;
+  padding:36px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;
+  animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.modal::-webkit-scrollbar{width:4px}
+.modal::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:4px}
+@keyframes popIn{from{opacity:0;transform:scale(0.88)}to{opacity:1;transform:scale(1)}}
+.modal-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.modal-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700}
+.modal-close{background:transparent;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:2px;line-height:1}
+.modal-close:hover{color:var(--txt)}
+
+/* ── FORM ELEMENTS ── */
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:12px;font-weight:600;letter-spacing:1px;
+  text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.form-input,.form-select,.form-textarea{
+  width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--bdr2);
+  border-radius:10px;padding:12px 14px;font-family:'Inter',sans-serif;
+  font-size:14px;color:var(--txt);outline:none;transition:all 0.18s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:var(--violet2);background:rgba(124,107,205,0.06);
+}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--muted2)}
+.form-select{appearance:none;cursor:pointer}
+.form-select option{background:var(--s2)}
+.form-textarea{resize:vertical;min-height:100px;line-height:1.6}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-hint{font-size:11px;color:var(--muted);margin-top:5px}
+
+/* ── TASK TYPE PILLS ── */
+.type-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.type-pill{
+  padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1px solid var(--bdr2);background:rgba(255,255,255,0.03);
+  color:var(--muted);transition:all 0.15s;
+}
+.type-pill:hover{border-color:var(--violet2);color:var(--violet2)}
+.type-pill.selected{background:rgba(124,107,205,0.2);border-color:var(--violet2);color:var(--violet2)}
+
+/* ── NOTIFICATION COMPOSER ── */
+.notif-targets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.target-chip{
+  padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;
+  cursor:pointer;border:1px solid var(--bdr2);background:rgba(255,255,255,0.03);
+  color:var(--muted);transition:all 0.15s;display:flex;align-items:center;gap:6px;
+}
+.target-chip:hover{border-color:var(--violet2);color:var(--violet2)}
+.target-chip.sel{background:rgba(124,107,205,0.15);border-color:var(--violet2);color:var(--violet2)}
+.target-chip .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* ── PROGRESS BAR ── */
+.progress-bar{height:6px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;transition:width 0.3s;background:linear-gradient(90deg,var(--violet),var(--violet2))}
+
+/* ── RESULT DETAIL ── */
+.result-detail{
+  background:var(--s2);border:1px solid var(--bdr);border-radius:12px;
+  padding:16px;margin-bottom:10px;
+}
+.rd-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.rd-name{font-size:14px;font-weight:600}
+.rd-score{font-family:'Syne',sans-serif;font-size:20px;font-weight:800}
+
+/* ── EMPTY STATE ── */
+.empty-state{
+  text-align:center;padding:60px 20px;
+}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-title{font-size:16px;font-weight:600;margin-bottom:6px}
+.empty-sub{font-size:14px;color:var(--muted)}
+
+/* ── SEARCH ── */
+.search-bar{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--bdr2);
+  border-radius:10px;padding:9px 14px;
+}
+.search-bar input{
+  background:transparent;border:none;outline:none;
+  font-family:'Inter',sans-serif;font-size:14px;color:var(--txt);flex:1;
+}
+.search-bar input::placeholder{color:var(--muted2)}
+.search-icon{color:var(--muted2);font-size:14px}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:24px;right:24px;z-index:999;
+  background:var(--s2);border:1px solid var(--bdr2);
+  border-radius:12px;padding:14px 20px;
+  font-size:14px;font-weight:500;
+  display:none;align-items:center;gap:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  animation:slideUp 0.3s ease;max-width:360px;
+}
+#toast.show{display:flex}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── LOADING ── */
+.spinner{
+  width:32px;height:32px;border-radius:50%;
+  border:3px solid rgba(255,255,255,0.1);
+  border-top-color:var(--violet2);
+  animation:spin 0.7s linear infinite;margin:0 auto;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-wrap{padding:60px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.loading-wrap p{color:var(--muted);font-size:14px}
+
+/* ── SCORE RING ── */
+.score-ring{
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;flex-shrink:0;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .form-row{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .main-content{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-view">
+  <div class="login-card">
+    <div class="login-logo">IELTS Platform</div>
+    <h1 class="login-h">Teacher Portal</h1>
+    <p class="login-sub">Sign in to manage tasks and students</p>
+    <div class="login-err hidden" id="login-err"></div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="teacher-note">
+      This portal is for <strong>teachers only</strong>.<br>
+      Students use the main platform page.
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div id="main-view" class="hidden">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sb-logo">IELTS Platform<span>Teacher</span></div>
+    <nav class="sb-nav">
+      <div class="sb-section">Overview</div>
+      <div class="nav-item active" onclick="showPage('dashboard')" data-page="dashboard">
+        <span class="icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showPage('students')" data-page="students">
+        <span class="icon">👥</span> Students
+      </div>
+      <div class="sb-section">Content</div>
+      <div class="nav-item" onclick="showPage('tasks')" data-page="tasks">
+        <span class="icon">📋</span> Daily Tasks
+      </div>
+      <div class="nav-item" onclick="showPage('results')" data-page="results">
+        <span class="icon">📈</span> Results
+      </div>
+      <div class="sb-section">Communication</div>
+      <div class="nav-item" onclick="showPage('notifications')" data-page="notifications">
+        <span class="icon">🔔</span> Notifications
+        <span id="unread-badge" class="badge badge-red hidden" style="margin-left:auto;font-size:10px;padding:2px 7px"></span>
+      </div>
+    </nav>
+    <div class="sb-bottom">
+      <div class="teacher-badge">
+        <div class="tb-avatar" id="tb-avatar">T</div>
+        <div class="tb-info">
+          <div class="tb-name" id="tb-name">Teacher</div>
+          <div class="tb-role">Instructor</div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()" title="Sign out">⎋</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="topbar">
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="topbar-right">
+        <span id="today-date" style="font-size:13px;color:var(--muted)"></span>
+      </div>
+    </div>
+
+    <!-- ── DASHBOARD PAGE ── -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card" style="--sc:var(--violet2)">
+          <div class="sc-label">Total Students</div>
+          <div class="sc-val" id="stat-students">—</div>
+          <div class="sc-sub">registered accounts</div>
+        </div>
+        <div class="stat-card" style="--sc:var(--green)">
+          <div class="sc-label">Tasks This Week</div>
+          <div class="sc-val" id="stat-tasks">—</div>
+          <div class="sc-sub">published tasks</div>
+        </div>
+        <div class="stat-card" style="--sc:var(--orange)">
+          <div class="sc-label">Submissions Today</div>
+          <div class="sc-val" id="stat-today">—</div>
+          <div class="sc-sub">task completions</div>
+        </div>
+        <div class="stat-card" style="--sc:var(--blue)">
+          <div class="sc-label">Avg Score</div>
+          <div class="sc-val" id="stat-avg">—</div>
+          <div class="sc-sub">across all tasks</div>
+        </div>
+      </div>
+
+      <div class="section-hdr">
+        <div class="section-title">Recent Submissions</div>
+        <button class="btn btn-ghost btn-sm" onclick="showPage('results')">View All →</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Task</th><th>Score</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody id="recent-tbody">
+            <tr><td colspan="5"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-hdr">
+        <div class="section-title">Today's Tasks</div>
+        <button class="btn btn-violet btn-sm" onclick="openTaskModal()">+ Add Task</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Title</th><th>Type</th><th>Completions</th><th>Due</th><th>Actions</th></tr></thead>
+          <tbody id="today-tasks-tbody">
+            <tr><td colspan="5"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── STUDENTS PAGE ── -->
+    <div class="page" id="page-students">
+      <div class="section-hdr">
+        <div class="search-bar" style="width:280px">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search students…" oninput="filterStudents(this.value)" id="student-search">
+        </div>
+        <span id="student-count" style="font-size:13px;color:var(--muted)"></span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Email</th><th>Joined</th><th>Tasks Done</th><th>Avg Score</th><th>Last Active</th><th>Actions</th></tr></thead>
+          <tbody id="students-tbody">
+            <tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── TASKS PAGE ── -->
+    <div class="page" id="page-tasks">
+      <div class="section-hdr">
+        <div style="display:flex;gap:10px;align-items:center">
+          <select class="form-select" style="width:160px;padding:8px 12px" id="task-filter-date" onchange="loadTasks()">
+            <option value="all">All Dates</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+            <option value="past">Past</option>
+          </select>
+          <select class="form-select" style="width:150px;padding:8px 12px" id="task-filter-type" onchange="loadTasks()">
+            <option value="all">All Types</option>
+            <option value="writing">Writing</option>
+            <option value="reading">Reading</option>
+            <option value="listening">Listening</option>
+            <option value="speaking">Speaking</option>
+            <option value="vocabulary">Vocabulary</option>
+            <option value="grammar">Grammar</option>
+          </select>
+        </div>
+        <button class="btn btn-violet" onclick="openTaskModal()">+ New Task</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Title</th><th>Type</th><th>Date</th><th>Due Time</th><th>Completions</th><th>Avg Score</th><th>Actions</th></tr></thead>
+          <tbody id="tasks-tbody">
+            <tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── RESULTS PAGE ── -->
+    <div class="page" id="page-results">
+      <div class="section-hdr">
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <select class="form-select" style="width:200px;padding:8px 12px" id="result-filter-task" onchange="loadResults()">
+            <option value="all">All Tasks</option>
+          </select>
+          <select class="form-select" style="width:180px;padding:8px 12px" id="result-filter-student" onchange="loadResults()">
+            <option value="all">All Students</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="exportResults()">⬇ Export CSV</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Student</th><th>Task</th><th>Type</th><th>Score</th><th>Status</th><th>Submitted</th><th>Details</th></tr></thead>
+          <tbody id="results-tbody">
+            <tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── NOTIFICATIONS PAGE ── -->
+    <div class="page" id="page-notifications">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+
+        <!-- Compose -->
+        <div>
+          <div class="section-title" style="margin-bottom:18px">Send Notification</div>
+          <div class="table-wrap" style="padding:24px">
+            <div class="form-group">
+              <label>Send To</label>
+              <div style="display:flex;gap:8px;margin-bottom:8px">
+                <button class="btn btn-sm btn-ghost" id="target-all" onclick="toggleTarget('all')">👥 All Students</button>
+                <button class="btn btn-sm btn-ghost" id="target-sel" onclick="toggleTarget('select')">✎ Select Students</button>
+              </div>
+              <div id="student-checkboxes" class="hidden" style="max-height:180px;overflow-y:auto;background:rgba(0,0,0,0.2);border-radius:10px;padding:10px;border:1px solid var(--bdr)"></div>
+            </div>
+            <div class="form-group">
+              <label>Type</label>
+              <div class="type-pills">
+                <div class="type-pill selected" data-type="general" onclick="selectNotifType(this)">📢 General</div>
+                <div class="type-pill" data-type="task" onclick="selectNotifType(this)">📋 Task Reminder</div>
+                <div class="type-pill" data-type="result" onclick="selectNotifType(this)">📈 Result</div>
+                <div class="type-pill" data-type="urgent" onclick="selectNotifType(this)">🔴 Urgent</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" class="form-input" id="notif-title" placeholder="Notification title…">
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea class="form-textarea" id="notif-body" placeholder="Write your message here…" style="min-height:120px"></textarea>
+            </div>
+            <button class="btn btn-violet" onclick="sendNotification()" id="send-notif-btn" style="width:100%">
+              🔔 Send Notification
+            </button>
+          </div>
+        </div>
+
+        <!-- Sent notifications -->
+        <div>
+          <div class="section-hdr">
+            <div class="section-title">Sent Notifications</div>
+            <button class="btn btn-ghost btn-sm" onclick="loadNotifications()">↻ Refresh</button>
+          </div>
+          <div id="notif-list">
+            <div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+</div><!-- /main-view -->
+
+<!-- ── TASK MODAL ── -->
+<div class="modal-overlay" id="task-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="task-modal-title">New Task</div>
+      <button class="modal-close" onclick="closeModal('task-modal')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Task Date</label>
+        <input type="date" class="form-input" id="task-date">
+      </div>
+      <div class="form-group">
+        <label>Due Time</label>
+        <input type="time" class="form-input" id="task-due-time" value="23:59">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" class="form-input" id="task-title" placeholder="e.g. IELTS Writing Task 2 — Opinion Essay">
+    </div>
+    <div class="form-group">
+      <label>Task Type</label>
+      <div class="type-pills" id="task-type-pills">
+        <div class="type-pill selected" data-type="writing" onclick="selectType(this)">✍️ Writing</div>
+        <div class="type-pill" data-type="reading" onclick="selectType(this)">📖 Reading</div>
+        <div class="type-pill" data-type="listening" onclick="selectType(this)">🎧 Listening</div>
+        <div class="type-pill" data-type="speaking" onclick="selectType(this)">🎤 Speaking</div>
+        <div class="type-pill" data-type="vocabulary" onclick="selectType(this)">📚 Vocabulary</div>
+        <div class="type-pill" data-type="grammar" onclick="selectType(this)">🔤 Grammar</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>IELTS Band Target</label>
+      <select class="form-select" id="task-band">
+        <option value="">Any level</option>
+        <option value="5.0">Band 5.0</option>
+        <option value="5.5">Band 5.5</option>
+        <option value="6.0">Band 6.0</option>
+        <option value="6.5">Band 6.5</option>
+        <option value="7.0">Band 7.0</option>
+        <option value="7.5">Band 7.5</option>
+        <option value="8.0">Band 8.0+</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Instructions / Prompt</label>
+      <textarea class="form-textarea" id="task-instructions" placeholder="Write the task instructions here. Be specific about what students should do, word count, time limit, etc." style="min-height:130px"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Resource Link (optional)</label>
+      <input type="url" class="form-input" id="task-link" placeholder="https://…">
+      <div class="form-hint">Link to audio file, reading passage, or reference material</div>
+    </div>
+    <div class="form-group">
+      <label>Points / Max Score</label>
+      <input type="number" class="form-input" id="task-points" value="100" min="1" max="1000">
+    </div>
+    <input type="hidden" id="task-editing-id">
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+      <button class="btn btn-ghost" onclick="closeModal('task-modal')">Cancel</button>
+      <button class="btn btn-violet" id="save-task-btn" onclick="saveTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── STUDENT DETAIL MODAL ── -->
+<div class="modal-overlay" id="student-modal">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-title" id="sm-name">Student</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px" id="sm-email"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('student-modal')">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">
+      <div style="background:var(--s2);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:24px;font-weight:700;color:var(--violet2)" id="sm-total-tasks">0</div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px">Tasks Done</div>
+      </div>
+      <div style="background:var(--s2);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:24px;font-weight:700;color:var(--green)" id="sm-avg-score">—</div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px">Avg Score</div>
+      </div>
+      <div style="background:var(--s2);border-radius:12px;padding:14px;text-align:center">
+        <div style="font-size:24px;font-weight:700;color:var(--orange)" id="sm-streak">0</div>
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px">Day Streak</div>
+      </div>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">Task History</div>
+    <div id="sm-task-history" style="max-height:320px;overflow-y:auto"></div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeModal('student-modal')">Close</button>
+      <button class="btn btn-violet" style="flex:1" onclick="openNotifForStudent()">🔔 Send Message</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── RESULT DETAIL MODAL ── -->
+<div class="modal-overlay" id="result-modal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-hdr">
+      <div class="modal-title">Submission Detail</div>
+      <button class="modal-close" onclick="closeModal('result-modal')">✕</button>
+    </div>
+    <div id="result-modal-content"></div>
+    <div style="text-align:right;margin-top:20px">
+      <button class="btn btn-ghost" onclick="closeModal('result-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div id="toast"><span id="toast-icon">✓</span><span id="toast-msg">Done</span></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// SUPABASE INIT
+// ═══════════════════════════════════════════════
+const SUPABASE_URL = 'https://wqoshwbtxulnlfccbuvi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxb3Nod2J0eHVsbmxmY2NidXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODAwMTgsImV4cCI6MjA5MzA1NjAxOH0.ChxkoIlruVPtontdf0_uvG__XSpZdVhScxR1f-F_ArA';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let currentTeacher = null;
+let allStudents = [];
+let allTasks = [];
+let notifTargetMode = 'all';
+let notifSelectedStudents = new Set();
+let selectedNotifType = 'general';
+let currentStudentForNotif = null;
+
+// ═══════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    currentTeacher = session.user;
+    showApp();
+  }
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const btn   = document.getElementById('login-btn');
+  const err   = document.getElementById('login-err');
+  err.classList.add('hidden');
+  if (!email || !pass) { showErr('Please enter email and password.'); return; }
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.disabled = false; btn.textContent = 'Sign In →';
+  if (error) { showErr(error.message); return; }
+  currentTeacher = data.user;
+  showApp();
+}
+
+function showErr(msg) {
+  const el = document.getElementById('login-err');
+  el.textContent = msg; el.classList.remove('hidden');
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  location.reload();
+}
+
+function showApp() {
+  document.getElementById('login-view').classList.add('hidden');
+  document.getElementById('main-view').classList.remove('hidden');
+  const email = currentTeacher.email;
+  document.getElementById('tb-name').textContent = email.split('@')[0];
+  document.getElementById('tb-avatar').textContent = email[0].toUpperCase();
+  loadDashboard();
+  loadStudents();
+  loadNotifications();
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const pageTitles = {
+  dashboard: 'Dashboard', students: 'Students',
+  tasks: 'Daily Tasks', results: 'Results', notifications: 'Notifications'
+};
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.page === page);
+  });
+  document.getElementById('page-title').textContent = pageTitles[page] || page;
+  if (page === 'tasks')         loadTasks();
+  if (page === 'results')       loadResultsPage();
+  if (page === 'notifications') { loadNotifications(); loadStudentCheckboxes(); }
+}
+
+// ═══════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════
+async function loadDashboard() {
+  // Stats
+  const { count: studentCount } = await sb.from('profiles').select('*', { count: 'exact', head: true });
+  document.getElementById('stat-students').textContent = studentCount ?? '—';
+
+  const weekStart = new Date(); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  const { count: taskCount } = await sb.from('tasks')
+    .select('*', { count: 'exact', head: true })
+    .gte('task_date', weekStart.toISOString().split('T')[0]);
+  document.getElementById('stat-tasks').textContent = taskCount ?? '—';
+
+  const today = new Date().toISOString().split('T')[0];
+  const { count: todayCount } = await sb.from('task_submissions')
+    .select('*', { count: 'exact', head: true })
+    .gte('submitted_at', today);
+  document.getElementById('stat-today').textContent = todayCount ?? '—';
+
+  const { data: scoreData } = await sb.from('task_submissions').select('score').not('score', 'is', null);
+  if (scoreData && scoreData.length) {
+    const avg = Math.round(scoreData.reduce((a, b) => a + (b.score || 0), 0) / scoreData.length);
+    document.getElementById('stat-avg').textContent = avg + '%';
+  } else { document.getElementById('stat-avg').textContent = '—'; }
+
+  // Recent submissions
+  const { data: recent } = await sb.from('task_submissions')
+    .select('*, profiles(email), tasks(title, task_type)')
+    .order('submitted_at', { ascending: false })
+    .limit(8);
+  const tbody = document.getElementById('recent-tbody');
+  if (!recent || !recent.length) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No submissions yet</div></div></td></tr>`;
+  } else {
+    tbody.innerHTML = recent.map(r => `
+      <tr>
+        <td><strong>${r.profiles?.email?.split('@')[0] || 'Unknown'}</strong><br><span style="font-size:11px;color:var(--muted)">${r.profiles?.email || ''}</span></td>
+        <td>${r.tasks?.title || 'Task'}</td>
+        <td>${scoreCell(r.score)}</td>
+        <td class="muted">${timeAgo(r.submitted_at)}</td>
+        <td>${statusBadge(r.status)}</td>
+      </tr>`).join('');
+  }
+
+  // Today's tasks
+  const { data: todayTasks } = await sb.from('tasks')
+    .select('*, task_submissions(count)')
+    .eq('task_date', today)
+    .order('created_at', { ascending: false });
+  const ttbody = document.getElementById('today-tasks-tbody');
+  if (!todayTasks || !todayTasks.length) {
+    ttbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No tasks today</div><div class="empty-sub">Click "+ Add Task" to create one</div></div></td></tr>`;
+  } else {
+    ttbody.innerHTML = todayTasks.map(t => `
+      <tr>
+        <td><strong>${t.title}</strong></td>
+        <td>${typeBadge(t.task_type)}</td>
+        <td>${t.task_submissions?.[0]?.count || 0}</td>
+        <td class="muted">${t.due_time || '23:59'}</td>
+        <td>
+          <button class="btn btn-ghost btn-sm" onclick="openTaskModal(${JSON.stringify(t).replace(/"/g,'&quot;')})">Edit</button>
+          <button class="btn btn-red btn-sm" onclick="deleteTask('${t.id}')">Delete</button>
+        </td>
+      </tr>`).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════
+// STUDENTS
+// ═══════════════════════════════════════════════
+async function loadStudents() {
+  const { data: profiles } = await sb.from('profiles').select('*').order('created_at', { ascending: false });
+  allStudents = profiles || [];
+
+  // Get submission stats per student
+  const { data: subs } = await sb.from('task_submissions')
+    .select('student_id, score, submitted_at');
+
+  const statsMap = {};
+  (subs || []).forEach(s => {
+    if (!statsMap[s.student_id]) statsMap[s.student_id] = { count: 0, total: 0, last: null };
+    statsMap[s.student_id].count++;
+    if (s.score) statsMap[s.student_id].total += s.score;
+    if (!statsMap[s.student_id].last || s.submitted_at > statsMap[s.student_id].last)
+      statsMap[s.student_id].last = s.submitted_at;
+  });
+
+  allStudents = allStudents.map(s => ({
+    ...s,
+    taskCount: statsMap[s.id]?.count || 0,
+    avgScore: statsMap[s.id]?.count ? Math.round(statsMap[s.id].total / statsMap[s.id].count) : null,
+    lastActive: statsMap[s.id]?.last || null
+  }));
+
+  document.getElementById('student-count').textContent = `${allStudents.length} students`;
+  renderStudents(allStudents);
+
+  // Populate result filter
+  const sel = document.getElementById('result-filter-student');
+  sel.innerHTML = '<option value="all">All Students</option>' +
+    allStudents.map(s => `<option value="${s.id}">${s.email?.split('@')[0] || s.id}</option>`).join('');
+}
+
+function renderStudents(students) {
+  const tbody = document.getElementById('students-tbody');
+  if (!students.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">No students yet</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = students.map(s => `
+    <tr>
+      <td><strong>${s.full_name || s.email?.split('@')[0] || 'Student'}</strong></td>
+      <td class="muted">${s.email || '—'}</td>
+      <td class="muted">${s.created_at ? new Date(s.created_at).toLocaleDateString() : '—'}</td>
+      <td><span style="font-weight:600">${s.taskCount}</span></td>
+      <td>${s.avgScore !== null ? scoreCell(s.avgScore) : '<span class="muted">—</span>'}</td>
+      <td class="muted">${s.lastActive ? timeAgo(s.lastActive) : 'Never'}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="openStudentDetail('${s.id}')">View</button>
+        <button class="btn btn-violet btn-sm" onclick="quickNotifStudent('${s.id}','${(s.email||'').replace(/'/g,"\\'")}')">Notify</button>
+      </td>
+    </tr>`).join('');
+}
+
+function filterStudents(q) {
+  const f = q.toLowerCase();
+  renderStudents(allStudents.filter(s =>
+    (s.email || '').toLowerCase().includes(f) ||
+    (s.full_name || '').toLowerCase().includes(f)
+  ));
+}
+
+async function openStudentDetail(id) {
+  const student = allStudents.find(s => s.id === id);
+  if (!student) return;
+  document.getElementById('sm-name').textContent = student.full_name || student.email?.split('@')[0] || 'Student';
+  document.getElementById('sm-email').textContent = student.email || '';
+  document.getElementById('sm-total-tasks').textContent = student.taskCount;
+  document.getElementById('sm-avg-score').textContent = student.avgScore !== null ? student.avgScore + '%' : '—';
+  document.getElementById('sm-streak').textContent = '—';
+  currentStudentForNotif = id;
+
+  const hist = document.getElementById('sm-task-history');
+  hist.innerHTML = '<div class="loading-wrap" style="padding:20px"><div class="spinner"></div></div>';
+  openModal('student-modal');
+
+  const { data: subs } = await sb.from('task_submissions')
+    .select('*, tasks(title, task_type, task_date)')
+    .eq('student_id', id)
+    .order('submitted_at', { ascending: false })
+    .limit(20);
+
+  if (!subs || !subs.length) {
+    hist.innerHTML = '<div class="empty-state" style="padding:30px"><div class="empty-icon">📭</div><div class="empty-title">No submissions yet</div></div>';
+  } else {
+    hist.innerHTML = subs.map(s => `
+      <div class="result-detail">
+        <div class="rd-hdr">
+          <div>
+            <div class="rd-name">${s.tasks?.title || 'Task'}</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">${s.tasks?.task_date || ''} · ${typeBadge(s.tasks?.task_type)}</div>
+          </div>
+          <div class="rd-score" style="color:${scoreColor(s.score)}">${s.score !== null ? s.score + '%' : '—'}</div>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">${statusBadge(s.status)} · ${timeAgo(s.submitted_at)}</div>
+      </div>`).join('');
+  }
+}
+
+function openNotifForStudent() {
+  closeModal('student-modal');
+  showPage('notifications');
+  setTimeout(() => {
+    toggleTarget('select');
+    if (currentStudentForNotif) {
+      const cb = document.querySelector(`input[data-student="${currentStudentForNotif}"]`);
+      if (cb) { cb.checked = true; notifSelectedStudents.add(currentStudentForNotif); }
+    }
+  }, 100);
+}
+
+function quickNotifStudent(id, email) {
+  currentStudentForNotif = id;
+  showPage('notifications');
+  setTimeout(() => {
+    toggleTarget('select');
+    const cb = document.querySelector(`input[data-student="${id}"]`);
+    if (cb) { cb.checked = true; notifSelectedStudents.add(id); }
+    document.getElementById('notif-title').focus();
+  }, 100);
+}
+
+// ═══════════════════════════════════════════════
+// TASKS
+// ═══════════════════════════════════════════════
+async function loadTasks() {
+  const filter = document.getElementById('task-filter-date')?.value || 'all';
+  const typeFilter = document.getElementById('task-filter-type')?.value || 'all';
+  const tbody = document.getElementById('tasks-tbody');
+  tbody.innerHTML = `<tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr>`;
+
+  let query = sb.from('tasks').select('*').order('task_date', { ascending: false });
+
+  const today = new Date().toISOString().split('T')[0];
+  if (filter === 'today') query = query.eq('task_date', today);
+  else if (filter === 'week') {
+    const w = new Date(); w.setDate(w.getDate() - 7);
+    query = query.gte('task_date', w.toISOString().split('T')[0]);
+  } else if (filter === 'past') {
+    query = query.lt('task_date', today);
+  }
+  if (typeFilter !== 'all') query = query.eq('task_type', typeFilter);
+
+  const { data: tasks } = await query;
+  allTasks = tasks || [];
+
+  // Get submission counts
+  const ids = allTasks.map(t => t.id);
+  let countMap = {};
+  if (ids.length) {
+    const { data: counts } = await sb.from('task_submissions')
+      .select('task_id, score')
+      .in('task_id', ids);
+    (counts || []).forEach(c => {
+      if (!countMap[c.task_id]) countMap[c.task_id] = { n: 0, total: 0 };
+      countMap[c.task_id].n++;
+      if (c.score) countMap[c.task_id].total += c.score;
+    });
+  }
+
+  // Populate results filter
+  const sel = document.getElementById('result-filter-task');
+  sel.innerHTML = '<option value="all">All Tasks</option>' +
+    allTasks.map(t => `<option value="${t.id}">${t.title}</option>`).join('');
+
+  if (!allTasks.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No tasks found</div><div class="empty-sub">Create your first task with the button above</div></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = allTasks.map(t => {
+    const stats = countMap[t.id] || { n: 0, total: 0 };
+    const avg = stats.n ? Math.round(stats.total / stats.n) + '%' : '—';
+    return `
+    <tr>
+      <td>
+        <strong>${t.title}</strong>
+        ${t.band_target ? `<br><span style="font-size:11px;color:var(--muted)">Band ${t.band_target}</span>` : ''}
+      </td>
+      <td>${typeBadge(t.task_type)}</td>
+      <td class="muted">${t.task_date || '—'}</td>
+      <td class="muted">${t.due_time || '23:59'}</td>
+      <td>${stats.n} <span style="color:var(--muted);font-size:12px">submissions</span></td>
+      <td>${scoreCell(stats.n ? Math.round(stats.total / stats.n) : null)}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick='editTask(${JSON.stringify(t)})'>✏️ Edit</button>
+        <button class="btn btn-red btn-sm" onclick="deleteTask('${t.id}')">🗑</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openTaskModal(task) {
+  document.getElementById('task-editing-id').value = task?.id || '';
+  document.getElementById('task-modal-title').textContent = task ? 'Edit Task' : 'New Task';
+  document.getElementById('task-title').value = task?.title || '';
+  document.getElementById('task-date').value = task?.task_date || new Date().toISOString().split('T')[0];
+  document.getElementById('task-due-time').value = task?.due_time || '23:59';
+  document.getElementById('task-instructions').value = task?.instructions || '';
+  document.getElementById('task-link').value = task?.resource_link || '';
+  document.getElementById('task-points').value = task?.max_points || 100;
+  document.getElementById('task-band').value = task?.band_target || '';
+
+  // Reset type pills
+  document.querySelectorAll('#task-type-pills .type-pill').forEach(p => {
+    p.classList.toggle('selected', p.dataset.type === (task?.task_type || 'writing'));
+  });
+  openModal('task-modal');
+}
+
+function editTask(task) { openTaskModal(task); }
+
+async function saveTask() {
+  const id = document.getElementById('task-editing-id').value;
+  const selType = document.querySelector('#task-type-pills .type-pill.selected');
+  const payload = {
+    title:         document.getElementById('task-title').value.trim(),
+    task_date:     document.getElementById('task-date').value,
+    due_time:      document.getElementById('task-due-time').value,
+    task_type:     selType?.dataset.type || 'writing',
+    instructions:  document.getElementById('task-instructions').value.trim(),
+    resource_link: document.getElementById('task-link').value.trim(),
+    max_points:    parseInt(document.getElementById('task-points').value) || 100,
+    band_target:   document.getElementById('task-band').value || null,
+    created_by:    currentTeacher.id
+  };
+  if (!payload.title || !payload.task_date) { showToast('⚠️ Title and date are required', 'error'); return; }
+
+  const btn = document.getElementById('save-task-btn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  let error;
+  if (id) {
+    ({ error } = await sb.from('tasks').update(payload).eq('id', id));
+  } else {
+    ({ error } = await sb.from('tasks').insert(payload));
+  }
+  btn.disabled = false; btn.textContent = 'Save Task';
+
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+  closeModal('task-modal');
+  showToast(id ? '✏️ Task updated!' : '✅ Task created!');
+  loadTasks();
+  loadDashboard();
+}
+
+async function deleteTask(id) {
+  if (!confirm('Delete this task? All submissions will also be removed.')) return;
+  await sb.from('task_submissions').delete().eq('task_id', id);
+  await sb.from('tasks').delete().eq('id', id);
+  showToast('🗑 Task deleted');
+  loadTasks(); loadDashboard();
+}
+
+function selectType(el) {
+  document.querySelectorAll('#task-type-pills .type-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ═══════════════════════════════════════════════
+// RESULTS
+// ═══════════════════════════════════════════════
+async function loadResultsPage() {
+  if (!allTasks.length) await loadTasks();
+  if (!allStudents.length) await loadStudents();
+  loadResults();
+}
+
+async function loadResults() {
+  const taskF    = document.getElementById('result-filter-task')?.value || 'all';
+  const studentF = document.getElementById('result-filter-student')?.value || 'all';
+  const tbody    = document.getElementById('results-tbody');
+  tbody.innerHTML = `<tr><td colspan="7"><div class="loading-wrap"><div class="spinner"></div><p>Loading…</p></div></td></tr>`;
+
+  let query = sb.from('task_submissions')
+    .select('*, profiles(email, full_name), tasks(title, task_type)')
+    .order('submitted_at', { ascending: false })
+    .limit(100);
+  if (taskF !== 'all')    query = query.eq('task_id', taskF);
+  if (studentF !== 'all') query = query.eq('student_id', studentF);
+
+  const { data: results } = await query;
+  if (!results || !results.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">No results found</div></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = results.map(r => `
+    <tr>
+      <td><strong>${r.profiles?.full_name || r.profiles?.email?.split('@')[0] || '—'}</strong><br><span style="font-size:11px;color:var(--muted)">${r.profiles?.email || ''}</span></td>
+      <td>${r.tasks?.title || '—'}</td>
+      <td>${typeBadge(r.tasks?.task_type)}</td>
+      <td>${scoreCell(r.score)}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td class="muted">${timeAgo(r.submitted_at)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick='openResultDetail(${JSON.stringify(r)})'>Details</button></td>
+    </tr>`).join('');
+}
+
+function openResultDetail(r) {
+  document.getElementById('result-modal-content').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+      <div style="background:var(--s2);border-radius:12px;padding:16px">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Student</div>
+        <div style="font-weight:600">${r.profiles?.full_name || r.profiles?.email?.split('@')[0] || '—'}</div>
+        <div style="font-size:12px;color:var(--muted)">${r.profiles?.email || ''}</div>
+      </div>
+      <div style="background:var(--s2);border-radius:12px;padding:16px">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Score</div>
+        <div style="font-size:28px;font-weight:800;color:${scoreColor(r.score)}">${r.score !== null ? r.score + '%' : '—'}</div>
+      </div>
+    </div>
+    <div style="background:var(--s2);border-radius:12px;padding:16px;margin-bottom:12px">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Task</div>
+      <div style="font-weight:600;margin-bottom:4px">${r.tasks?.title || '—'}</div>
+      <div>${typeBadge(r.tasks?.task_type)} ${statusBadge(r.status)}</div>
+    </div>
+    ${r.answer_text ? `<div style="background:var(--s2);border-radius:12px;padding:16px;margin-bottom:12px">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Student's Answer</div>
+      <div style="font-size:14px;line-height:1.7;color:rgba(238,240,246,0.8)">${r.answer_text}</div>
+    </div>` : ''}
+    ${r.feedback ? `<div style="background:rgba(124,107,205,0.08);border:1px solid rgba(124,107,205,0.2);border-radius:12px;padding:16px">
+      <div style="font-size:11px;color:var(--violet2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Teacher Feedback</div>
+      <div style="font-size:14px;line-height:1.7">${r.feedback}</div>
+    </div>` : ''}
+    <div style="font-size:12px;color:var(--muted);margin-top:12px">Submitted: ${new Date(r.submitted_at).toLocaleString()}</div>
+  `;
+  openModal('result-modal');
+}
+
+function exportResults() {
+  const rows = [['Student', 'Email', 'Task', 'Type', 'Score', 'Status', 'Submitted']];
+  document.querySelectorAll('#results-tbody tr').forEach(tr => {
+    const cells = tr.querySelectorAll('td');
+    if (cells.length > 1) {
+      rows.push([
+        cells[0]?.querySelector('strong')?.textContent || '',
+        cells[0]?.querySelector('span')?.textContent || '',
+        cells[1]?.textContent?.trim() || '',
+        cells[2]?.textContent?.trim() || '',
+        cells[3]?.textContent?.trim() || '',
+        cells[4]?.textContent?.trim() || '',
+        cells[5]?.textContent?.trim() || ''
+      ]);
+    }
+  });
+  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'ielts-results-' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+  showToast('⬇ Exported CSV');
+}
+
+// ═══════════════════════════════════════════════
+// NOTIFICATIONS
+// ═══════════════════════════════════════════════
+async function loadNotifications() {
+  const container = document.getElementById('notif-list');
+  container.innerHTML = '<div class="loading-wrap" style="padding:20px"><div class="spinner"></div></div>';
+  const { data: notifs } = await sb.from('notifications')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(30);
+
+  if (!notifs || !notifs.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🔔</div><div class="empty-title">No notifications sent yet</div></div>`;
+    return;
+  }
+
+  container.innerHTML = notifs.map(n => `
+    <div style="background:var(--s2);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:10px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            ${notifTypeBadge(n.notif_type)}
+            <span style="font-size:11px;color:var(--muted)">${timeAgo(n.created_at)}</span>
+          </div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:4px">${n.title}</div>
+          <div style="font-size:13px;color:rgba(238,240,246,0.7);line-height:1.5">${n.body}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:8px">
+            To: ${n.target_all ? 'All students' : `${(n.target_students||[]).length} student(s)`}
+          </div>
+        </div>
+        <button class="btn btn-red btn-sm" onclick="deleteNotif('${n.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+async function loadStudentCheckboxes() {
+  const container = document.getElementById('student-checkboxes');
+  if (!allStudents.length) await loadStudents();
+  container.innerHTML = allStudents.map(s => `
+    <label style="display:flex;align-items:center;gap:8px;padding:7px 0;cursor:pointer;font-size:13px">
+      <input type="checkbox" data-student="${s.id}" onchange="toggleStudentSel('${s.id}',this.checked)"
+        style="accent-color:var(--violet2)">
+      <span style="color:var(--txt)">${s.full_name || s.email?.split('@')[0]}</span>
+      <span style="color:var(--muted);font-size:11px">${s.email}</span>
+    </label>`).join('');
+}
+
+function toggleTarget(mode) {
+  notifTargetMode = mode;
+  const allBtn = document.getElementById('target-all');
+  const selBtn = document.getElementById('target-sel');
+  const boxes  = document.getElementById('student-checkboxes');
+  allBtn.className = 'btn btn-sm ' + (mode === 'all' ? 'btn-violet' : 'btn-ghost');
+  selBtn.className = 'btn btn-sm ' + (mode === 'select' ? 'btn-violet' : 'btn-ghost');
+  boxes.classList.toggle('hidden', mode !== 'select');
+}
+
+function toggleStudentSel(id, checked) {
+  if (checked) notifSelectedStudents.add(id);
+  else notifSelectedStudents.delete(id);
+}
+
+function selectNotifType(el) {
+  document.querySelectorAll('.type-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedNotifType = el.dataset.type;
+}
+
+async function sendNotification() {
+  const title = document.getElementById('notif-title').value.trim();
+  const body  = document.getElementById('notif-body').value.trim();
+  if (!title || !body) { showToast('⚠️ Title and message are required', 'error'); return; }
+
+  const targetAll = notifTargetMode === 'all';
+  if (!targetAll && notifSelectedStudents.size === 0) {
+    showToast('⚠️ Select at least one student', 'error'); return;
+  }
+
+  const btn = document.getElementById('send-notif-btn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+
+  const payload = {
+    title,
+    body,
+    notif_type: selectedNotifType,
+    target_all: targetAll,
+    target_students: targetAll ? [] : [...notifSelectedStudents],
+    created_by: currentTeacher.id,
+    created_at: new Date().toISOString()
+  };
+
+  const { error } = await sb.from('notifications').insert(payload);
+  btn.disabled = false; btn.textContent = '🔔 Send Notification';
+
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
+
+  document.getElementById('notif-title').value = '';
+  document.getElementById('notif-body').value = '';
+  notifSelectedStudents.clear();
+  showToast('🔔 Notification sent!');
+  loadNotifications();
+}
+
+async function deleteNotif(id) {
+  if (!confirm('Delete this notification?')) return;
+  await sb.from('notifications').delete().eq('id', id);
+  showToast('🗑 Deleted');
+  loadNotifications();
+}
+
+// ═══════════════════════════════════════════════
+// MODAL HELPERS
+// ═══════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); });
+});
+
+// ═══════════════════════════════════════════════
+// UTILITY / UI HELPERS
+// ═══════════════════════════════════════════════
+function scoreColor(s) {
+  if (s === null || s === undefined) return 'var(--muted)';
+  if (s >= 80) return '#4ade80';
+  if (s >= 60) return '#fb923c';
+  return '#f87171';
+}
+
+function scoreCell(s) {
+  if (s === null || s === undefined) return '<span style="color:var(--muted)">—</span>';
+  const color = scoreColor(s);
+  return `<span style="font-weight:700;color:${color}">${s}%</span>`;
+}
+
+function typeBadge(type) {
+  const map = {
+    writing: 'badge-violet', reading: 'badge-blue', listening: 'badge-green',
+    speaking: 'badge-orange', vocabulary: 'badge-blue', grammar: 'badge-muted'
+  };
+  const icons = {
+    writing:'✍️', reading:'📖', listening:'🎧', speaking:'🎤', vocabulary:'📚', grammar:'🔤'
+  };
+  const cls = map[type] || 'badge-muted';
+  const icon = icons[type] || '📋';
+  return `<span class="badge ${cls}">${icon} ${type || 'task'}</span>`;
+}
+
+function statusBadge(status) {
+  if (status === 'completed') return '<span class="badge badge-green">✓ Completed</span>';
+  if (status === 'submitted') return '<span class="badge badge-blue">↑ Submitted</span>';
+  if (status === 'late')      return '<span class="badge badge-orange">⚠ Late</span>';
+  return '<span class="badge badge-muted">' + (status || 'pending') + '</span>';
+}
+
+function notifTypeBadge(type) {
+  const map = {
+    general:'badge-violet', task:'badge-blue', result:'badge-green', urgent:'badge-red'
+  };
+  const icons = { general:'📢', task:'📋', result:'📈', urgent:'🔴' };
+  return `<span class="badge ${map[type]||'badge-muted'}">${icons[type]||'📢'} ${type||'general'}</span>`;
+}
+
+function timeAgo(iso) {
+  if (!iso) return '—';
+  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (diff < 60)   return 'Just now';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
+  return new Date(iso).toLocaleDateString();
+}
+
+let toastTimer;
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  const icon  = document.getElementById('toast-icon');
+  const msgEl = document.getElementById('toast-msg');
+  icon.textContent  = type === 'error' ? '⚠️' : '✓';
+  msgEl.textContent = msg;
+  toast.style.borderColor = type === 'error' ? 'rgba(239,68,68,0.3)' : 'var(--bdr2)';
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════════════════
+// SETUP SQL HINT (shown in console)
+// ═══════════════════════════════════════════════
+console.log(`
+%c IELTS Teacher Dashboard — Supabase Setup
+
+Run these SQL commands in your Supabase SQL editor:
+
+-- Profiles table (auto-created on signup)
+create table if not exists profiles (
+  id uuid references auth.users primary key,
+  email text,
+  full_name text,
+  created_at timestamptz default now()
+);
+
+-- Tasks table
+create table if not exists tasks (
+  id uuid default gen_random_uuid() primary key,
+  title text not null,
+  task_date date not null,
+  due_time time default '23:59',
+  task_type text default 'writing',
+  instructions text,
+  resource_link text,
+  max_points int default 100,
+  band_target text,
+  created_by uuid references auth.users,
+  created_at timestamptz default now()
+);
+
+-- Task submissions
+create table if not exists task_submissions (
+  id uuid default gen_random_uuid() primary key,
+  task_id uuid references tasks on delete cascade,
+  student_id uuid references auth.users,
+  answer_text text,
+  score int,
+  status text default 'submitted',
+  feedback text,
+  submitted_at timestamptz default now()
+);
+
+-- Notifications
+create table if not exists notifications (
+  id uuid default gen_random_uuid() primary key,
+  title text not null,
+  body text not null,
+  notif_type text default 'general',
+  target_all boolean default true,
+  target_students uuid[],
+  created_by uuid references auth.users,
+  created_at timestamptz default now()
+);
+
+-- Row Level Security (enable on all tables)
+-- For a simple setup, use policies that allow authenticated users to read/write.
+`, 'color:#a99de8;font-weight:bold');
+
+// ═══════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
