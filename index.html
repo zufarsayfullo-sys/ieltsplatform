@@ -3,180 +3,158 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>IELTS Daily Tasks</title>
+  <title>IELTS Daily Tasks | Mr Zufar</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
-      --bg: #0d0f14;
-      --surface: #161920;
-      --surface2: #1e2230;
-      --border: #2a2f3d;
-      --accent: #f0c040;
-      --accent2: #e07b3f;
-      --text: #eef0f6;
-      --muted: #7a8099;
-      --success: #4caf82;
-      --danger: #e05c5c;
-      --radius: 14px;
+      --bg: #0d0f14; --surface: #161920; --surface2: #1e2230; --border: #2a2f3d;
+      --accent: #f0c040; --accent2: #e07b3f; --text: #eef0f6; --muted: #7a8099;
+      --success: #4caf82; --danger: #e05c5c; --radius: 14px;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
-    body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 10%, rgba(240,192,64,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 80% 90%, rgba(224,123,63,0.05) 0%, transparent 60%); pointer-events: none; z-index: 0; }
-
-    #auth-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; position: relative; z-index: 1; }
-    .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 48px 40px; width: 100%; max-width: 420px; box-shadow: 0 40px 80px rgba(0,0,0,0.5); animation: fadeUp 0.5s ease both; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-    .auth-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
-    .auth-logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-    .auth-logo-text { font-family: 'Playfair Display', serif; font-size: 22px; line-height: 1.1; }
-    .auth-logo-text span { display: block; font-size: 11px; font-family: 'DM Sans', sans-serif; color: var(--muted); font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; }
-    .auth-heading { font-family: 'Playfair Display', serif; font-size: 28px; margin-bottom: 28px; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; }
-    .form-group input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 13px 16px; color: var(--text); font-size: 14px; outline: none; transition: border-color 0.2s; }
-    .form-group input:focus { border-color: var(--accent); }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; }
-    .btn-primary { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); color: #0d0f14; width: 100%; margin-top: 8px; }
-    .auth-toggle { text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); }
-    .auth-toggle a { color: var(--accent); cursor: pointer; }
-    .auth-error { background: rgba(224,92,92,0.12); border: 1px solid rgba(224,92,92,0.3); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--danger); margin-bottom: 16px; display: none; }
-
-    #app-screen { display: none; position: relative; z-index: 1; }
-    .topnav { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--border); background: rgba(13,15,20,0.8); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; }
-    .nav-logo { display: flex; align-items: center; gap: 10px; font-family: 'Playfair Display', serif; font-size: 18px; }
-    .nav-logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 9px; display: flex; align-items: center; justify-content: center; }
-    .user-pill { display: flex; align-items: center; gap: 8px; background: var(--surface2); border: 1px solid var(--border); border-radius: 50px; padding: 6px 14px 6px 8px; font-size: 13px; }
-    .user-avatar { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0d0f14; }
-    .btn-signout { background: transparent; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; color: var(--muted); font-size: 12px; cursor: pointer; }
-
-    .main-content { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
-    .dash-header { margin-bottom: 36px; }
-    .dash-title { font-family: 'Playfair Display', serif; font-size: 36px; margin-bottom: 10px; }
-    .dash-title span { color: var(--accent); }
-    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 36px; }
-    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
-    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
-    .stat-value { font-family: 'Playfair Display', serif; font-size: 32px; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
     
-    .date-strip { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 24px; scrollbar-width: none; }
-    .date-chip { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; min-width: 60px; }
-    .date-chip.active { background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%); color: #0d0f14; }
-    .date-chip .day-num { font-family: 'Playfair Display', serif; font-size: 22px; }
-
-    .task-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; position: relative; border-left: 4px solid var(--accent); }
-    .task-title { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 10px; }
-    .task-skill { font-size: 11px; font-weight: 600; text-transform: uppercase; background: rgba(240,192,64,0.15); color: var(--accent); padding: 3px 10px; border-radius: 50px; margin-bottom: 10px; display: inline-block; }
-    .btn-sm { padding: 7px 14px; font-size: 12px; font-weight: 600; border-radius: 8px; cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--text); }
+    /* Layout */
+    #auth-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+    #app-screen { display: none; }
+    
+    .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 40px; width: 100%; max-width: 400px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+    .topnav { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; border-bottom: 1px solid var(--border); background: rgba(13,15,20,0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
+    
+    /* Stats & Calendar */
+    .main-content { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 30px; width: fit-content; min-width: 150px; }
+    .date-strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 30px; scrollbar-width: none; }
+    .date-chip { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; min-width: 65px; transition: 0.2s; }
+    .date-chip.active { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; border-color: transparent; }
+    
+    /* Task Cards */
+    .task-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; border-left: 4px solid var(--accent); transition: transform 0.2s; }
+    .task-card:hover { transform: translateY(-3px); }
+    .task-skill { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--accent); background: rgba(240,192,64,0.1); padding: 4px 10px; border-radius: 50px; display: inline-block; margin-bottom: 10px; }
+    .task-title { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 12px; }
+    
+    /* UI Components */
+    .btn { padding: 12px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; width: 100%; transition: 0.2s; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .input-field { width: 100%; background: var(--surface2); border: 1px solid var(--border); padding: 12px; border-radius: 10px; color: #fff; margin-bottom: 15px; outline: none; }
   </style>
 </head>
 <body>
 
 <div id="auth-screen">
   <div class="auth-card">
-    <div class="auth-logo"><div class="auth-logo-icon">📚</div><div class="auth-logo-text">IELTS Daily<span>Student Platform</span></div></div>
-    <h1 class="auth-heading" id="auth-heading">Sign in</h1>
-    <div class="auth-error" id="auth-error"></div>
-    <div id="login-form">
-      <div class="form-group"><label>Email</label><input type="email" id="login-email" placeholder="your@email.com"/></div>
-      <div class="form-group"><label>Password</label><input type="password" id="login-password" placeholder="••••••••"/></div>
-      <button class="btn btn-primary" onclick="handleLogin()">Sign In</button>
-    </div>
+    <h2 style="font-family:'Playfair Display'; margin-bottom:20px;">IELTS Student Login</h2>
+    <input type="email" id="email" class="input-field" placeholder="Email">
+    <input type="password" id="pass" class="input-field" placeholder="Password">
+    <button class="btn btn-primary" onclick="handleLogin()">Sign In</button>
+    <p id="auth-err" style="color:var(--danger); font-size:13px; margin-top:10px; display:none;"></p>
   </div>
 </div>
 
 <div id="app-screen">
   <nav class="topnav">
-    <div class="nav-logo"><div class="nav-logo-icon">📚</div>IELTS Daily</div>
-    <div class="nav-right">
-      <div class="user-pill"><div class="user-avatar" id="user-initials">?</div><span id="user-email-display"></span></div>
-      <button class="btn-signout" onclick="handleSignOut()">Sign out</button>
-    </div>
+    <div style="font-family:'Playfair Display'; font-size:20px;">📚 IELTS Daily</div>
+    <button onclick="sb.auth.signOut()" style="background:none; border:1px solid var(--border); color:var(--muted); padding:5px 12px; border-radius:8px; cursor:pointer;">Sign Out</button>
   </nav>
 
   <div class="main-content">
-    <div class="dash-header"><h1 class="dash-title">Daily IELTS <span>Tasks</span></h1><p id="today-line">Loading...</p></div>
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-label">Total Tasks</div><div class="stat-value" id="stat-total">0</div></div>
+    <h1 style="font-family:'Playfair Display'; font-size:32px; margin-bottom:5px;">Daily Study <span>Plan</span></h1>
+    <p id="current-user-msg" style="color:var(--muted); margin-bottom:25px;"></p>
+
+    <div class="stat-card">
+      <div style="font-size:11px; color:var(--muted); text-transform:uppercase;">Total Tasks Ready</div>
+      <div style="font-size:32px; font-family:'Playfair Display';" id="stat-total">0</div>
     </div>
+
     <div class="date-strip" id="date-strip"></div>
     <div id="task-area"></div>
   </div>
 </div>
 
 <script>
-const SUPABASE_URL = 'https://wqoshwbtxulnlfccbuvi.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxb3Nod2J0eHVsbmxmY2NidXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODAwMTgsImV4cCI6MjA5MzA1NjAxOH0.ChxkoIlruVPtontdf0_uvG__XSpZdVhScxR1f-F_ArA';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  // Credentials exactly from your previous context
+  const S_URL = 'https://wqoshwbtxulnlfccbuvi.supabase.co';
+  const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxb3Nod2J0eHVsbmxmY2NidXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODAwMTgsImV4cCI6MjA5MzA1NjAxOH0.ChxkoIlruVPtontdf0_uvG__XSpZdVhScxR1f-F_ArA';
+  const sb = supabase.createClient(S_URL, S_KEY);
 
-let currentUser = null;
-let allTasks = [];
-let selectedDate = new Date().toISOString().slice(0, 10);
+  let allTasks = [];
+  let selectedDate = new Date().toISOString().split('T')[0];
 
-(async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) { currentUser = session.user; showApp(); }
-  sb.auth.onAuthStateChange((_, s) => { if (s) { currentUser = s.user; showApp(); } else { showAuth(); } });
-})();
+  // Auth Listener
+  sb.auth.onAuthStateChange((event, session) => {
+    if (session) {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+      document.getElementById('current-user-msg').textContent = `Welcome, ${session.user.email}`;
+      loadTasks();
+    } else {
+      document.getElementById('auth-screen').style.display = 'flex';
+      document.getElementById('app-screen').style.display = 'none';
+    }
+  });
 
-async function handleLogin() {
-  const email = document.getElementById('login-email').value;
-  const pass = document.getElementById('login-password').value;
-  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
-  if (error) { document.getElementById('auth-error').textContent = error.message; document.getElementById('auth-error').style.display = 'block'; }
-}
-
-async function handleSignOut() { await sb.auth.signOut(); }
-function showAuth() { document.getElementById('app-screen').style.display = 'none'; document.getElementById('auth-screen').style.display = 'flex'; }
-
-async function showApp() {
-  document.getElementById('auth-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display = 'block';
-  document.getElementById('user-email-display').textContent = currentUser.email;
-  await loadTasks();
-}
-
-async function loadTasks() {
-  const { data, error } = await sb.from('tasks').select('*').order('task_date', { ascending: false });
-  if (!error) {
-    allTasks = data;
-    document.getElementById('stat-total').textContent = allTasks.length;
-    buildDateStrip();
-    renderTasks(selectedDate);
+  async function handleLogin() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('pass').value;
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      const errEl = document.getElementById('auth-err');
+      errEl.textContent = error.message;
+      errEl.style.display = 'block';
+    }
   }
-}
 
-function buildDateStrip() {
-  const strip = document.getElementById('date-strip');
-  strip.innerHTML = '';
-  const now = new Date();
-  for (let i = -3; i <= 3; i++) {
-    const d = new Date(now); d.setDate(now.getDate() + i);
-    const ds = d.toISOString().slice(0, 10);
-    const chip = document.createElement('div');
-    chip.className = `date-chip ${ds === selectedDate ? 'active' : ''}`;
-    chip.innerHTML = `<span class="day-num">${d.getDate()}</span><span>${d.toLocaleString('default', { month: 'short' })}</span>`;
-    chip.onclick = () => { selectedDate = ds; buildDateStrip(); renderTasks(ds); };
-    strip.appendChild(chip);
+  async function loadTasks() {
+    // Fetching from 'tasks' table as seen in your screenshot
+    const { data, error } = await sb.from('tasks').select('*').order('task_date', { ascending: true });
+    if (!error) {
+      allTasks = data;
+      document.getElementById('stat-total').textContent = allTasks.length;
+      renderDateStrip();
+      renderTasks(selectedDate);
+    }
   }
-}
 
-function renderTasks(date) {
-  const area = document.getElementById('task-area');
-  const tasks = allTasks.filter(t => t.task_date === date);
-  if (!tasks.length) { area.innerHTML = '<p class="no-task">No tasks for this day.</p>'; return; }
-  
-  // Mapping to column names from image_28915f.png: title, task_type, task_date
-  area.innerHTML = tasks.map(t => `
-    <div class="task-card">
-      <span class="task-skill">${t.task_type || 'General'}</span>
-      <h3 class="task-title">${t.title}</h3>
-      <p style="color:var(--muted); font-size:14px; margin-bottom:15px;">Due: ${t.due_time || '23:59'}</p>
-      <button class="btn-sm">Start Task</button>
-    </div>
-  `).join('');
-}
+  function renderDateStrip() {
+    const strip = document.getElementById('date-strip');
+    strip.innerHTML = '';
+    const now = new Date();
+    for (let i = -3; i <= 3; i++) {
+      const d = new Date(now);
+      d.setDate(now.getDate() + i);
+      const ds = d.toISOString().split('T')[0];
+      const chip = document.createElement('div');
+      chip.className = `date-chip ${ds === selectedDate ? 'active' : ''}`;
+      chip.innerHTML = `<span style="font-size:18px; font-weight:700;">${d.getDate()}</span><span style="font-size:11px;">${d.toLocaleString('default', {month:'short'})}</span>`;
+      chip.onclick = () => { selectedDate = ds; renderDateStrip(); renderTasks(ds); };
+      strip.appendChild(chip);
+    }
+  }
+
+  function renderTasks(dateStr) {
+    const area = document.getElementById('task-area');
+    // Using 'task_date' column name from image_287720.png
+    const filtered = allTasks.filter(t => t.task_date === dateStr);
+
+    if (filtered.length === 0) {
+      area.innerHTML = `<p style="color:var(--muted); text-align:center; padding:20px;">No tasks scheduled for this day.</p>`;
+      return;
+    }
+
+    // Using 'task_type' and 'title' from image_287720.png
+    area.innerHTML = filtered.map(t => `
+      <div class="task-card">
+        <span class="task-skill">${t.task_type || 'General'}</span>
+        <h3 class="task-title">${t.title}</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:13px; color:var(--muted);">🕒 Due: ${t.due_time || '23:59'}</span>
+          <button class="btn" style="width:auto; padding:8px 15px; font-size:12px; background:var(--surface2); color:var(--accent); border:1px solid var(--border);">Open Task</button>
+        </div>
+      </div>
+    `).join('');
+  }
 </script>
 </body>
 </html>
