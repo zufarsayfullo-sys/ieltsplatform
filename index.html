@@ -1,831 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IELTS Daily Tasks</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#07080d;--s1:#0d0f18;--s2:#131720;--s3:#1a1f2e;
-  --txt:#eef0f6;--muted:#7a7f94;--muted2:#4a4f62;
-  --bdr:rgba(255,255,255,0.07);--bdr2:rgba(255,255,255,0.12);
-  --violet:#7c6bcd;--violet2:#a99de8;--lilac:#c4b8f8;
-  --green:#22c55e;--red:#ef4444;--orange:#f97316;
-}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
-body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(ellipse 60% 40% at 15% 20%,rgba(124,107,205,0.08) 0%,transparent 60%),
-             radial-gradient(ellipse 50% 50% at 85% 80%,rgba(59,130,246,0.05) 0%,transparent 60%)}
+  <meta charset="UTF-8" />
+  <title>Student Platform</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-#app{position:relative;z-index:1;min-height:100vh}
-.hidden{display:none!important}
+  <style>
+    body { font-family: Arial; margin: 0; background:#f4f6f8; }
+    header { background:#111827; color:white; padding:15px; text-align:center; }
 
-/* ── LOGIN ── */
-#login-view{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
-.login-card{
-  background:rgba(13,15,24,0.95);border:1px solid var(--bdr2);
-  border-radius:24px;padding:48px;max-width:400px;width:100%;
-  box-shadow:0 40px 80px rgba(0,0,0,0.5);
-}
-.logo{font-family:'Syne',sans-serif;font-size:12px;font-weight:800;
-  letter-spacing:5px;text-transform:uppercase;color:var(--muted2);margin-bottom:32px}
-.login-h{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:6px}
-.login-sub{font-size:14px;color:var(--muted);margin-bottom:28px}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;
-  text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.field input{
-  width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--bdr2);
-  border-radius:10px;padding:12px 14px;font-family:'Inter',sans-serif;
-  font-size:14px;color:var(--txt);outline:none;transition:all 0.18s;
-}
-.field input:focus{border-color:var(--violet2);background:rgba(124,107,205,0.06)}
-.field input::placeholder{color:var(--muted2)}
-.login-btn{
-  width:100%;background:linear-gradient(135deg,var(--violet),#4a3a9a);
-  color:#fff;border:none;border-radius:12px;padding:13px;
-  font-family:'Inter',sans-serif;font-size:15px;font-weight:700;
-  cursor:pointer;transition:all 0.2s;margin-top:4px;
-}
-.login-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.login-btn:disabled{opacity:0.5;cursor:default;transform:none}
-.login-err{
-  background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);
-  border-radius:8px;padding:10px 14px;font-size:13px;color:#fca5a5;margin-bottom:14px;
-}
+    .container { max-width:900px; margin:auto; padding:20px; }
 
-/* ── MAIN APP ── */
-#main-view{display:none;min-height:100vh}
-#main-view.show{display:block}
+    .card {
+      background:white; padding:15px; margin:10px 0;
+      border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);
+      cursor:pointer;
+    }
 
-/* ── TOP NAV ── */
-.topnav{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:18px 40px;border-bottom:1px solid var(--bdr);
-  background:rgba(7,8,13,0.85);backdrop-filter:blur(16px);
-  position:sticky;top:0;z-index:100;
-}
-.nav-logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--violet2)}
-.nav-user{display:flex;align-items:center;gap:10px}
-.nav-avatar{
-  width:32px;height:32px;border-radius:8px;
-  background:linear-gradient(135deg,var(--violet),#4a3a9a);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;flex-shrink:0;
-}
-.nav-email{font-size:13px;color:var(--muted)}
-.logout-btn{
-  background:transparent;border:1px solid var(--bdr2);
-  color:var(--muted);border-radius:8px;padding:6px 12px;
-  font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
-  cursor:pointer;transition:all 0.15s;
-}
-.logout-btn:hover{color:var(--txt);border-color:rgba(255,255,255,0.2)}
+    input, button {
+      padding:10px; margin:5px 0; width:100%;
+    }
 
-/* ── MAIN LAYOUT ── */
-.main-wrap{max-width:1100px;margin:0 auto;padding:32px 40px}
+    button { cursor:pointer; }
 
-/* ── DAILY SCORE HERO ── */
-.daily-hero{
-  background:var(--s1);border:1px solid var(--bdr);border-radius:20px;
-  padding:32px 36px;margin-bottom:28px;
-  display:flex;align-items:center;gap:32px;
-  position:relative;overflow:hidden;
-}
-.daily-hero::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 80% at 0% 50%,rgba(124,107,205,0.1) 0%,transparent 60%);
-  pointer-events:none;
-}
-.score-ring-wrap{flex-shrink:0;position:relative;z-index:1}
-.score-ring-svg{transform:rotate(-90deg)}
-.sr-bg{fill:none;stroke:rgba(255,255,255,0.07);stroke-width:8}
-.sr-fg{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s cubic-bezier(0.34,1.56,0.64,1),stroke 0.5s}
-.score-ring-num{
-  position:absolute;inset:0;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-}
-.srn-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;line-height:1}
-.srn-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:3px}
-
-.daily-info{flex:1;position:relative;z-index:1}
-.di-date{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.di-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:8px}
-.di-sub{font-size:14px;color:var(--muted);line-height:1.6}
-.di-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.di-pill{
-  display:flex;align-items:center;gap:6px;
-  padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;
-  background:rgba(255,255,255,0.05);border:1px solid var(--bdr2);
-  color:var(--muted);
-}
-.di-pill.done{background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.25);color:#4ade80}
-.di-pill .pip{width:6px;height:6px;border-radius:50%;background:currentColor}
-
-/* ── NOTIFICATIONS ── */
-#notif-bar{
-  background:rgba(124,107,205,0.1);border:1px solid rgba(124,107,205,0.25);
-  border-radius:14px;padding:14px 18px;margin-bottom:24px;
-}
-.notif-item{
-  display:flex;align-items:flex-start;gap:10px;
-  padding:10px 0;border-bottom:1px solid rgba(124,107,205,0.1);
-}
-.notif-item:last-child{border-bottom:none;padding-bottom:0}
-.notif-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-.notif-content{}
-.notif-title{font-size:14px;font-weight:600;margin-bottom:2px}
-.notif-body{font-size:13px;color:var(--muted);line-height:1.5}
-.notif-time{font-size:11px;color:var(--muted2);margin-top:3px}
-
-/* ── TASK CARDS ── */
-.section-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:16px;
-}
-.section-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
-.tasks-list{display:flex;flex-direction:column;gap:16px}
-
-.task-card{
-  background:var(--s1);border:1px solid var(--bdr);border-radius:16px;
-  overflow:hidden;transition:border-color 0.2s;
-}
-.task-card.completed{border-color:rgba(34,197,94,0.25)}
-.task-card.active-now{border-color:rgba(124,107,205,0.35)}
-
-.task-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:18px 22px;cursor:pointer;
-  transition:background 0.15s;gap:14px;
-}
-.task-header:hover{background:rgba(255,255,255,0.02)}
-
-.th-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0}
-.task-type-icon{
-  width:40px;height:40px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;flex-shrink:0;
-}
-.task-meta{flex:1;min-width:0}
-.task-title{font-size:15px;font-weight:600;margin-bottom:3px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.task-sub{font-size:12px;color:var(--muted)}
-
-.th-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.task-score-badge{
-  font-family:'Syne',sans-serif;font-size:18px;font-weight:800;
-  padding:4px 12px;border-radius:8px;
-  background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:#4ade80;
-}
-.task-score-badge.low{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.2);color:#fca5a5}
-.task-score-badge.mid{background:rgba(249,115,22,0.1);border-color:rgba(249,115,22,0.2);color:#fb923c}
-
-.open-btn{
-  background:linear-gradient(135deg,var(--violet),#4a3a9a);
-  color:#fff;border:none;border-radius:9px;
-  padding:9px 18px;font-family:'Inter',sans-serif;
-  font-size:13px;font-weight:700;cursor:pointer;transition:all 0.18s;white-space:nowrap;
-}
-.open-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.open-btn.done-btn{
-  background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);
-  color:#4ade80;
-}
-.open-btn.done-btn:hover{background:rgba(34,197,94,0.18)}
-
-/* ── QUIZ IFRAME PANEL ── */
-.quiz-panel{
-  border-top:1px solid var(--bdr);
-  background:var(--bg);
-  display:none;
-}
-.quiz-panel.open{display:block}
-
-.qp-topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 16px;background:var(--s2);border-bottom:1px solid var(--bdr);
-}
-.qp-label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
-.qp-status{font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px}
-.qp-status.waiting{background:rgba(255,255,255,0.05);color:var(--muted)}
-.qp-status.recording{background:rgba(34,197,94,0.1);color:#4ade80;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
-.close-btn{
-  background:transparent;border:1px solid var(--bdr2);color:var(--muted);
-  border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;
-  cursor:pointer;transition:all 0.15s;
-}
-.close-btn:hover{color:var(--txt);border-color:rgba(255,255,255,0.2)}
-
-.quiz-iframe{
-  width:100%;border:none;display:block;
-  transition:height 0.3s;min-height:600px;
-}
-
-/* ── EMPTY STATE ── */
-.empty{text-align:center;padding:72px 20px}
-.empty-icon{font-size:52px;margin-bottom:14px}
-.empty-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px}
-.empty-sub{font-size:14px;color:var(--muted)}
-
-/* ── PAST SCORES ── */
-.history-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:28px}
-.hday{
-  background:var(--s1);border:1px solid var(--bdr);border-radius:10px;
-  padding:10px 6px;text-align:center;
-}
-.hday-date{font-size:10px;color:var(--muted2);margin-bottom:4px}
-.hday-score{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
-.hday-tasks{font-size:10px;color:var(--muted2);margin-top:2px}
-.hday.today{border-color:rgba(124,107,205,0.4)}
-
-/* ── TOAST ── */
-#toast{
-  position:fixed;bottom:24px;right:24px;z-index:999;
-  background:var(--s2);border:1px solid rgba(34,197,94,0.3);
-  border-radius:12px;padding:14px 20px;
-  font-size:14px;font-weight:500;
-  display:none;align-items:center;gap:10px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.4);
-  animation:slideUp 0.3s ease;
-}
-#toast.show{display:flex}
-#toast.err{border-color:rgba(239,68,68,0.3)}
-@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
-/* Type colors */
-.type-writing  {background:rgba(124,107,205,0.15);color:var(--violet2)}
-.type-reading  {background:rgba(59,130,246,0.15);color:#93c5fd}
-.type-listening{background:rgba(34,197,94,0.15);color:#4ade80}
-.type-speaking {background:rgba(249,115,22,0.15);color:#fb923c}
-.type-vocabulary{background:rgba(168,85,247,0.15);color:#c084fc}
-.type-grammar  {background:rgba(156,163,175,0.15);color:#9ca3af}
-
-@media(max-width:768px){
-  .topnav{padding:14px 20px}
-  .main-wrap{padding:20px}
-  .daily-hero{flex-direction:column;text-align:center;padding:24px 20px}
-  .history-grid{grid-template-columns:repeat(4,1fr)}
-}
-</style>
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  </style>
 </head>
+
 <body>
-<div id="app">
 
-<!-- ── LOGIN ── -->
-<div id="login-view">
-  <div class="login-card">
-    <div class="logo">IELTS Platform</div>
-    <h1 class="login-h">Welcome back</h1>
-    <p class="login-sub">Sign in to access your daily tasks</p>
-    <div class="login-err hidden" id="login-err"></div>
-    <div class="field">
-      <label>Email</label>
-      <input type="email" id="login-email" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <div class="field">
-      <label>Password</label>
-      <input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In →</button>
-    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--muted)">
-      No account? <span style="color:var(--violet2);cursor:pointer" onclick="doSignup()">Sign up here</span>
+<header>
+  <h2>Student Practice Platform</h2>
+</header>
+
+<div class="container">
+
+  <!-- AUTH -->
+  <div id="auth">
+    <h3>Login / Signup</h3>
+    <input id="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Password" />
+    <button onclick="signup()">Sign Up</button>
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- APP -->
+  <div id="app" style="display:none;">
+
+    <button onclick="logout()">Logout</button>
+
+    <div class="row">
+
+      <!-- TASKS -->
+      <div>
+        <h3>Today’s Tasks</h3>
+        <div id="tasks"></div>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div>
+        <h3>Leaderboard</h3>
+        <div id="board"></div>
+      </div>
+
     </div>
   </div>
+
 </div>
-
-<!-- ── MAIN ── -->
-<div id="main-view">
-  <nav class="topnav">
-    <div class="nav-logo">IELTS Daily</div>
-    <div class="nav-user">
-      <div class="nav-avatar" id="nav-avatar">S</div>
-      <div class="nav-email" id="nav-email"></div>
-      <button class="logout-btn" onclick="doLogout()">Sign out</button>
-    </div>
-  </nav>
-
-  <div class="main-wrap">
-
-    <!-- Daily score hero -->
-    <div class="daily-hero">
-      <div class="score-ring-wrap">
-        <svg class="score-ring-svg" width="110" height="110" viewBox="0 0 110 110">
-          <circle class="sr-bg" cx="55" cy="55" r="44"/>
-          <circle class="sr-fg" id="score-ring" cx="55" cy="55" r="44"
-            stroke-dasharray="276.5" stroke-dashoffset="276.5" stroke="var(--violet2)"/>
-        </svg>
-        <div class="score-ring-num">
-          <div class="srn-val" id="daily-score-val">—</div>
-          <div class="srn-label">Today</div>
-        </div>
-      </div>
-      <div class="daily-info">
-        <div class="di-date" id="hero-date"></div>
-        <div class="di-title">Daily Tasks</div>
-        <div class="di-sub" id="hero-sub">Loading your tasks for today…</div>
-        <div class="di-pills" id="task-pills"></div>
-      </div>
-    </div>
-
-    <!-- Notifications -->
-    <div id="notif-bar" class="hidden"></div>
-
-    <!-- Task list -->
-    <div class="section-hdr">
-      <div class="section-title" id="tasks-label">Today's Tasks</div>
-      <div id="tasks-progress" style="font-size:13px;color:var(--muted)"></div>
-    </div>
-    <div class="tasks-list" id="tasks-list">
-      <div class="empty">
-        <div class="empty-icon">⏳</div>
-        <div class="empty-title">Loading tasks…</div>
-      </div>
-    </div>
-
-    <!-- Weekly history -->
-    <div style="margin-top:36px">
-      <div class="section-hdr">
-        <div class="section-title">This Week</div>
-      </div>
-      <div class="history-grid" id="history-grid"></div>
-    </div>
-
-  </div>
-</div>
-
-<div id="toast"><span id="toast-icon">✓</span><span id="toast-msg">Saved</span></div>
-
-</div><!-- /app -->
 
 <script>
-// ═══════════════════════════════════════════════
-// SUPABASE
-// ═══════════════════════════════════════════════
-const SUPABASE_URL = 'https://wqoshwbtxulnlfccbuvi.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxb3Nod2J0eHVsbmxmY2NidXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODAwMTgsImV4cCI6MjA5MzA1NjAxOH0.ChxkoIlruVPtontdf0_uvG__XSpZdVhScxR1f-F_ArA';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  // 🔑 PASTE YOUR SUPABASE KEYS HERE
+  const SUPABASE_URL = "YOUR_SUPABASE_URL";
+  const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
 
-// ═══════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════
-let currentUser = null;
-let todayTasks  = [];
-let taskScores  = {};   // taskId → score%
-let openTaskId  = null;
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const TODAY = new Date().toISOString().split('T')[0];
+  // ---------- AUTH ----------
+  async function signup() {
+    const email = emailEl().value;
+    const password = passEl().value;
 
-// ═══════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════
-async function init() {
-  // Listen for quiz score messages from iframes
-  window.addEventListener('message', handleQuizMessage);
+    await supabase.auth.signUp({ email, password });
+    alert("Check your email to confirm signup");
+  }
 
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) { currentUser = session.user; showApp(); }
-}
+  async function login() {
+    const email = emailEl().value;
+    const password = passEl().value;
 
-async function doLogin() {
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-pass').value;
-  const btn   = document.getElementById('login-btn');
-  hideErr();
-  if (!email || !pass) { showErr('Please enter email and password.'); return; }
-  btn.disabled = true; btn.textContent = 'Signing in…';
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-  btn.disabled = false; btn.textContent = 'Sign In →';
-  if (error) { showErr(error.message); return; }
-  currentUser = data.user;
-  showApp();
-}
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
 
-async function doSignup() {
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-pass').value;
-  if (!email || !pass) { showErr('Enter email and password to sign up.'); return; }
-  const btn = document.getElementById('login-btn');
-  btn.disabled = true; btn.textContent = 'Creating account…';
-  const { data, error } = await sb.auth.signUp({ email, password: pass });
-  btn.disabled = false; btn.textContent = 'Sign In →';
-  if (error) { showErr(error.message); return; }
-  // Upsert profile
-  await sb.from('profiles').upsert({ id: data.user.id, email });
-  currentUser = data.user;
-  showApp();
-}
+    if (!error) loadApp();
+    else alert(error.message);
+  }
 
-async function doLogout() {
-  await sb.auth.signOut(); location.reload();
-}
+  async function logout() {
+    await supabase.auth.signOut();
+    location.reload();
+  }
 
-function showApp() {
-  document.getElementById('login-view').classList.add('hidden');
-  const mv = document.getElementById('main-view');
-  mv.classList.remove('hidden'); mv.classList.add('show');
-  const email = currentUser.email;
-  document.getElementById('nav-email').textContent = email;
-  document.getElementById('nav-avatar').textContent = email[0].toUpperCase();
-  document.getElementById('hero-date').textContent =
-    new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  loadTodayTasks();
-  loadNotifications();
-  loadWeekHistory();
-}
+  function emailEl() { return document.getElementById("email"); }
+  function passEl() { return document.getElementById("password"); }
 
-function showErr(msg) {
-  const el = document.getElementById('login-err');
-  el.textContent = msg; el.classList.remove('hidden');
-}
-function hideErr() { document.getElementById('login-err').classList.add('hidden'); }
+  // ---------- LOAD APP ----------
+  async function loadApp() {
+    document.getElementById("auth").style.display = "none";
+    document.getElementById("app").style.display = "block";
 
-// ═══════════════════════════════════════════════
-// LOAD TODAY'S TASKS
-// ═══════════════════════════════════════════════
-async function loadTodayTasks() {
-  const { data: tasks } = await sb.from('tasks')
-    .select('*')
-    .eq('task_date', TODAY)
-    .order('created_at', { ascending: true });
+    loadTasks();
+    loadLeaderboard();
+  }
 
-  todayTasks = tasks || [];
+  // ---------- TASKS ----------
+  async function loadTasks() {
+    const today = new Date().toISOString().split("T")[0];
 
-  // Load existing submissions for today
-  if (todayTasks.length) {
-    const ids = todayTasks.map(t => t.id);
-    const { data: subs } = await sb.from('task_submissions')
-      .select('task_id, score, status')
-      .eq('student_id', currentUser.id)
-      .in('task_id', ids);
-    (subs || []).forEach(s => {
-      if (s.score !== null) taskScores[s.task_id] = s.score;
+    const { data } = await supabase
+      .from("tasks")
+      .select("*")
+      .eq("date", today);
+
+    const container = document.getElementById("tasks");
+    container.innerHTML = "";
+
+    data.forEach(t => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `<b>${t.title}</b><br>${t.type}`;
+
+      div.onclick = () => {
+        window.location.href = "task.html?id=" + t.id;
+      };
+
+      container.appendChild(div);
     });
   }
 
-  renderTasks();
-  updateDailyScore();
-}
+  // ---------- LEADERBOARD ----------
+  async function loadLeaderboard() {
+    const { data } = await supabase
+      .from("scores")
+      .select("*")
+      .order("points", { ascending: false });
 
-// ═══════════════════════════════════════════════
-// RENDER TASKS
-// ═══════════════════════════════════════════════
-const TYPE_ICONS = {
-  writing:'✍️', reading:'📖', listening:'🎧',
-  speaking:'🎤', vocabulary:'📚', grammar:'🔤'
-};
-const TYPE_LABELS = {
-  writing:'Writing', reading:'Reading', listening:'Listening',
-  speaking:'Speaking', vocabulary:'Vocabulary', grammar:'Grammar'
-};
+    const container = document.getElementById("board");
+    container.innerHTML = "";
 
-function renderTasks() {
-  const list    = document.getElementById('tasks-list');
-  const pills   = document.getElementById('task-pills');
-  const label   = document.getElementById('tasks-label');
-  const prog    = document.getElementById('tasks-progress');
-  const heroSub = document.getElementById('hero-sub');
-
-  if (!todayTasks.length) {
-    list.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">📅</div>
-        <div class="empty-title">No tasks today</div>
-        <div class="empty-sub">Your teacher hasn't posted any tasks yet. Check back soon!</div>
-      </div>`;
-    heroSub.textContent = 'No tasks posted yet for today.';
-    pills.innerHTML = '';
-    return;
+    data.forEach((u, i) => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.innerHTML = `#${i+1} User: ${u.user_id} — ${u.points} pts`;
+      container.appendChild(div);
+    });
   }
 
-  const done = todayTasks.filter(t => taskScores[t.id] !== undefined).length;
-  label.textContent = `Today's Tasks`;
-  prog.textContent  = `${done} / ${todayTasks.length} completed`;
-  heroSub.textContent = done === todayTasks.length
-    ? `All done! Great work today 🎉`
-    : `${todayTasks.length - done} task${todayTasks.length - done !== 1 ? 's' : ''} remaining`;
-
-  // Render pills in hero
-  pills.innerHTML = todayTasks.map(t => {
-    const sc = taskScores[t.id];
-    const isDone = sc !== undefined;
-    return `<div class="di-pill ${isDone ? 'done' : ''}">
-      <div class="pip"></div>
-      ${TYPE_LABELS[t.task_type] || 'Task'}
-      ${isDone ? ` · ${sc}%` : ''}
-    </div>`;
-  }).join('');
-
-  // Render task cards
-  list.innerHTML = '';
-  todayTasks.forEach(task => {
-    const score   = taskScores[task.id];
-    const isDone  = score !== undefined;
-    const isOpen  = openTaskId === task.id;
-
-    const card = document.createElement('div');
-    card.className = `task-card ${isDone ? 'completed' : ''} ${isOpen ? 'active-now' : ''}`;
-    card.id = `card-${task.id}`;
-
-    const scoreHtml = isDone
-      ? `<div class="task-score-badge ${score >= 70 ? '' : score >= 50 ? 'mid' : 'low'}">${score}%</div>`
-      : '';
-
-    const btnHtml = isDone
-      ? `<button class="open-btn done-btn" onclick="toggleQuiz('${task.id}')">↻ Redo</button>`
-      : `<button class="open-btn" onclick="toggleQuiz('${task.id}')">Start Task →</button>`;
-
-    card.innerHTML = `
-      <div class="task-header" onclick="toggleQuiz('${task.id}')">
-        <div class="th-left">
-          <div class="task-type-icon type-${task.task_type}">${TYPE_ICONS[task.task_type] || '📋'}</div>
-          <div class="task-meta">
-            <div class="task-title">${task.title}</div>
-            <div class="task-sub">
-              ${TYPE_LABELS[task.task_type] || 'Task'}
-              ${task.band_target ? ` · Band ${task.band_target}` : ''}
-              · Due ${task.due_time || '23:59'}
-            </div>
-          </div>
-        </div>
-        <div class="th-right">
-          ${scoreHtml}
-          ${btnHtml}
-        </div>
-      </div>
-      <div class="quiz-panel ${isOpen ? 'open' : ''}" id="panel-${task.id}">
-        <div class="qp-topbar">
-          <div class="qp-label">
-            📋 ${task.title}
-            <span class="qp-status ${isDone ? 'recording' : 'waiting'}" id="status-${task.id}">
-              ${isDone ? '✓ score recorded' : '⏳ waiting for score…'}
-            </span>
-          </div>
-          <button class="close-btn" onclick="closeQuiz('${task.id}')">✕ Close</button>
-        </div>
-        <iframe
-          id="iframe-${task.id}"
-          class="quiz-iframe"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-          srcdoc=""
-          scrolling="yes">
-        </iframe>
-      </div>
-    `;
-
-    list.appendChild(card);
-
-    // If this was the open task, re-inject the HTML
-    if (isOpen && task.html_content) {
-      const iframe = document.getElementById(`iframe-${task.id}`);
-      if (iframe) injectQuizHTML(iframe, task);
-    }
-  });
-}
-
-// ═══════════════════════════════════════════════
-// OPEN / CLOSE QUIZ
-// ═══════════════════════════════════════════════
-function toggleQuiz(taskId) {
-  if (openTaskId === taskId) { closeQuiz(taskId); return; }
-  if (openTaskId) closeQuiz(openTaskId);
-  openTaskId = taskId;
-  const panel  = document.getElementById(`panel-${taskId}`);
-  const iframe = document.getElementById(`iframe-${taskId}`);
-  const task   = todayTasks.find(t => t.id === taskId);
-  if (!panel || !task) return;
-  panel.classList.add('open');
-  document.getElementById(`card-${taskId}`).classList.add('active-now');
-  if (task.html_content) {
-    injectQuizHTML(iframe, task);
-  } else {
-    iframe.srcdoc = noContentHTML(task);
-  }
-  // Smooth scroll to card
-  setTimeout(() => document.getElementById(`card-${taskId}`)
-    .scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-}
-
-function closeQuiz(taskId) {
-  const panel  = document.getElementById(`panel-${taskId}`);
-  const iframe = document.getElementById(`iframe-${taskId}`);
-  if (panel) panel.classList.remove('open');
-  if (iframe) iframe.srcdoc = '';
-  const card = document.getElementById(`card-${taskId}`);
-  if (card) card.classList.remove('active-now');
-  if (openTaskId === taskId) openTaskId = null;
-}
-
-function injectQuizHTML(iframe, task) {
-  // Inject the bridge snippet into the quiz HTML automatically
-  const bridge = `
-<script>
-(function(){
-  function reportScoreToParent(score){
-    try{
-      window.parent.postMessage(
-        {type:'IELTS_QUIZ_SCORE',score:Math.round(score),taskId:'${task.id}'},
-        '*'
-      );
-    }catch(e){}
-  }
-  // Watch for endQuiz / show result being called
-  // Auto-patch: override sendResults if it exists
-  var _orig = window.sendResults;
-  if(typeof _orig === 'function'){
-    window.sendResults = function(status){
-      _orig.apply(this,arguments);
-      // Try to grab score from common variable names
-      var sc = window.score || window.correctCount || 0;
-      var total = window.questions && window.questions.length ? window.questions.length : 10;
-      reportScoreToParent(Math.round((sc/total)*100));
-    };
-  }
-  // Expose for manual use
-  window.reportScoreToParent = reportScoreToParent;
-  window.IELTS_REPORT_SCORE = reportScoreToParent;
-})();
-<\/script>`;
-
-  // Inject bridge before </body> or at end
-  let html = task.html_content;
-  if (html.includes('</body>')) {
-    html = html.replace('</body>', bridge + '</body>');
-  } else {
-    html = html + bridge;
-  }
-  iframe.srcdoc = html;
-
-  // Auto-resize iframe based on content
-  iframe.onload = function() {
-    try {
-      const h = iframe.contentDocument?.documentElement?.scrollHeight;
-      if (h && h > 400) iframe.style.height = h + 'px';
-    } catch(e) {}
-  };
-}
-
-function noContentHTML(task) {
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <style>body{font-family:sans-serif;background:#07080d;color:#eef0f6;
-  display:flex;align-items:center;justify-content:center;min-height:300px;text-align:center;padding:40px}
-  h2{margin-bottom:8px;font-size:20px}p{color:#7a7f94;font-size:14px}</style></head><body>
-  <div><h2>📋 ${task.title}</h2>
-  <p>The teacher has not uploaded the quiz content yet.</p>
-  ${task.instructions ? `<p style="margin-top:14px;color:#a99de8">${task.instructions}</p>` : ''}
-  ${task.resource_link ? `<p style="margin-top:12px"><a href="${task.resource_link}" target="_blank" style="color:#7c6bcd">Open Resource →</a></p>` : ''}
-  </div></body></html>`;
-}
-
-// ═══════════════════════════════════════════════
-// SCORE BRIDGE — listen for postMessage from iframes
-// ═══════════════════════════════════════════════
-async function handleQuizMessage(event) {
-  const data = event.data;
-  if (!data || data.type !== 'IELTS_QUIZ_SCORE') return;
-
-  const score  = Math.min(100, Math.max(0, Math.round(data.score)));
-  const taskId = data.taskId || openTaskId;
-  if (!taskId || !currentUser) return;
-
-  // Already recorded this score?
-  if (taskScores[taskId] === score) return;
-
-  taskScores[taskId] = score;
-
-  // Update status indicator
-  const statusEl = document.getElementById(`status-${taskId}`);
-  if (statusEl) {
-    statusEl.className = 'qp-status recording';
-    statusEl.textContent = `✓ score recorded: ${score}%`;
-  }
-
-  showToast(`✓ Score recorded: ${score}%`);
-
-  // Upsert submission in Supabase
-  const { error } = await sb.from('task_submissions').upsert({
-    task_id:      taskId,
-    student_id:   currentUser.id,
-    score:        score,
-    status:       'completed',
-    submitted_at: new Date().toISOString()
-  }, { onConflict: 'task_id,student_id' });
-
-  if (error) console.error('Score save error:', error);
-
-  updateDailyScore();
-  renderTasks();   // re-render to show updated badges
-}
-
-// ═══════════════════════════════════════════════
-// DAILY SCORE
-// ═══════════════════════════════════════════════
-function updateDailyScore() {
-  const scores = Object.values(taskScores);
-  if (!scores.length) {
-    document.getElementById('daily-score-val').textContent = '—';
-    document.getElementById('score-ring').style.strokeDashoffset = '276.5';
-    document.getElementById('score-ring').style.stroke = 'var(--violet2)';
-    return;
-  }
-  const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
-  document.getElementById('daily-score-val').textContent = avg + '%';
-
-  // Ring
-  const ring = document.getElementById('score-ring');
-  const offset = 276.5 * (1 - avg / 100);
-  ring.style.strokeDashoffset = offset;
-  ring.style.stroke = avg >= 70 ? '#22c55e' : avg >= 50 ? '#f97316' : '#ef4444';
-}
-
-// ═══════════════════════════════════════════════
-// NOTIFICATIONS
-// ═══════════════════════════════════════════════
-async function loadNotifications() {
-  const { data: notifs } = await sb.from('notifications')
-    .select('*')
-    .or(`target_all.eq.true,target_students.cs.{${currentUser.id}}`)
-    .order('created_at', { ascending: false })
-    .limit(5);
-
-  const bar = document.getElementById('notif-bar');
-  if (!notifs || !notifs.length) { bar.classList.add('hidden'); return; }
-
-  const typeIcons = { general:'📢', task:'📋', result:'📈', urgent:'🔴' };
-  bar.innerHTML = notifs.map(n => `
-    <div class="notif-item">
-      <div class="notif-icon">${typeIcons[n.notif_type] || '📢'}</div>
-      <div class="notif-content">
-        <div class="notif-title">${n.title}</div>
-        <div class="notif-body">${n.body}</div>
-        <div class="notif-time">${timeAgo(n.created_at)}</div>
-      </div>
-    </div>`).join('');
-  bar.classList.remove('hidden');
-}
-
-// ═══════════════════════════════════════════════
-// WEEKLY HISTORY
-// ═══════════════════════════════════════════════
-async function loadWeekHistory() {
-  const days = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    days.push(d.toISOString().split('T')[0]);
-  }
-
-  const { data: subs } = await sb.from('task_submissions')
-    .select('task_id, score, submitted_at, tasks(task_date)')
-    .eq('student_id', currentUser.id)
-    .gte('submitted_at', days[0] + 'T00:00:00');
-
-  const byDay = {};
-  (subs || []).forEach(s => {
-    const d = s.tasks?.task_date || s.submitted_at?.split('T')[0];
-    if (!byDay[d]) byDay[d] = [];
-    if (s.score !== null) byDay[d].push(s.score);
+  // auto session check
+  supabase.auth.getSession().then(({ data }) => {
+    if (data.session) loadApp();
   });
 
-  const grid = document.getElementById('history-grid');
-  grid.innerHTML = days.map(d => {
-    const scores = byDay[d] || [];
-    const avg    = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : null;
-    const isToday = d === TODAY;
-    const label  = new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric'});
-    const color  = avg === null ? 'var(--muted)' : avg >= 70 ? '#22c55e' : avg >= 50 ? '#f97316' : '#ef4444';
-    return `
-      <div class="hday ${isToday ? 'today' : ''}">
-        <div class="hday-date">${label}</div>
-        <div class="hday-score" style="color:${color}">${avg !== null ? avg+'%' : '—'}</div>
-        <div class="hday-tasks">${scores.length} task${scores.length !== 1 ? 's' : ''}</div>
-      </div>`;
-  }).join('');
-}
-
-// ═══════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════
-function timeAgo(iso) {
-  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-  if (diff < 60) return 'Just now';
-  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
-  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
-  return Math.floor(diff/86400) + 'd ago';
-}
-
-let toastTimer;
-function showToast(msg, type = 'ok') {
-  const t = document.getElementById('toast');
-  document.getElementById('toast-msg').textContent = msg;
-  t.className = 'show' + (type === 'err' ? ' err' : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-}
-
-init();
 </script>
+
 </body>
 </html>
