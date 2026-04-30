@@ -252,12 +252,46 @@
             font-weight: 700;
             color: #facc15;
         }
+        /* date strip */
+        .date-strip {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.2rem;
+            scrollbar-width: thin;
+        }
+        .date-chip {
+            flex-shrink: 0;
+            background: #334155;
+            border: 1px solid #475569;
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #cbd5e1;
+        }
+        .date-chip:hover {
+            background: #475569;
+            border-color: #facc15;
+        }
+        .date-chip.active {
+            background: #facc15;
+            color: #0f172a;
+            border-color: #facc15;
+            font-weight: 600;
+        }
+        .date-chip.has-task {
+            border-left: 3px solid #10b981;
+        }
         .date-picker-wrapper {
             display: flex;
             gap: 0.8rem;
             align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
         .date-picker-wrapper input {
             flex: 2;
@@ -309,6 +343,10 @@
             .lb-header, .lb-row {
                 grid-template-columns: 50px 1fr 80px;
             }
+            .date-chip {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
+            }
         }
     </style>
 </head>
@@ -345,6 +383,10 @@
                 <h1>📖 Daily Tasks</h1>
                 <button id="logoutBtn" class="btn-secondary" style="padding: 0.4rem 1rem;">Sign Out</button>
             </div>
+            
+            <!-- DATE STRIP (easy navigation) -->
+            <div class="date-strip" id="dateStrip"></div>
+
             <div class="date-picker-wrapper">
                 <input type="date" id="datePicker">
                 <button id="loadTasksBtn">Load Tasks</button>
@@ -363,6 +405,8 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxb3Nod2J0eHVsbmxmY2NidXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODAwMTgsImV4cCI6MjA5MzA1NjAxOH0.ChxkoIlruVPtontdf0_uvG__XSpZdVhScxR1f-F_ArA';
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let currentUser = null;
+    let allTasks = [];
+    let taskDates = new Set(); // for highlighting chips with tasks
 
     // DOM elements
     const authCard = document.getElementById('authCard');
@@ -376,6 +420,7 @@
     const taskListDiv = document.getElementById('taskList');
     const authMsgDiv = document.getElementById('authMsg');
     const leaderboardContainer = document.getElementById('leaderboardContainer');
+    const dateStripDiv = document.getElementById('dateStrip');
 
     // Helper: show auth message
     function showAuthMessage(msg, isError = true) {
@@ -394,9 +439,42 @@
         });
     }
 
+    // ========== DATE STRIP (build chips) ==========
+    function buildDateStrip(selectedDate) {
+        if (!dateStripDiv) return;
+        const today = new Date();
+        // create dates from -7 to +7 days from today
+        const chips = [];
+        for (let i = -7; i <= 7; i++) {
+            const d = new Date(today);
+            d.setDate(today.getDate() + i);
+            const dateStr = d.toISOString().slice(0,10);
+            const displayDay = d.getDate();
+            const displayMonth = d.toLocaleString('default', { month: 'short' });
+            const hasTask = taskDates.has(dateStr);
+            const isActive = (dateStr === selectedDate);
+            chips.push({ dateStr, display: `${displayDay} ${displayMonth}`, hasTask, isActive });
+        }
+        dateStripDiv.innerHTML = chips.map(chip => `
+            <div class="date-chip ${chip.isActive ? 'active' : ''} ${chip.hasTask ? 'has-task' : ''}" data-date="${chip.dateStr}">
+                ${chip.display}
+            </div>
+        `).join('');
+        // attach click handlers
+        document.querySelectorAll('.date-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const newDate = chip.dataset.date;
+                datePicker.value = newDate;
+                loadTasksForDate(newDate);
+                // update active class
+                document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+            });
+        });
+    }
+
     // ========== LEADERBOARD (average score) ==========
     async function renderLeaderboard() {
-        // Fetch all completions with scores
         const { data: completions, error } = await sb.from('task_completions').select('user_id, user_name, user_avatar, score');
         if (error) {
             leaderboardContainer.innerHTML = `<div class="alert">❌ Could not load leaderboard</div>`;
@@ -407,8 +485,7 @@
             return;
         }
 
-        // Aggregate per user
-        const userMap = new Map(); // user_id -> { name, avatar, scores[] }
+        const userMap = new Map();
         for (const c of completions) {
             if (c.score === null || c.score === undefined) continue;
             if (!userMap.has(c.user_id)) {
@@ -420,7 +497,6 @@
             }
             userMap.get(c.user_id).scores.push(c.score);
         }
-        // Calculate average and build array
         let leaderboard = [];
         for (const [userId, data] of userMap.entries()) {
             const avg = data.scores.reduce((a,b)=>a+b,0) / data.scores.length;
@@ -437,7 +513,6 @@
             return;
         }
 
-        // Top 3 for podium
         const top3 = leaderboard.slice(0,3);
         const podiumHtml = `
             <div class="leaderboard-grid">
@@ -484,13 +559,9 @@
         leaderboardContainer.innerHTML = podiumHtml;
     }
 
-    // ========== TASKS ==========
-    async function loadTasks() {
-        const date = datePicker.value;
-        if (!date) {
-            taskListDiv.innerHTML = '<div class="alert">📅 Please select a date first.</div>';
-            return;
-        }
+    // ========== LOAD TASKS ==========
+    async function loadTasksForDate(date) {
+        if (!date) return;
         taskListDiv.innerHTML = '<div class="alert">⏳ Loading tasks...</div>';
         const { data: tasks, error } = await sb.from('tasks').select('*').eq('task_date', date);
         if (error) {
@@ -545,14 +616,31 @@
                     alert("Error: " + error.message);
                 } else {
                     alert(`✅ Score ${numScore}% saved!`);
-                    await loadTasks();
-                    await renderLeaderboard(); // refresh leaderboard
+                    await loadTasksForDate(date);
+                    await renderLeaderboard();
                 }
             });
         });
     }
 
-    // ========== AUTH (unchanged working version) ==========
+    // ========== LOAD ALL TASK DATES (for chip highlighting) ==========
+    async function loadAllTaskDates() {
+        const { data: tasks, error } = await sb.from('tasks').select('task_date').order('task_date');
+        if (error) return;
+        taskDates.clear();
+        (tasks || []).forEach(t => taskDates.add(t.task_date));
+    }
+
+    // ========== HANDLE DATE CHANGE ==========
+    async function onDateChange(date) {
+        if (!date) return;
+        datePicker.value = date;
+        await loadTasksForDate(date);
+        // rebuild date strip with active selection
+        buildDateStrip(date);
+    }
+
+    // ========== AUTH ==========
     async function login() {
         const email = emailInput.value.trim();
         const password = passwordInput.value;
@@ -605,9 +693,11 @@
             authCard.style.display = 'none';
             dashboard.style.display = 'block';
             const today = new Date().toISOString().slice(0,10);
+            await loadAllTaskDates();
             datePicker.value = today;
-            await loadTasks();
+            await loadTasksForDate(today);
             await renderLeaderboard();
+            buildDateStrip(today);
         } else {
             currentUser = null;
             authCard.style.display = 'block';
@@ -631,7 +721,11 @@
     // Event listeners
     loginBtn.addEventListener('click', login);
     logoutBtn.addEventListener('click', logout);
-    loadTasksBtn.addEventListener('click', loadTasks);
+    loadTasksBtn.addEventListener('click', () => {
+        const date = datePicker.value;
+        if (date) onDateChange(date);
+    });
+    datePicker.addEventListener('change', (e) => onDateChange(e.target.value));
     document.getElementById('showSignupBtn')?.addEventListener('click', signup);
     document.getElementById('showResetBtn')?.addEventListener('click', resetPassword);
 </script>
