@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>IELTS Student · Daily Tasks + Leaderboard</title>
+    <title>IELTS Student · Daily Tasks</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -33,11 +33,6 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
         }
 
         h1 {
@@ -84,9 +79,6 @@
             border: 2px solid #facc15;
             transition: transform 0.1s;
         }
-        .avatar-clickable:hover {
-            transform: scale(1.02);
-        }
         .avatar-clickable img {
             width: 100%;
             height: 100%;
@@ -97,9 +89,16 @@
             font-size: 1.2rem;
             color: #facc15;
         }
+        .btn-secondary {
+            background: #475569;
+            color: #f1f5f9;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+        }
 
-        /* leaderboard & tasks styles (same as before) */
-        /* ... (keeping existing styles) ... */
+        /* leaderboard */
         .leaderboard-grid {
             display: grid;
             grid-template-columns: 1fr 1.2fr 1fr;
@@ -128,8 +127,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
             overflow: hidden;
         }
         .podium-avatar img {
@@ -185,6 +182,8 @@
             font-weight: 700;
             color: #facc15;
         }
+
+        /* date strip */
         .date-strip {
             display: flex;
             gap: 0.5rem;
@@ -222,8 +221,14 @@
         }
         .date-picker-wrapper input {
             flex: 2;
-            margin-bottom: 0;
+            padding: 0.6rem;
+            border-radius: 40px;
+            background: #334155;
+            border: 1px solid #475569;
+            color: white;
         }
+
+        /* task card */
         .task-card {
             background: #334155;
             border-radius: 20px;
@@ -242,13 +247,17 @@
             border-radius: 30px;
             font-size: 0.7rem;
         }
-        .complete-btn {
+        .complete-btn, .start-task-btn {
             background: #10b981;
             color: white;
             border: none;
             padding: 0.4rem 1rem;
             border-radius: 40px;
             cursor: pointer;
+        }
+        .start-task-btn {
+            background: #facc15;
+            color: #0f172a;
         }
         .completed-badge {
             background: #10b981;
@@ -263,14 +272,50 @@
             color: #facc15;
             border-radius: 16px;
         }
-        .btn-secondary {
-            background: #475569;
-            color: #f1f5f9;
-            padding: 0.5rem 1rem;
-            border-radius: 40px;
+
+        /* modal for external task */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #1e293b;
+            border-radius: 28px;
+            max-width: 1000px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+            position: relative;
+        }
+        .task-iframe {
+            width: 100%;
+            height: 500px;
             border: none;
+            border-radius: 16px;
+            background: white;
+            margin-top: 1rem;
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #475569;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             cursor: pointer;
         }
+
         .auth-links {
             margin-top: 1rem;
             text-align: center;
@@ -295,10 +340,10 @@
     <!-- AUTH CARD -->
     <div id="authCard" class="card">
         <h1>📚 IELTS Daily</h1>
-        <p style="margin-bottom: 1.2rem; color: #94a3b8;">Student · Daily Tasks</p>
-        <input type="email" id="email" placeholder="Email address">
-        <input type="password" id="password" placeholder="Password">
-        <button id="loginBtn" style="width: 100%;">Sign In</button>
+        <p style="margin-bottom: 1.2rem;">Student · Daily Tasks</p>
+        <input type="email" id="email" placeholder="Email address" style="width:100%; padding:0.6rem; margin-bottom:0.8rem; border-radius:40px;">
+        <input type="password" id="password" placeholder="Password" style="width:100%; padding:0.6rem; margin-bottom:0.8rem; border-radius:40px;">
+        <button id="loginBtn" style="width:100%; padding:0.6rem; border-radius:40px; background:#facc15; font-weight:bold;">Sign In</button>
         <div class="auth-links">
             <a id="showSignupBtn">Create account</a> &nbsp;|&nbsp;
             <a id="showResetBtn">Forgot password?</a>
@@ -319,7 +364,7 @@
             <div class="top-bar">
                 <h1>📖 Daily Tasks</h1>
                 <div class="avatar-container">
-                    <div class="avatar-clickable" id="avatarBtn" title="Click to change avatar">
+                    <div class="avatar-clickable" id="avatarBtn" title="Change avatar">
                         <span id="avatarInitials" class="avatar-initials">?</span>
                     </div>
                     <button id="logoutBtn" class="btn-secondary">Sign Out</button>
@@ -328,13 +373,11 @@
             <div class="date-strip" id="dateStrip"></div>
             <div class="date-picker-wrapper">
                 <input type="date" id="datePicker">
-                <button id="loadTasksBtn">Load Tasks</button>
+                <button id="loadTasksBtn" style="padding:0.5rem 1rem; border-radius:40px; background:#facc15;">Load Tasks</button>
             </div>
             <div id="taskList"></div>
         </div>
     </div>
-
-    <footer style="text-align:center; margin-top:2rem; font-size:0.7rem;">© IELTS Daily — keep practicing</footer>
 </div>
 
 <script>
@@ -342,18 +385,7 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxb3Nod2J0eHVsbmxmY2NidXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODAwMTgsImV4cCI6MjA5MzA1NjAxOH0.ChxkoIlruVPtontdf0_uvG__XSpZdVhScxR1f-F_ArA';
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let currentUser = null;
-    let allTasks = [];
     let taskDates = new Set();
-
-    // DOM elements
-    const authCard = document.getElementById('authCard');
-    const dashboard = document.getElementById('dashboard');
-    const leaderboardContainer = document.getElementById('leaderboardContainer');
-    const dateStripDiv = document.getElementById('dateStrip');
-    const taskListDiv = document.getElementById('taskList');
-    const datePicker = document.getElementById('datePicker');
-    const avatarBtn = document.getElementById('avatarBtn');
-    const avatarInitialsSpan = document.getElementById('avatarInitials');
 
     // Helper
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m => m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
@@ -362,8 +394,9 @@
     async function updateAvatarDisplay() {
         if (!currentUser) return;
         let avatarUrl = currentUser.user_metadata?.avatar_url || null;
+        const avatarBtn = document.getElementById('avatarBtn');
         if (avatarUrl) {
-            avatarBtn.innerHTML = `<img src="${avatarUrl}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`;
+            avatarBtn.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover">`;
         } else {
             const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
             const initials = name.charAt(0).toUpperCase();
@@ -379,18 +412,12 @@
         if (uploadError) { alert("Upload error: " + uploadError.message); return; }
         const { data: urlData } = sb.storage.from('avatars').getPublicUrl(fileName);
         const avatarUrl = urlData.publicUrl + '?t=' + Date.now();
-
-        // Update user metadata
-        const { error: metaError } = await sb.auth.updateUser({ data: { avatar_url: avatarUrl } });
-        if (metaError) { alert("Failed to update profile: " + metaError.message); return; }
-        // Update all existing task_completions rows for this user (so leaderboard shows new avatar)
+        await sb.auth.updateUser({ data: { avatar_url: avatarUrl } });
         await sb.from('task_completions').update({ user_avatar: avatarUrl }).eq('user_id', currentUser.id);
-
-        // Refresh session data
         const { data: { user } } = await sb.auth.getUser();
         currentUser = user;
         await updateAvatarDisplay();
-        await renderLeaderboard();   // leaderboard also uses user_avatar
+        await renderLeaderboard();
         alert("Avatar updated!");
     }
 
@@ -404,9 +431,11 @@
 
     // ========== LEADERBOARD ==========
     async function renderLeaderboard() {
-        const { data: completions, error } = await sb.from('task_completions').select('user_id, user_name, user_avatar, score');
-        if (error) { leaderboardContainer.innerHTML = `<div class="alert">❌ Could not load leaderboard</div>`; return; }
-        if (!completions || completions.length === 0) { leaderboardContainer.innerHTML = `<div class="alert">📭 No scores yet. Complete tasks to appear!</div>`; return; }
+        const { data: completions } = await sb.from('task_completions').select('user_id, user_name, user_avatar, score');
+        if (!completions || completions.length === 0) {
+            document.getElementById('leaderboardContainer').innerHTML = `<div class="alert">📭 No scores yet.</div>`;
+            return;
+        }
         const userMap = new Map();
         for (const c of completions) {
             if (c.score === null) continue;
@@ -415,14 +444,14 @@
             }
             userMap.get(c.user_id).scores.push(c.score);
         }
-        let leaderboard = [];
-        for (const [id, data] of userMap.entries()) {
-            const avg = data.scores.reduce((a,b)=>a+b,0) / data.scores.length;
-            leaderboard.push({ user_id: id, name: data.name, avatar: data.avatar, avgScore: Math.round(avg) });
+        let leaderboard = Array.from(userMap.entries()).map(([uid, d]) => ({
+            user_id: uid, name: d.name, avatar: d.avatar,
+            avgScore: Math.round(d.scores.reduce((a,b)=>a+b,0)/d.scores.length)
+        })).sort((a,b) => b.avgScore - a.avgScore);
+        if (leaderboard.length === 0) {
+            document.getElementById('leaderboardContainer').innerHTML = `<div class="alert">📭 No valid scores.</div>`;
+            return;
         }
-        leaderboard.sort((a,b)=>b.avgScore - a.avgScore);
-        if (leaderboard.length === 0) { leaderboardContainer.innerHTML = `<div class="alert">📭 No valid scores.</div>`; return; }
-
         const top3 = leaderboard.slice(0,3);
         const podiumHtml = `
             <div class="leaderboard-grid">
@@ -430,15 +459,14 @@
                 ${top3[0] ? `<div class="podium-card first"><div class="podium-avatar" style="width:70px;height:70px;">${top3[0].avatar ? `<img src="${top3[0].avatar}">` : (top3[0].name.charAt(0)||'?')}</div><div>${escapeHtml(top3[0].name)}</div><div style="font-size:1.8rem;font-weight:bold;color:#facc15;">${top3[0].avgScore}%</div></div>` : '<div></div>'}
                 ${top3[2] ? `<div class="podium-card third"><div class="podium-avatar">${top3[2].avatar ? `<img src="${top3[2].avatar}">` : (top3[2].name.charAt(0)||'?')}</div><div>${escapeHtml(top3[2].name)}</div><div style="font-size:1.5rem;font-weight:bold;color:#facc15;">${top3[2].avgScore}%</div></div>` : '<div></div>'}
             </div>
-            <div class="lb-list">
-                <div class="lb-header"><div>Rank</div><div>Student</div><div>Avg Score</div></div>
-                ${leaderboard.map((u, idx) => `<div class="lb-row"><div>${idx+1}</div><div class="lb-name"><div class="lb-avatar">${u.avatar ? `<img src="${u.avatar}">` : (u.name.charAt(0)||'?')}</div><span>${escapeHtml(u.name)}${u.user_id === currentUser?.id ? ' <span style="font-size:0.7rem;color:#facc15;">(You)</span>' : ''}</span></div><div class="lb-score">${u.avgScore}%</div></div>`).join('')}
+            <div class="lb-list"><div class="lb-header"><div>Rank</div><div>Student</div><div>Avg Score</div></div>
+            ${leaderboard.map((u, i) => `<div class="lb-row"><div>${i+1}</div><div class="lb-name"><div class="lb-avatar">${u.avatar ? `<img src="${u.avatar}">` : (u.name.charAt(0)||'?')}</div><span>${escapeHtml(u.name)}${u.user_id === currentUser?.id ? ' <span style="font-size:0.7rem;color:#facc15;">(You)</span>' : ''}</span></div><div class="lb-score">${u.avgScore}%</div></div>`).join('')}
             </div>
         `;
-        leaderboardContainer.innerHTML = podiumHtml;
+        document.getElementById('leaderboardContainer').innerHTML = podiumHtml;
     }
 
-    // ========== DATE STRIP & TASKS ==========
+    // ========== DATE STRIP ==========
     async function loadAllTaskDates() {
         const { data: tasks } = await sb.from('tasks').select('task_date');
         taskDates.clear();
@@ -455,11 +483,12 @@
             const display = `${d.getDate()} ${d.toLocaleString('default',{month:'short'})}`;
             chips.push({ dateStr, display, hasTask: taskDates.has(dateStr), active: dateStr === selectedDate });
         }
-        dateStripDiv.innerHTML = chips.map(c => `<div class="date-chip ${c.active ? 'active' : ''} ${c.hasTask ? 'has-task' : ''}" data-date="${c.dateStr}">${c.display}</div>`).join('');
+        const strip = document.getElementById('dateStrip');
+        strip.innerHTML = chips.map(c => `<div class="date-chip ${c.active ? 'active' : ''} ${c.hasTask ? 'has-task' : ''}" data-date="${c.dateStr}">${c.display}</div>`).join('');
         document.querySelectorAll('.date-chip').forEach(chip => {
             chip.addEventListener('click', () => {
                 const newDate = chip.dataset.date;
-                datePicker.value = newDate;
+                document.getElementById('datePicker').value = newDate;
                 loadTasksForDate(newDate);
                 document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
                 chip.classList.add('active');
@@ -467,24 +496,38 @@
         });
     }
 
+    // ========== TASKS (with external HTML support) ==========
     async function loadTasksForDate(date) {
         if (!date) return;
+        const taskListDiv = document.getElementById('taskList');
         taskListDiv.innerHTML = '<div class="alert">⏳ Loading tasks...</div>';
         const { data: tasks, error } = await sb.from('tasks').select('*').eq('task_date', date);
         if (error) { taskListDiv.innerHTML = `<div class="alert">❌ ${error.message}</div>`; return; }
         if (!tasks.length) { taskListDiv.innerHTML = '<div class="alert">📭 No tasks for this date.</div>'; return; }
+
+        // Get user completions
         const { data: completions } = await sb.from('task_completions').select('task_id, score').eq('user_id', currentUser.id);
         const completedMap = new Map((completions||[]).map(c => [c.task_id, c.score]));
-        taskListDiv.innerHTML = tasks.map(task => `
-            <div class="task-card">
-                <div class="task-skill">${task.skill || 'General'}</div>
-                <div class="task-title">${escapeHtml(task.title)}</div>
-                ${task.description ? `<div style="font-size:0.85rem;color:#cbd5e1;margin-top:0.3rem;">${escapeHtml(task.description.substring(0,150))}${task.description.length>150?'…':''}</div>` : ''}
-                <div style="margin-top:0.6rem;">
-                    ${completedMap.has(task.id) ? `<span class="completed-badge">✅ Completed (${completedMap.get(task.id)}%)</span>` : `<button class="complete-btn" data-task-id="${task.id}">✓ Mark as Completed</button>`}
+
+        taskListDiv.innerHTML = tasks.map(task => {
+            const completed = completedMap.has(task.id);
+            const score = completedMap.get(task.id);
+            const external = task.external_html_url && task.external_html_url.trim().length > 0;
+            return `
+                <div class="task-card">
+                    <div class="task-skill">${task.skill || 'General'}</div>
+                    <div class="task-title">${escapeHtml(task.title)}</div>
+                    ${task.description ? `<div style="font-size:0.85rem; color:#cbd5e1; margin-top:0.3rem;">${escapeHtml(task.description.substring(0,150))}${task.description.length>150?'…':''}</div>` : ''}
+                    <div style="margin-top:0.6rem;">
+                        ${completed ? `<span class="completed-badge">✅ Completed (${score}%)</span>` :
+                        (external ? `<button class="start-task-btn" data-task-id="${task.id}" data-task-url="${escapeHtml(task.external_html_url)}">🎯 Start Task</button>` :
+                                   `<button class="complete-btn" data-task-id="${task.id}">✓ Mark as Completed</button>`)}
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
+
+        // Attach handlers for manual completion
         document.querySelectorAll('.complete-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const taskId = btn.dataset.taskId;
@@ -502,13 +545,71 @@
                 else { alert(`✅ Score ${num}% saved!`); loadTasksForDate(date); renderLeaderboard(); }
             });
         });
+
+        // Attach handlers for external tasks (open modal)
+        document.querySelectorAll('.start-task-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const taskId = btn.dataset.taskId;
+                const taskUrl = btn.dataset.taskUrl;
+                openExternalTask(taskId, taskUrl, date);
+            });
+        });
     }
 
-    async function onDateChange(date) {
-        if (!date) return;
-        datePicker.value = date;
-        await loadTasksForDate(date);
-        buildDateStrip(date);
+    // Modal for external task (iframe)
+    let currentModal = null;
+    function openExternalTask(taskId, taskUrl, currentDate) {
+        // close any existing modal
+        if (currentModal) currentModal.remove();
+        const modal = document.createElement('div');
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <button class="modal-close">✕</button>
+                <h3 style="margin-bottom:0.5rem;">📝 Task</h3>
+                <iframe class="task-iframe" src="${escapeHtml(taskUrl)}" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals"></iframe>
+                <p style="font-size:0.8rem; margin-top:0.5rem;">Your score will be saved automatically when you finish the task.</p>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        currentModal = modal;
+
+        // Close button
+        modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
+
+        // Listen for postMessage from iframe
+        const messageHandler = async (event) => {
+            if (event.data && event.data.type === 'taskScore') {
+                const score = parseInt(event.data.score, 10);
+                if (!isNaN(score) && score >= 0 && score <= 100) {
+                    // Save score
+                    const { error } = await sb.from('task_completions').insert({
+                        task_id: taskId, user_id: currentUser.id, score: score,
+                        user_name: currentUser.user_metadata?.full_name || currentUser.email.split('@')[0],
+                        user_avatar: currentUser.user_metadata?.avatar_url || null,
+                        completed_at: new Date().toISOString()
+                    });
+                    if (error) {
+                        alert("Error saving score: " + error.message);
+                    } else {
+                        alert(`✅ Score ${score}% saved!`);
+                        modal.remove();
+                        await loadTasksForDate(currentDate);
+                        await renderLeaderboard();
+                    }
+                }
+                window.removeEventListener('message', messageHandler);
+            }
+        };
+        window.addEventListener('message', messageHandler);
+        // Cleanup when modal is closed
+        const observer = new MutationObserver(() => {
+            if (!document.body.contains(modal)) {
+                window.removeEventListener('message', messageHandler);
+                observer.disconnect();
+            }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
     }
 
     // ========== AUTH ==========
@@ -548,20 +649,20 @@
     async function updateUIForUser(user) {
         if (user) {
             currentUser = user;
-            authCard.style.display = 'none';
-            dashboard.style.display = 'block';
+            document.getElementById('authCard').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
             await loadAllTaskDates();
             const today = new Date().toISOString().slice(0,10);
-            datePicker.value = today;
+            document.getElementById('datePicker').value = today;
             await loadTasksForDate(today);
             await renderLeaderboard();
             buildDateStrip(today);
             await updateAvatarDisplay();
-            avatarBtn.addEventListener('click', openAvatarPicker);
+            document.getElementById('avatarBtn').addEventListener('click', openAvatarPicker);
         } else {
             currentUser = null;
-            authCard.style.display = 'block';
-            dashboard.style.display = 'none';
+            document.getElementById('authCard').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'none';
         }
     }
 
@@ -573,8 +674,17 @@
 
     document.getElementById('loginBtn').addEventListener('click', login);
     document.getElementById('logoutBtn').addEventListener('click', logout);
-    document.getElementById('loadTasksBtn').addEventListener('click', () => onDateChange(datePicker.value));
-    datePicker.addEventListener('change', (e) => onDateChange(e.target.value));
+    document.getElementById('loadTasksBtn').addEventListener('click', () => {
+        const date = document.getElementById('datePicker').value;
+        if (date) loadTasksForDate(date);
+    });
+    document.getElementById('datePicker').addEventListener('change', (e) => {
+        const date = e.target.value;
+        if (date) {
+            loadTasksForDate(date);
+            buildDateStrip(date);
+        }
+    });
     document.getElementById('showSignupBtn').addEventListener('click', signup);
     document.getElementById('showResetBtn').addEventListener('click', resetPassword);
 </script>
