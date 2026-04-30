@@ -1114,3 +1114,75 @@ function notify(msg, type = 'success') {
 
 </body>
 </html>
+// ... (Keep your URL and KEY at the top)
+
+async function loadTasks() {
+  // Correctly fetching from your 'tasks' table
+  const { data, error } = await sb
+    .from('tasks')
+    .select('*')
+    .order('task_date', { ascending: false });
+
+  if (error) {
+    console.error(error);
+    notify('Could not load tasks: ' + error.message, 'error');
+    return;
+  }
+
+  allTasks = data || [];
+  taskDates = new Set(allTasks.map(t => t.task_date));
+
+  updateStats();
+  buildDateStrip();
+  renderTasks(selectedDate);
+}
+
+function renderTasks(date) {
+  const area = document.getElementById('task-area');
+  // Matching the 'task_date' column from image_287720.png
+  const tasks = allTasks.filter(t => t.task_date === date);
+  const admin = isAdmin(currentUser?.email || '');
+
+  const fmt = new Date(date + 'T00:00:00').toLocaleDateString('en-GB', { 
+    weekday:'long', day:'numeric', month:'long', year:'numeric' 
+  });
+
+  if (!tasks.length) {
+    area.innerHTML = `<div class="no-task">...</div>`;
+    return;
+  }
+
+  // UPDATED: Using 'task_type' and 'instructions' to match your database
+  area.innerHTML = tasks.map(t => `
+    <div class="task-card" id="tc-${t.id}">
+      <div class="task-meta">
+        <span class="task-skill skill-writing">${t.task_type || 'General'}</span>
+        <span class="task-date">${fmt}</span>
+      </div>
+      <div class="task-title">${escHtml(t.title)}</div>
+      <div class="task-desc">${escHtml(t.instructions || '').replace(/\n/g,'<br/>')}</div>
+      ${admin ? `<button onclick="deleteTask('${t.id}')">🗑 Delete</button>` : ''}
+    </div>
+  `).join('');
+}
+
+async function addTask() {
+  const title = document.getElementById('task-title').value.trim();
+  const desc = document.getElementById('task-desc').value.trim();
+  const type = document.getElementById('task-skill').value; // mapping select to task_type
+  const date = document.getElementById('task-date').value;
+
+  if (!title || !date) { notify('Title and date are required.', 'error'); return; }
+
+  // UPDATED: Using correct column names for insert
+  const { error } = await sb.from('tasks').insert([{
+    title: title,
+    instructions: desc, 
+    task_type: type,
+    task_date: date
+  }]);
+
+  if (error) { notify('Error: ' + error.message, 'error'); return; }
+  notify('Task published!', 'success');
+  await loadTasks();
+}
