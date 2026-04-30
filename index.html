@@ -587,6 +587,46 @@ body::before {
 ```
 
   </style>
+  /* ──── AVATAR & LEADERBOARD STYLES ──── */
+.avatar-container {
+    position: relative;
+    cursor: pointer;
+}
+.avatar-upload-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 10px;
+    color: white;
+}
+.avatar-container:hover .avatar-upload-overlay { opacity: 1; }
+
+.leaderboard-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 36px;
+}
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+.leaderboard-item:last-child { border: none; }
+.rank-badge {
+    width: 24px;
+    font-weight: bold;
+    color: var(--accent);
+}
 </head>
 <body>
 
@@ -726,7 +766,18 @@ body::before {
     Loading tasks…
   </div>
 </div>
+<!-- TASK AREA -->
+<div class="task-area" id="task-area">...</div>
 
+<!-- NEW: LEADERSHIP BOARD -->
+<div class="section" id="leaderboard-section">
+    <div class="section-header">
+        <h2 class="section-title">Leadership Board</h2>
+    </div>
+    <div class="leaderboard-card" id="leaderboard-list">
+        <div class="loading-overlay"><div class="spinner"></div></div>
+    </div>
+</div>
 <!-- ADMIN PANEL -->
 <div id="admin-panel" style="display:none">
   <div class="admin-header">
@@ -1111,6 +1162,85 @@ function notify(msg, type = 'success') {
   notifTimer = setTimeout(() => { el.classList.remove('show'); }, 3500);
 }
 </script>
+// ═══════════════════════════════════════════════
+// NEW: TASK COMPLETION LOGIC
+// ═══════════════════════════════════════════════
+async function completeTask(taskId) {
+    const btn = document.querySelector(`#btn-complete-${taskId}`);
+    btn.innerHTML = '<span class="spinner"></span>';
+    
+    const { error } = await sb.from('task_submissions').insert([{
+        task_id: taskId,
+        student_id: currentUser.id,
+        completed_at: new Date()
+    }]);
 
+    if (error) {
+        notify("Error: " + error.message, "error");
+        btn.textContent = "Complete Task";
+    } else {
+        notify("Task marked as completed!", "success");
+        // Update user's score in profiles
+        await sb.rpc('increment_score', { row_id: currentUser.id, x: 10 }); 
+        loadTasks(); // Refresh to show completed state
+        loadLeaderboard();
+    }
+}
+
+// ═══════════════════════════════════════════════
+// NEW: AVATAR UPLOAD LOGIC
+// ═══════════════════════════════════════════════
+async function uploadAvatar(file) {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${currentUser.id}.${fileExt}`;
+    const filePath = `avatars/${fileName}`;
+
+    let { error: uploadError } = await sb.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+    if (uploadError) return notify(uploadError.message, "error");
+
+    const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(filePath);
+    
+    await sb.from('profiles').update({ avatar_url: publicUrl }).eq('id', currentUser.id);
+    location.reload();
+}
+
+// ═══════════════════════════════════════════════
+// NEW: LEADERSHIP BOARD LOGIC
+// ═══════════════════════════════════════════════
+async function loadLeaderboard() {
+    const { data, error } = await sb
+        .from('profiles')
+        .select('full_name, total_score, avatar_url')
+        .order('total_score', { ascending: false })
+        .limit(5);
+
+    const list = document.getElementById('leaderboard-list');
+    if (data) {
+        list.innerHTML = data.map((user, i) => `
+            <div class="leaderboard-item">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span class="rank-badge">#${i + 1}</span>
+                    <div class="user-avatar" style="background-image: url('${user.avatar_url || ''}'); background-size: cover;">
+                        ${user.avatar_url ? '' : user.full_name[0]}
+                    </div>
+                    <span>${user.full_name}</span>
+                </div>
+                <span class="stat-value gold" style="font-size:18px">${user.total_score || 0} XP</span>
+            </div>
+        `).join('');
+    }
+}
+
+// Update renderTasks to include the "Complete" button
+// Inside your renderTasks(date) function, update the return HTML:
+/*
+  <div class="task-actions">
+      <button id="btn-complete-${t.id}" class="btn-primary btn-sm" onclick="completeTask('${t.id}')">✓ Mark as Complete</button>
+      ${admin ? `<button class="btn-sm danger" onclick="deleteTask('${t.id}')">🗑 Delete</button>` : ''}
+  </div>
+*/
 </body>
 </html>
