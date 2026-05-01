@@ -823,8 +823,6 @@ body::before{
 const SUPABASE_URL = 'https://wqoshwbtxulnlfccbuvi.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indxb3Nod2J0eHVsbmxmY2NidXZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0ODAwMTgsImV4cCI6MjA5MzA1NjAxOH0.ChxkoIlruVPtontdf0_uvG__XSpZdVhScxR1f-F_ArA';
 
-// ── IMPORTANT: set this to your GitHub Pages base URL ──
-// e.g. 'https://yourusername.github.io/your-repo'
 const GITHUB_BASE = window.location.origin + (window.location.pathname.replace(/\/[^/]*$/, '') || '');
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -834,11 +832,14 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // ════════════════════════════════════════════════════
 let currentUser  = null;
 let currentName  = '';
-let todayScores  = {};   // taskFile → score%
+let todayScores  = {};
 let openTask     = null;
 let activeTab    = 'login';
 
-const TODAY = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+// ── FIX: store taskList globally so handleScore can access it ──
+let currentTaskList = [];
+
+const TODAY = new Date().toISOString().split('T')[0];
 
 // ════════════════════════════════════════════════════
 // BOOT
@@ -883,7 +884,6 @@ async function submitAuth() {
     btn.disabled = false; btn.textContent = 'Create Account →';
     if (error) { showMsg(error.message, 'err'); return; }
     currentUser = data.user;
-    // Save profile
     await sb.from('profiles').upsert({ id: currentUser.id, email, full_name: name });
     showMsg('Account created! Welcome 🎉', 'ok');
     setTimeout(() => afterLogin(), 1200);
@@ -891,22 +891,18 @@ async function submitAuth() {
 }
 
 async function afterLogin() {
-  // Get profile name
   const { data: profile } = await sb.from('profiles')
     .select('full_name').eq('id', currentUser.id).single();
   currentName = profile?.full_name || currentUser.email.split('@')[0];
   document.getElementById('auth-screen').classList.add('hidden');
   document.getElementById('app-screen').style.display = 'block';
-  // Nav
   const initials = currentName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   document.getElementById('nav-av').textContent = initials;
   document.getElementById('nav-nm').textContent = currentName;
-  // Hero date
   document.getElementById('hero-date').textContent =
     new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   document.getElementById('lb-week').textContent =
     'Week of ' + new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-  // Load data
   await loadTodayTasks();
   loadLeaderboard();
   loadProfile();
@@ -918,25 +914,23 @@ async function signOut() {
 }
 
 // ════════════════════════════════════════════════════
-// TODAY'S TASKS — from GitHub folder /tasks/YYYY-MM-DD/
+// TODAY'S TASKS
 // ════════════════════════════════════════════════════
 async function loadTodayTasks() {
   const grid = document.getElementById('tasks-grid');
-
-  // Fetch the index file for today's folder
-  // Convention: /tasks/YYYY-MM-DD/index.json  lists the task files
-  // Each entry: { file: "prepositions.html", title: "Prepositions Quiz", type: "grammar" }
   const indexUrl = `${GITHUB_BASE}/tasks/${TODAY}/index.json`;
 
   let taskList = [];
   try {
     const resp = await fetch(indexUrl);
-    if (resp.ok) {
-      taskList = await resp.json();
-    }
+    if (resp.ok) taskList = await resp.json();
+    // Handle both formats: plain array OR { tasks: [...] }
+    if (!Array.isArray(taskList)) taskList = taskList.tasks || [];
   } catch(e) {}
 
-  // Load existing scores from Supabase
+  // ── FIX: save to global so handleScore can use it ──
+  currentTaskList = taskList;
+
   if (taskList.length) {
     const keys = taskList.map(t => `${TODAY}/${t.file}`);
     const { data: subs } = await sb.from('scores')
@@ -1019,7 +1013,6 @@ async function loadTodayTasks() {
     grid.appendChild(card);
   });
 
-  // Store task list globally for openQuiz
   window._tasks = taskList;
 }
 
@@ -1037,8 +1030,6 @@ function openQuiz(idx, file, e) {
   panel.classList.add('open');
   card.classList.add('is-open');
   frame.src = src;
-
-  // Store taskKey on the frame for score capture
   frame.dataset.taskKey = `${TODAY}/${file}`;
   frame.dataset.taskIdx = idx;
 
@@ -1057,32 +1048,29 @@ function closeQuiz(idx, e) {
 }
 
 // ════════════════════════════════════════════════════
-// SCORE CAPTURE — postMessage from iframe
+// SCORE CAPTURE
 // ════════════════════════════════════════════════════
 async function handleScore(event) {
   const d = event.data;
   if (!d || d.type !== 'IELTS_QUIZ_SCORE') return;
   const score = Math.min(100, Math.max(0, Math.round(d.score)));
 
-  // Figure out which task sent this
   let taskKey = null;
   document.querySelectorAll('.quiz-frame').forEach(f => {
     try {
       if (f.contentWindow === event.source) taskKey = f.dataset.taskKey;
     } catch(e) {}
   });
-  // Fallback: use currently open task
   if (!taskKey && openTask !== null) {
     const f = document.getElementById(`frame-${openTask}`);
     if (f) taskKey = f.dataset.taskKey;
   }
   if (!taskKey || !currentUser) return;
-  if (todayScores[taskKey] === score) return; // already recorded
+  if (todayScores[taskKey] === score) return;
 
   todayScores[taskKey] = score;
   showToast(`✓ Score saved: ${score}%`);
 
-  // Save to Supabase
   await sb.from('scores').upsert({
     student_id:   currentUser.id,
     student_name: currentName,
@@ -1092,7 +1080,6 @@ async function handleScore(event) {
     scored_at:    new Date().toISOString()
   }, { onConflict: 'student_id,task_key' });
 
-  // Re-render
   await loadTodayTasks();
   loadLeaderboard();
   loadProfile();
@@ -1104,7 +1091,11 @@ async function handleScore(event) {
 function updateDailyScore(taskList) {
   const ring = document.getElementById('score-ring');
   const num  = document.getElementById('score-num');
-  const scores = (taskList || [])
+
+  // ── FIX: safely fall back to currentTaskList if taskList is not an array ──
+  const list = Array.isArray(taskList) ? taskList : currentTaskList;
+
+  const scores = list
     .map(t => todayScores[`${TODAY}/${t.file}`])
     .filter(s => s !== undefined);
 
@@ -1120,7 +1111,7 @@ function updateDailyScore(taskList) {
 }
 
 // ════════════════════════════════════════════════════
-// NOTIFICATIONS from Supabase
+// NOTIFICATIONS
 // ════════════════════════════════════════════════════
 async function loadNotifications() {
   const container = document.getElementById('notif-container');
@@ -1149,7 +1140,6 @@ async function loadLeaderboard() {
   const lbBody = document.getElementById('lb-body');
   const podiumWrap = document.getElementById('podium-wrap');
 
-  // Get all scores from today
   const { data: rows } = await sb.from('scores')
     .select('student_id, student_name, score, task_date')
     .eq('task_date', TODAY);
@@ -1165,7 +1155,6 @@ async function loadLeaderboard() {
     return;
   }
 
-  // Aggregate by student
   const map = {};
   rows.forEach(r => {
     if (!map[r.student_id]) {
@@ -1181,7 +1170,6 @@ async function loadLeaderboard() {
     tasks: s.scores.length,
   })).sort((a,b) => b.avg - a.avg || b.tasks - a.tasks);
 
-  // Podium (top 3)
   const podiumItems = [
     { rank:2, data: board[1] },
     { rank:1, data: board[0] },
@@ -1205,7 +1193,6 @@ async function loadLeaderboard() {
       </div>`;
   }).join('');
 
-  // Full table
   lbBody.innerHTML = board.map((s,i) => {
     const rank    = i + 1;
     const isMe    = s.id === currentUser.id;
