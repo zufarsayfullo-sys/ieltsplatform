@@ -1,0 +1,32 @@
+{
+  "date": "2025-05-01",
+  "title": "Day 1 — English Practice",
+  "tasks": [
+    {
+      "id": "prepositions",
+      "title": "Prepositions",
+      "description": "Practice common prepositions of time, place, and collocation.",
+      "type": "quiz",
+      "file": "prepositions.html",
+      "topic": "grammar",
+      "questions": 10,
+      "difficulty": "intermediate",
+      "estimatedMinutes": 8,
+      "tags": ["grammar", "prepositions"],
+      "completed": false
+    },
+    {
+      "id": "vocabulary",
+      "title": "Vocabulary",
+      "description": "Learn and test 15 new words from the topic of daily routines.",
+      "type": "quiz",
+      "file": "vocabulary.html",
+      "topic": "vocabulary",
+      "questions": 15,
+      "difficulty": "beginner",
+      "estimatedMinutes": 10,
+      "tags": ["vocabulary", "daily-routines"],
+      "completed": false
+    }
+  ]
+}
