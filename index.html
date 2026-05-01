@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>IELTS Daily · Student Tasks</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Daily · Simple Tasks</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -12,45 +12,44 @@
             box-sizing: border-box;
         }
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: system-ui, 'Segoe UI', sans-serif;
             background: #0f172a;
-            color: #f1f5f9;
+            color: #e2e8f0;
             padding: 1.5rem;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         .card {
             background: #1e293b;
-            border-radius: 28px;
+            border-radius: 1.5rem;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid #334155;
+        }
+        h1, h2 {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
         }
         h1 {
             font-size: 1.8rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #facc15, #fbbf24);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            color: #facc15;
         }
         h2 {
+            font-size: 1.3rem;
             color: #facc15;
-            margin-bottom: 1rem;
         }
         input, button {
             font-family: inherit;
-            border-radius: 40px;
+            border-radius: 2rem;
             border: none;
-            padding: 0.75rem 1rem;
-            font-size: 0.95rem;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
         }
         input {
             background: #334155;
-            color: #f1f5f9;
+            color: white;
             border: 1px solid #475569;
             width: 100%;
             margin-bottom: 0.8rem;
@@ -63,73 +62,63 @@
         }
         button:hover {
             background: #eab308;
-            transform: translateY(-1px);
         }
         .btn-secondary {
             background: #475569;
-            color: #f1f5f9;
+            color: white;
         }
         .task-card {
             background: #334155;
-            border-radius: 20px;
-            padding: 1.2rem;
-            margin-bottom: 1rem;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
             border: 1px solid #475569;
         }
         .task-title {
-            font-size: 1.2rem;
             font-weight: 600;
             color: #facc15;
-            margin-bottom: 0.3rem;
+            font-size: 1.1rem;
         }
         .task-skill {
             display: inline-block;
             background: #1e293b;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
+            padding: 0.2rem 0.7rem;
+            border-radius: 2rem;
             font-size: 0.7rem;
-            margin-bottom: 0.6rem;
-        }
-        .task-desc {
-            font-size: 0.85rem;
-            color: #cbd5e1;
-            margin-bottom: 0.8rem;
-            line-height: 1.4;
+            margin-bottom: 0.5rem;
         }
         .completed-badge {
             background: #10b981;
+            padding: 0.2rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
             display: inline-block;
-            padding: 0.3rem 0.9rem;
-            border-radius: 40px;
-            font-size: 0.75rem;
         }
         .complete-btn {
             background: #10b981;
             color: white;
-            padding: 0.4rem 1.2rem;
+            padding: 0.3rem 1rem;
         }
         .leaderboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1.2fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
-            align-items: end;
             margin-bottom: 1.5rem;
         }
         .podium-card {
             background: #1e293b;
             border: 1px solid #334155;
-            border-radius: 20px;
-            padding: 1rem 0.8rem;
+            border-radius: 1rem;
+            padding: 0.8rem;
             text-align: center;
         }
         .podium-card.first {
             background: linear-gradient(160deg, rgba(250,204,21,0.15), #1e293b);
             border-color: #facc15;
-            padding-top: 1.5rem;
         }
         .podium-avatar {
-            width: 56px;
-            height: 56px;
+            width: 50px;
+            height: 50px;
             background: #334155;
             border-radius: 50%;
             margin: 0 auto 8px;
@@ -137,62 +126,39 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.2rem;
         }
         .first .podium-avatar {
-            width: 70px;
-            height: 70px;
+            width: 65px;
+            height: 65px;
         }
         .lb-list {
             background: #1e293b;
-            border-radius: 20px;
+            border-radius: 1rem;
             overflow: hidden;
         }
-        .lb-header, .lb-row {
+        .lb-row {
             display: grid;
-            grid-template-columns: 60px 1fr 100px;
-            padding: 0.8rem 1rem;
+            grid-template-columns: 50px 1fr 80px;
+            padding: 0.6rem 1rem;
             border-bottom: 1px solid #334155;
-        }
-        .lb-header {
-            background: #0f172a;
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-        }
-        .lb-name {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        .lb-avatar {
-            width: 32px;
-            height: 32px;
-            background: #334155;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
         }
         .lb-score {
             text-align: right;
-            font-weight: 700;
+            font-weight: 600;
             color: #facc15;
         }
         .date-strip {
             display: flex;
             gap: 0.5rem;
             overflow-x: auto;
-            padding-bottom: 0.5rem;
             margin-bottom: 1rem;
         }
         .date-chip {
             background: #334155;
             border: 1px solid #475569;
-            border-radius: 40px;
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
+            border-radius: 2rem;
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
             cursor: pointer;
             white-space: nowrap;
         }
@@ -205,7 +171,7 @@
         }
         .date-picker-wrapper {
             display: flex;
-            gap: 0.8rem;
+            gap: 0.5rem;
             margin-bottom: 1rem;
             flex-wrap: wrap;
         }
@@ -214,21 +180,21 @@
             margin-bottom: 0;
         }
         .alert {
-            padding: 1rem;
+            padding: 0.8rem;
             background: #2d3748;
+            border-radius: 1rem;
             color: #facc15;
-            border-radius: 16px;
         }
         .auth-links {
             text-align: center;
             margin-top: 1rem;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         .auth-links a {
             color: #facc15;
             cursor: pointer;
         }
-        @media (max-width: 780px) {
+        @media (max-width: 700px) {
             .leaderboard-grid {
                 grid-template-columns: 1fr;
             }
@@ -241,32 +207,28 @@
 <body>
 <div class="container">
 
-    <!-- Authentication Card -->
+    <!-- AUTH CARD -->
     <div id="authCard" class="card">
         <h1>📚 IELTS Daily</h1>
-        <p style="margin-bottom: 1rem;">Student · Daily Tasks</p>
-        <input type="email" id="email" placeholder="Email address">
+        <p>Student · Simple Tasks</p>
+        <input type="email" id="email" placeholder="Email">
         <input type="password" id="password" placeholder="Password">
-        <button id="loginBtn" style="width: 100%">Sign In</button>
+        <button id="loginBtn" style="width:100%">Sign In</button>
         <div class="auth-links">
-            <a id="showSignupBtn">Create account</a> &nbsp;|&nbsp;
-            <a id="showResetBtn">Forgot password?</a>
+            <a id="showSignupBtn">Create account</a> | <a id="showResetBtn">Forgot password?</a>
         </div>
-        <div id="authMsg" style="margin-top: 1rem;"></div>
+        <div id="authMsg" style="margin-top:0.8rem;"></div>
     </div>
 
-    <!-- Dashboard -->
-    <div id="dashboard" style="display: none;">
-        <!-- Leaderboard -->
+    <!-- DASHBOARD -->
+    <div id="dashboard" style="display:none">
         <div class="card">
-            <h2>🏆 Leaderboard (Average Score)</h2>
+            <h2>🏆 Leaderboard (Avg Score)</h2>
             <div id="leaderboardContainer"><div class="alert">Loading...</div></div>
         </div>
-
-        <!-- Tasks -->
         <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h1>📖 Daily Tasks</h1>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h1>📖 Tasks</h1>
                 <button id="logoutBtn" class="btn-secondary">Sign Out</button>
             </div>
             <div class="date-strip" id="dateStrip"></div>
@@ -286,172 +248,127 @@
     let currentUser = null;
     let taskDatesSet = new Set();
 
-    // DOM elements
+    // DOM refs
     const authCard = document.getElementById('authCard');
-    const dashboard = document.getElementById('dashboard');
+    const dashboardDiv = document.getElementById('dashboard');
     const leaderboardDiv = document.getElementById('leaderboardContainer');
     const taskListDiv = document.getElementById('taskList');
     const dateStripDiv = document.getElementById('dateStrip');
     const datePicker = document.getElementById('datePicker');
     const authMsgDiv = document.getElementById('authMsg');
 
-    function showAuthMessage(msg, isError = true) {
-        authMsgDiv.innerHTML = `<div style="background: ${isError ? '#7f1a1a' : '#14532d'}; padding: 0.6rem; border-radius: 12px;">${msg}</div>`;
-        setTimeout(() => authMsgDiv.innerHTML = '', 4000);
+    function showAuthMessage(msg, isErr=true) {
+        authMsgDiv.innerHTML = `<div style="background:${isErr?'#7f1a1a':'#14532d'};padding:0.5rem;border-radius:12px;">${msg}</div>`;
+        setTimeout(()=>authMsgDiv.innerHTML='', 4000);
     }
+    function escapeHtml(s) { return String(s).replace(/[&<>]/g, m=>m==='&'?'&amp;':m==='<'?'&lt;':'&gt;'); }
 
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
-    }
-
-    // ========== TASK DATES ==========
+    // Load all task dates for chip highlighting
     async function loadTaskDates() {
-        const { data: tasks } = await sb.from('tasks').select('task_date');
+        const { data:tasks } = await sb.from('tasks').select('task_date');
         taskDatesSet.clear();
-        (tasks || []).forEach(t => taskDatesSet.add(t.task_date));
+        (tasks||[]).forEach(t => taskDatesSet.add(t.task_date));
     }
 
-    function buildDateStrip(selectedDate) {
+    // Build date chips
+    function buildDateStrip(selected) {
         if (!dateStripDiv) return;
         const today = new Date();
-        const chips = [];
-        for (let i = -7; i <= 7; i++) {
-            const d = new Date(today);
-            d.setDate(today.getDate() + i);
-            const dateStr = d.toISOString().slice(0,10);
+        let chips = [];
+        for (let i=-7; i<=7; i++) {
+            const d = new Date(today); d.setDate(today.getDate()+i);
+            const ds = d.toISOString().slice(0,10);
             chips.push({
-                dateStr,
-                display: `${d.getDate()} ${d.toLocaleString('default', { month: 'short' })}`,
-                hasTask: taskDatesSet.has(dateStr),
-                active: dateStr === selectedDate
+                ds,
+                label: `${d.getDate()} ${d.toLocaleString('default',{month:'short'})}`,
+                hasTask: taskDatesSet.has(ds),
+                active: ds === selected
             });
         }
-        dateStripDiv.innerHTML = chips.map(c => `
-            <div class="date-chip ${c.active ? 'active' : ''} ${c.hasTask ? 'has-task' : ''}" data-date="${c.dateStr}">
-                ${c.display}
-            </div>
-        `).join('');
+        dateStripDiv.innerHTML = chips.map(c => `<div class="date-chip ${c.active?'active':''} ${c.hasTask?'has-task':''}" data-date="${c.ds}">${c.label}</div>`).join('');
         document.querySelectorAll('.date-chip').forEach(chip => {
             chip.addEventListener('click', () => {
                 const newDate = chip.dataset.date;
                 datePicker.value = newDate;
                 loadTasksForDate(newDate);
-                document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.date-chip').forEach(c=>c.classList.remove('active'));
                 chip.classList.add('active');
             });
         });
     }
 
-    // ========== LEADERBOARD ==========
+    // Leaderboard (average score)
     async function renderLeaderboard() {
-        const { data: completions } = await sb.from('task_completions').select('user_id, user_name, score');
-        if (!completions || completions.length === 0) {
-            leaderboardDiv.innerHTML = '<div class="alert">📭 No scores yet. Complete tasks to appear!</div>';
-            return;
+        const { data: comps } = await sb.from('task_completions').select('user_id, user_name, score');
+        if (!comps || comps.length===0) { leaderboardDiv.innerHTML='<div class="alert">📭 No scores yet.</div>'; return; }
+        const map = new Map();
+        for (const c of comps) {
+            if (c.score===null) continue;
+            if (!map.has(c.user_id)) map.set(c.user_id, { name: c.user_name || 'Student', scores: [] });
+            map.get(c.user_id).scores.push(c.score);
         }
-        const userMap = new Map();
-        for (const c of completions) {
-            if (c.score === null) continue;
-            if (!userMap.has(c.user_id)) {
-                userMap.set(c.user_id, { name: c.user_name || 'Student', scores: [] });
-            }
-            userMap.get(c.user_id).scores.push(c.score);
-        }
-        let leaderboard = Array.from(userMap.entries()).map(([id, data]) => ({
-            user_id: id,
-            name: data.name,
-            avgScore: Math.round(data.scores.reduce((a, b) => a + b, 0) / data.scores.length)
-        })).sort((a, b) => b.avgScore - a.avgScore);
+        let leaderboard = Array.from(map.entries()).map(([id, d]) => ({
+            id, name: d.name,
+            avg: Math.round(d.scores.reduce((a,b)=>a+b,0)/d.scores.length)
+        })).sort((a,b)=>b.avg - a.avg);
+        if (leaderboard.length===0) { leaderboardDiv.innerHTML='<div class="alert">📭 No valid scores.</div>'; return; }
 
-        if (leaderboard.length === 0) {
-            leaderboardDiv.innerHTML = '<div class="alert">📭 No valid scores.</div>';
-            return;
+        const top3 = leaderboard.slice(0,3);
+        let podiumHtml = '<div class="leaderboard-grid">';
+        // 2nd, 1st, 3rd order
+        const order = [1,0,2];
+        const classes = ['second','first','third'];
+        for (let i=0; i<3; i++) {
+            const u = top3[order[i]];
+            if (!u) { podiumHtml += '<div></div>'; continue; }
+            podiumHtml += `<div class="podium-card ${classes[i]}">
+                <div class="podium-avatar" ${i===0?'style="width:70px;height:70px;"':''}>${u.name.charAt(0)}</div>
+                <div>${escapeHtml(u.name)}</div>
+                <div style="font-size:1.5rem;font-weight:bold;color:#facc15;">${u.avg}%</div>
+            </div>`;
         }
-        const top3 = leaderboard.slice(0, 3);
-        const podiumHtml = `
-            <div class="leaderboard-grid">
-                ${top3[1] ? `
-                <div class="podium-card second">
-                    <div class="podium-avatar">${top3[1].name.charAt(0)}</div>
-                    <div>${escapeHtml(top3[1].name)}</div>
-                    <div style="font-size:1.5rem;font-weight:bold;color:#facc15;">${top3[1].avgScore}%</div>
-                </div>` : '<div></div>'}
-                ${top3[0] ? `
-                <div class="podium-card first">
-                    <div class="podium-avatar" style="width:70px;height:70px;">${top3[0].name.charAt(0)}</div>
-                    <div>${escapeHtml(top3[0].name)}</div>
-                    <div style="font-size:1.8rem;font-weight:bold;color:#facc15;">${top3[0].avgScore}%</div>
-                </div>` : '<div></div>'}
-                ${top3[2] ? `
-                <div class="podium-card third">
-                    <div class="podium-avatar">${top3[2].name.charAt(0)}</div>
-                    <div>${escapeHtml(top3[2].name)}</div>
-                    <div style="font-size:1.5rem;font-weight:bold;color:#facc15;">${top3[2].avgScore}%</div>
-                </div>` : '<div></div>'}
-            </div>
-            <div class="lb-list">
-                <div class="lb-header"><div>Rank</div><div>Student</div><div>Avg Score</div></div>
-                ${leaderboard.map((u, i) => `
-                    <div class="lb-row">
-                        <div>${i+1}</div>
-                        <div class="lb-name">
-                            <div class="lb-avatar">${u.name.charAt(0)}</div>
-                            <span>${escapeHtml(u.name)}${u.user_id === currentUser?.id ? ' <span style="font-size:0.7rem;color:#facc15;">(You)</span>' : ''}</span>
-                        </div>
-                        <div class="lb-score">${u.avgScore}%</div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
+        podiumHtml += `</div><div class="lb-list">`;
+        leaderboard.forEach((u, idx) => {
+            podiumHtml += `<div class="lb-row"><div>${idx+1}</div><div class="lb-name"><div class="lb-avatar">${u.name.charAt(0)}</div><span>${escapeHtml(u.name)}${u.id===currentUser?.id?' <span style="font-size:0.7rem;color:#facc15;">(You)</span>':''}</span></div><div class="lb-score">${u.avg}%</div></div>`;
+        });
+        podiumHtml += `</div>`;
         leaderboardDiv.innerHTML = podiumHtml;
     }
 
-    // ========== TASKS ==========
+    // Load tasks for a specific date
     async function loadTasksForDate(date) {
         if (!date) return;
-        taskListDiv.innerHTML = '<div class="alert">⏳ Loading tasks...</div>';
+        taskListDiv.innerHTML = '<div class="alert">Loading...</div>';
         const { data: tasks, error } = await sb.from('tasks').select('*').eq('task_date', date);
-        if (error) {
-            taskListDiv.innerHTML = `<div class="alert">❌ ${error.message}</div>`;
-            return;
-        }
-        if (!tasks || tasks.length === 0) {
-            taskListDiv.innerHTML = '<div class="alert">📭 No tasks for this date. Check back later!</div>';
-            return;
-        }
+        if (error) { taskListDiv.innerHTML = `<div class="alert">❌ ${error.message}</div>`; return; }
+        if (!tasks.length) { taskListDiv.innerHTML = '<div class="alert">📭 No tasks for this date.</div>'; return; }
 
-        const { data: completions } = await sb.from('task_completions').select('task_id, score').eq('user_id', currentUser.id);
-        const completedMap = new Map((completions || []).map(c => [c.task_id, c.score]));
+        const { data: comps } = await sb.from('task_completions').select('task_id, score').eq('user_id', currentUser.id);
+        const completed = new Map((comps||[]).map(c=>[c.task_id, c.score]));
 
         let html = '';
-        for (const task of tasks) {
-            const completed = completedMap.has(task.id);
-            const score = completedMap.get(task.id);
+        for (const t of tasks) {
+            const done = completed.has(t.id);
+            const score = completed.get(t.id);
             html += `
                 <div class="task-card">
-                    <div class="task-skill">${task.skill || 'General'}</div>
-                    <div class="task-title">${escapeHtml(task.title)}</div>
-                    ${task.description ? `<div class="task-desc">${escapeHtml(task.description.substring(0, 150))}${task.description.length > 150 ? '…' : ''}</div>` : ''}
-                    <div>
-                        ${completed ? `<span class="completed-badge">✅ Completed (${score}%)</span>` : `<button class="complete-btn" data-task-id="${task.id}">✓ Mark as Completed</button>`}
-                    </div>
+                    <div class="task-skill">${t.skill || 'Task'}</div>
+                    <div class="task-title">${escapeHtml(t.title)}</div>
+                    ${t.description ? `<div style="font-size:0.85rem; color:#cbd5e1; margin:0.3rem 0;">${escapeHtml(t.description.substring(0,150))}${t.description.length>150?'…':''}</div>` : ''}
+                    ${done ? `<span class="completed-badge">✅ Completed (${score}%)</span>` : `<button class="complete-btn" data-id="${t.id}">✓ Mark as Completed</button>`}
                 </div>
             `;
         }
         taskListDiv.innerHTML = html;
 
-        // Attach completion events
+        // Handle complete buttons
         document.querySelectorAll('.complete-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
-                const taskId = btn.dataset.taskId;
+                const taskId = btn.dataset.id;
                 const score = prompt("Enter your score (0-100):", "75");
                 if (score === null) return;
                 const num = parseInt(score);
-                if (isNaN(num) || num < 0 || num > 100) {
-                    alert("Score must be between 0 and 100");
-                    return;
-                }
+                if (isNaN(num) || num<0 || num>100) { alert("Score must be 0-100"); return; }
                 const { error } = await sb.from('task_completions').insert({
                     task_id: taskId,
                     user_id: currentUser.id,
@@ -459,9 +376,8 @@
                     user_name: currentUser.user_metadata?.full_name || currentUser.email.split('@')[0],
                     completed_at: new Date().toISOString()
                 });
-                if (error) {
-                    alert("Error: " + error.message);
-                } else {
+                if (error) alert("Error: " + error.message);
+                else {
                     alert(`✅ Score ${num}% saved!`);
                     await loadTasksForDate(date);
                     await renderLeaderboard();
@@ -473,57 +389,42 @@
     // ========== AUTH ==========
     async function login() {
         const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        if (!email || !password) {
-            showAuthMessage('Please enter email and password');
-            return;
-        }
+        const pwd = document.getElementById('password').value;
+        if (!email || !pwd) { showAuthMessage('Enter email and password'); return; }
         const btn = document.getElementById('loginBtn');
-        btn.disabled = true;
-        btn.textContent = 'Signing in...';
-        const { error } = await sb.auth.signInWithPassword({ email, password });
-        btn.disabled = false;
-        btn.textContent = 'Sign In';
+        btn.disabled = true; btn.textContent = 'Signing in...';
+        const { error } = await sb.auth.signInWithPassword({ email, password: pwd });
+        btn.disabled = false; btn.textContent = 'Sign In';
         if (error) showAuthMessage(error.message);
     }
-
-    async function logout() {
-        await sb.auth.signOut();
-    }
-
+    async function logout() { await sb.auth.signOut(); }
     async function signup() {
-        const email = prompt("Enter your email address:");
+        const email = prompt("Enter email:");
         if (!email) return;
-        const password = prompt("Create a password (minimum 6 characters):");
-        if (!password || password.length < 6) {
-            alert("Password must be at least 6 characters");
-            return;
-        }
-        const name = prompt("Your full name (optional):", email.split('@')[0]);
+        const pwd = prompt("Password (min 6 chars):");
+        if (!pwd || pwd.length<6) { alert("Password too short"); return; }
+        const name = prompt("Full name (optional):", email.split('@')[0]);
         const { error } = await sb.auth.signUp({
-            email,
-            password,
+            email, password: pwd,
             options: { data: { full_name: name || email.split('@')[0] } }
         });
-        if (error) alert("Signup error: " + error.message);
-        else alert("Account created! Please check your email to confirm (or disable email confirmation in Supabase).");
+        if (error) alert(error.message);
+        else alert("Account created! Check email to confirm.");
     }
-
     async function resetPassword() {
-        const email = prompt("Enter your email address to receive a reset link:");
+        const email = prompt("Enter your email for reset link:");
         if (!email) return;
         const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
-        if (error) alert("Error: " + error.message);
-        else alert("Password reset link sent! Check your email.");
+        if (error) alert(error.message);
+        else alert("Reset link sent!");
     }
-
-    async function updateUIForUser(user) {
+    async function updateUI(user) {
         if (user) {
             currentUser = user;
             authCard.style.display = 'none';
-            dashboard.style.display = 'block';
+            dashboardDiv.style.display = 'block';
             await loadTaskDates();
-            const today = new Date().toISOString().slice(0, 10);
+            const today = new Date().toISOString().slice(0,10);
             datePicker.value = today;
             await loadTasksForDate(today);
             await renderLeaderboard();
@@ -531,24 +432,18 @@
         } else {
             currentUser = null;
             authCard.style.display = 'block';
-            dashboard.style.display = 'none';
+            dashboardDiv.style.display = 'none';
             document.getElementById('email').value = '';
             document.getElementById('password').value = '';
         }
     }
 
-    // Auth state listener
-    sb.auth.onAuthStateChange((event, session) => {
-        updateUIForUser(session?.user || null);
-    });
-
-    // Initial session check
+    sb.auth.onAuthStateChange((event, session) => updateUI(session?.user || null));
     (async () => {
         const { data: { user } } = await sb.auth.getUser();
-        await updateUIForUser(user);
+        await updateUI(user);
     })();
 
-    // Event listeners
     document.getElementById('loginBtn').addEventListener('click', login);
     document.getElementById('logoutBtn').addEventListener('click', logout);
     document.getElementById('loadTasksBtn').addEventListener('click', () => {
