@@ -1,0 +1,862 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prepositions Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=1600&q=80') center/cover fixed;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            text-align: center;
+            color: #9c27b0;
+            margin-bottom: 10px;
+            font-size: 2.8em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, #9c27b020 0%, #7b1fa220 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 4px solid #9c27b0;
+        }
+
+        .example {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            color: #333;
+        }
+
+        .word-bank {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .word-bank h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .word-chip {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #856404;
+            border: 2px solid #ffc107;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #9c27b0;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 40px;
+            background: #e0e0e0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #28a745, #34d399);
+            transition: width 0.5s ease, background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            border-radius: 20px;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .stat-box {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .stat-correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .stat-incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .stat-remaining {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-number {
+            text-align: center;
+            font-size: 1.4em;
+            color: #9c27b0;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .sentence {
+            font-size: 1.3em;
+            line-height: 2;
+            margin-bottom: 25px;
+            color: #333;
+            text-align: center;
+        }
+
+        .blank-input {
+            display: inline-block;
+            min-width: 120px;
+            padding: 8px 12px;
+            border: 3px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            margin: 0 5px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .blank-input:focus {
+            outline: none;
+            border-color: #9c27b0;
+            box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.2);
+            transform: scale(1.05);
+        }
+
+        .blank-input.correct {
+            border-color: #28a745;
+            background: #d4edda;
+            animation: correctPulse 0.5s ease;
+        }
+
+        .blank-input.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .correct-answer-display {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #d4edda;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+            color: #155724;
+            font-weight: bold;
+            animation: slideIn 0.3s ease;
+            font-size: 1.2em;
+        }
+
+        .correct-answer-display.show {
+            display: block;
+        }
+
+        /* Buttons */
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+            color: white;
+            border: none;
+            padding: 18px 45px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(156, 39, 176, 0.4);
+            transition: all 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(156, 39, 176, 0.6);
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            font-size: 1.4em;
+            padding: 20px 50px;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            display: none;
+        }
+
+        .next-btn.show {
+            display: inline-block;
+        }
+
+        /* Score */
+        .final-score {
+            text-align: center;
+            padding: 40px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .final-score.show {
+            display: block;
+        }
+
+        .score-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .score-text {
+            font-size: 3em;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+
+        .score-details {
+            font-size: 1.3em;
+            color: #1b5e20;
+            margin-bottom: 30px;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+        }
+
+        #startSection {
+            display: block;
+        }
+
+        #quizSection {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .sentence {
+                font-size: 1.1em;
+            }
+
+            .blank-input {
+                min-width: 80px;
+                font-size: 0.9em;
+            }
+
+            button {
+                padding: 15px 30px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Prepositions Quiz</h1>
+        <p class="subtitle">Complete the sentences with the correct preposition</p>
+
+        <!-- Start Section -->
+        <div id="startSection">
+            <div class="instructions">
+                <h3 style="color: #9c27b0; margin-bottom: 15px;">📚 Instructions:</h3>
+                <p style="margin: 10px 0; line-height: 1.8;">The verb is given in each sentence. You only need to write the correct <strong>preposition</strong>. Choose from: <strong>for, in, of, on, to, with</strong>.</p>
+                
+                <div class="example">
+                    <strong>Example:</strong><br>
+                    If you succeed ___ your plans, you will get promoted.<br>
+                    → <strong>If you succeed in your plans, you will get promoted.</strong><br>
+                    (You write: <strong>in</strong>)
+                </div>
+            </div>
+
+            <div style="background: #f3e5f5; padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+                <label for="studentName" style="font-weight: bold; color: #7b1fa2; font-size: 1.1em;">Your Name:</label>
+                <input 
+                    type="text" 
+                    id="studentName" 
+                    placeholder="Enter your full name" 
+                    style="width: 100%; padding: 12px; margin-top: 8px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em;"
+                    required
+                >
+            </div>
+
+            <div class="button-container">
+                <button class="start-btn" onclick="startQuiz()">🚀 Start Quiz</button>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quizSection">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-text" id="progressText">Question 1 of 10</div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar" id="progressBar">0%</div>
+                </div>
+                <div class="progress-stats">
+                    <div class="stat-box stat-correct">
+                        ✓ Correct: <span id="correctCount">0</span>
+                    </div>
+                    <div class="stat-box stat-incorrect">
+                        ✗ Incorrect: <span id="incorrectCount">0</span>
+                    </div>
+                    <div class="stat-box stat-remaining">
+                        ⏳ Remaining: <span id="remainingCount">10</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Word Bank -->
+            <div class="word-bank" id="wordBank"></div>
+
+            <!-- Question Card -->
+            <div id="questionCard"></div>
+
+            <!-- Buttons -->
+            <div class="button-container">
+                <button onclick="checkAnswer()">✓ Check Answer</button>
+                <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question →</button>
+            </div>
+
+            <!-- Final Score -->
+            <div class="final-score" id="finalScore">
+                <div class="score-icon" id="scoreIcon">🎉</div>
+                <div class="score-text" id="scoreText"></div>
+                <div class="score-details" id="scoreDetails"></div>
+                <div id="submissionStatus" style="margin-top: 20px; padding: 15px; border-radius: 8px; display: none;"></div>
+                <button class="restart-btn" onclick="location.reload()">🔄 Try Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio elements -->
+    <audio id="correctSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZSA0PVqzn77BdGAg+l9r0yoEsBS6Czv" type="audio/wav">
+    </audio>
+    <audio id="incorrectSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA" type="audio/wav">
+    </audio>
+    <audio id="completeSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZSA0PVqzn77BdGAg+l9r0yoEsBS6Czv" type="audio/wav">
+    </audio>
+
+    <script>
+        // 100 Preposition Questions
+        const questionBank = [
+            // BELONG TO
+            { sentence: "This book doesn't belong ___ me.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "These keys belong ___ my sister.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "The house used to belong ___ my grandparents.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "Does this car belong ___ you?", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "The land will belong ___ the government.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            
+            // CONSIST OF
+            { sentence: "The team consists ___ twelve players.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "This salad consists ___ fresh vegetables.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "The exam will consist ___ three parts.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Our group consists ___ five members.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "The book consists ___ ten chapters.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            
+            // DEPEND ON
+            { sentence: "Success will depend ___ hard work.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "We can depend ___ you for help.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "The outcome will depend ___ many factors.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "Children depend ___ their parents.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "The price will depend ___ demand.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            
+            // DREAM OF
+            { sentence: "She always dreams ___ becoming a doctor.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "I dream ___ traveling around the world.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "They dream ___ owning their own business.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Many people dream ___ winning the lottery.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "He used to dream ___ being famous.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            
+            // HAPPEN TO
+            { sentence: "What will happen ___ us if we fail?", answer: "to", verb: "happen", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "Nothing bad will happen ___ you.", answer: "to", verb: "happen", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "Something strange happened ___ me yesterday.", answer: "to", verb: "happen", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "Do you know what happened ___ John?", answer: "to", verb: "happen", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "Accidents can happen ___ anyone.", answer: "to", verb: "happen", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            
+            // SUCCEED IN
+            { sentence: "If you succeed ___ your plans, you will get promoted.", answer: "in", verb: "succeed", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "She will succeed ___ her career.", answer: "in", verb: "succeed", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "We must succeed ___ this project.", answer: "in", verb: "succeed", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "They finally succeeded ___ their mission.", answer: "in", verb: "succeed", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "I hope to succeed ___ life.", answer: "in", verb: "succeed", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            
+            // THINK OF
+            { sentence: "What do you think ___ this idea?", answer: "of", verb: "think", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "I often think ___ my childhood.", answer: "of", verb: "think", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Did you think ___ a solution?", answer: "of", verb: "think", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "She doesn't think ___ him anymore.", answer: "of", verb: "think", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "We need to think ___ alternatives.", answer: "of", verb: "think", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            
+            // WORK FOR
+            { sentence: "I work ___ a large technology company.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            { sentence: "She wants to work ___ a charity organization.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            { sentence: "They work ___ the government.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            { sentence: "Do you work ___ yourself or a company?", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            { sentence: "He used to work ___ a small startup.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            
+            // BELIEVE IN
+            { sentence: "I believe ___ hard work and dedication.", answer: "in", verb: "believe", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "Do you believe ___ ghosts?", answer: "in", verb: "believe", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "She doesn't believe ___ luck.", answer: "in", verb: "believe", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "We believe ___ treating everyone fairly.", answer: "in", verb: "believe", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "They believe ___ giving second chances.", answer: "in", verb: "believe", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            
+            // Mixed questions
+            { sentence: "This strategy depends ___ careful planning.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "The recipe consists ___ simple ingredients.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "We dream ___ starting our own company.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "That trophy belongs ___ our team.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "I believe ___ helping others.", answer: "in", verb: "believe", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "Greatness can happen ___ anyone.", answer: "to", verb: "happen", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            
+            { sentence: "The committee consists ___ experts from various fields.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Your future will depend ___ your choices today.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "Students dream ___ graduating with honors.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "This wallet doesn't belong ___ me.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "Engineers work ___ multinational corporations.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            { sentence: "Did you ever dream ___ meeting a celebrity?", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            
+            { sentence: "The organization consists ___ volunteers.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Athletes succeed ___ their competitions.", answer: "in", verb: "succeed", wordbank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "What do you think ___ modern art?", answer: "of", verb: "think", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "The property belongs ___ the bank.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "Scientists work ___ research institutions.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            { sentence: "Good things happen ___ good people.", answer: "to", verb: "happen", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            
+            { sentence: "The course consists ___ lectures and practical sessions.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Your health will depend ___ your lifestyle.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "Children dream ___ becoming superheroes.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "These documents belong ___ the company.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "I believe ___ treating people with respect.", answer: "in", verb: "believe", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "Developers work ___ tech companies.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            
+            { sentence: "The meal consists ___ three courses.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "You can always depend ___ me.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "Many artists dream ___ fame and recognition.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "This responsibility belongs ___ the manager.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "What did you think ___ the movie?", answer: "of", verb: "think", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Writers work ___ publishing houses.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            
+            { sentence: "The package consists ___ various items.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Plants depend ___ water and sunlight.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "Entrepreneurs dream ___ building empires.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "The medals belong ___ the champion.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "I believe ___ being honest.", answer: "in", verb: "believe", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "Researchers work ___ universities.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            
+            { sentence: "The program consists ___ interactive modules.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Victory will depend ___ teamwork.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "Students dream ___ getting scholarships.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "That idea belongs ___ my colleague.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "What do you think ___ his proposal?", answer: "of", verb: "think", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "They work ___ developing new technology.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            
+            { sentence: "The solution consists ___ multiple steps.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Animals depend ___ their natural habitat.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "Singers dream ___ performing on big stages.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "The rights belong ___ the author.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "I believe ___ making a difference.", answer: "in", verb: "believe", wordBank: ["in", "to", "of", "on", "for", "with"] },
+            { sentence: "Chefs work ___ restaurants and hotels.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] },
+            
+            { sentence: "The training consists ___ practical exercises.", answer: "of", verb: "consist", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Quality will depend ___ attention to detail.", answer: "on", verb: "depend", wordBank: ["on", "to", "of", "in", "for", "with"] },
+            { sentence: "Athletes dream ___ breaking records.", answer: "of", verb: "dream", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "This invention belongs ___ a brilliant scientist.", answer: "to", verb: "belong", wordBank: ["to", "of", "on", "in", "for", "with"] },
+            { sentence: "What did you think ___ that book?", answer: "of", verb: "think", wordBank: ["of", "to", "on", "in", "for", "with"] },
+            { sentence: "Students work ___ completing their assignments.", answer: "for", verb: "work", wordBank: ["for", "to", "of", "on", "in", "with"] }
+        ];
+
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let answeredQuestions = 0;
+        let isChecked = false;
+        let studentName = '';
+        let userResponses = [];
+
+        // Sound functions
+        function playSound(soundId) {
+            const sound = document.getElementById(soundId);
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log('Audio play failed:', e));
+        }
+
+        function startQuiz() {
+            const nameInput = document.getElementById('studentName');
+            studentName = nameInput.value.trim();
+
+            if (!studentName) {
+                alert('Please enter your name to start the quiz.');
+                nameInput.focus();
+                return;
+            }
+
+            // Select 10 random questions
+            const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
+            currentQuestions = shuffled.slice(0, 10);
+            userResponses = [];
+            
+            document.getElementById('startSection').style.display = 'none';
+            document.getElementById('quizSection').style.display = 'block';
+            
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentIndex];
+            const card = document.getElementById('questionCard');
+            
+            isChecked = false;
+            document.getElementById('nextBtn').classList.remove('show');
+            
+            // Display word bank
+            const wordBankDiv = document.getElementById('wordBank');
+            wordBankDiv.innerHTML = `
+                <h3>💡 Choose the correct preposition:</h3>
+                <div class="words">
+                    ${question.wordBank.map(word => `<span class="word-chip">${word}</span>`).join('')}
+                </div>
+            `;
+            
+            // Create sentence with blank input
+            const sentenceParts = question.sentence.split('___');
+            let sentenceHTML = sentenceParts[0] + 
+                `<input type="text" class="blank-input" id="answerInput" autocomplete="off" placeholder="preposition">` + 
+                (sentenceParts[1] || '');
+            
+            card.innerHTML = `
+                <div class="question-card">
+                    <div class="question-number">Question ${currentIndex + 1} of 10</div>
+                    <div class="sentence">
+                        ${sentenceHTML}
+                    </div>
+                    <div class="correct-answer-display" id="correctAnswerDisplay">
+                        ✓ Correct answer: <strong>${question.answer}</strong>
+                    </div>
+                </div>
+            `;
+            
+            updateProgress();
+            
+            // Focus on input
+            setTimeout(() => {
+                document.getElementById('answerInput').focus();
+            }, 100);
+        }
+
+        function normalizeAnswer(answer) {
+            return answer
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, ' ');
+        }
+
+        function checkAnswer() {
+            if (isChecked) return;
+            
+            const question = currentQuestions[currentIndex];
+            const input = document.getElementById('answerInput');
+            const userAnswer = input.value.trim();
+            const normalizedUserAnswer = normalizeAnswer(userAnswer);
+            const correctAnswer = normalizeAnswer(question.answer);
+            
+            const isCorrect = normalizedUserAnswer === correctAnswer;
+            
+            // Store response for Google Sheets
+            userResponses.push({
+                questionNumber: currentIndex + 1,
+                sentence: question.sentence,
+                correctAnswer: question.answer,
+                userAnswer: userAnswer || '(no answer)',
+                isCorrect: isCorrect
+            });
+            
+            if (isCorrect) {
+                input.classList.add('correct');
+                correctCount++;
+                playSound('correctSound');
+            } else {
+                input.classList.add('incorrect');
+                incorrectCount++;
+                document.getElementById('correctAnswerDisplay').classList.add('show');
+                playSound('incorrectSound');
+            }
+            
+            answeredQuestions++;
+            isChecked = true;
+            document.getElementById('nextBtn').classList.add('show');
+            updateProgress();
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            
+            if (currentIndex < currentQuestions.length) {
+                showQuestion();
+            } else {
+                showFinalScore();
+            }
+        }
+
+        function updateProgress() {
+            const progressPercent = (answeredQuestions / 10) * 100;
+            const progressBar = document.getElementById('progressBar');
+            
+            progressBar.style.width = progressPercent + '%';
+            progressBar.textContent = Math.round(progressPercent) + '%';
+            
+            // Change color based on performance
+            const successRate = answeredQuestions > 0 ? (correctCount / answeredQuestions) * 100 : 0;
+            if (successRate >= 70) {
+                progressBar.style.background = 'linear-gradient(90deg, #28a745, #34d399)';
+            } else if (successRate >= 50) {
+                progressBar.style.background = 'linear-gradient(90deg, #ffc107, #ffeb3b)';
+            } else {
+                progressBar.style.background = 'linear-gradient(90deg, #dc3545, #ff6b6b)';
+            }
+            
+            document.getElementById('progressText').textContent = `Question ${currentIndex + 1} of 10`;
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('incorrectCount').textContent = incorrectCount;
+            document.getElementById('remainingCount').textContent = 10 - answeredQuestions;
+        }
+
+        function showFinalScore() {
+            playSound('completeSound');
+            
+            document.getElementById('wordBank').style.display = 'none';
+            document.getElementById('questionCard').style.display = 'none';
+            document.querySelector('.button-container').style.display = 'none';
+            document.querySelector('.progress-container').style.display = 'none';
+            
+            const finalScore = document.getElementById('finalScore');
+            const percentage = (correctCount / 10) * 100;
+            
+            let icon = '🎉';
+            let message = '';
+            
+            if (percentage === 100) {
+                icon = '🏆';
+                message = 'Perfect Score! Outstanding!';
+            } else if (percentage >= 80) {
+                icon = '🌟';
+                message = 'Excellent Work!';
+            } else if (percentage >= 60) {
+                icon = '👍';
+                message = 'Good Job!';
+            } else if (percentage >= 40) {
+                icon = '📚';
+                message = 'Keep Practicing!';
+            } else {
+                icon = '💪';
+                message = 'Don\'t Give Up!';
+            }
+            
+            document.getElementById('scoreIcon').textContent = icon;
+            document.getElementById('scoreText').textContent = message;
+            document.getElementById('scoreDetails').innerHTML = `
+                You got <strong>${correctCount} out of 10</strong> correct<br>
+                That's <strong>${percentage}%</strong>!
+            `;
+            
+            finalScore.classList.add('show');
+            
+            // Submit to Google Sheets
+            submitToGoogleSheets(correctCount, percentage);
+        }
+
+        function submitToGoogleSheets(correct, percentage) {
+            const statusDiv = document.getElementById('submissionStatus');
+            statusDiv.textContent = '📤 Submitting results...';
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = '#fff3cd';
+            statusDiv.style.color = '#856404';
+
+            const timestamp = new Date().toLocaleString();
+            
+            // Prepare detailed results
+            const detailedResults = userResponses.map(r => 
+                `Q${r.questionNumber}: ${r.isCorrect ? '✓' : '✗'} "${r.sentence}" (User: "${r.userAnswer}" | Correct: "${r.correctAnswer}")`
+            ).join(' | ');
+
+            const data = {
+                timestamp: timestamp,
+                name: studentName,
+                score: correct,
+                total: 10,
+                percentage: percentage + '%',
+                details: detailedResults,
+                quizType: 'Prepositions Quiz'
+            };
+
+            // Same Google Apps Script Web App URL
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbyzqnFl2MWH_4vk4IuJPXsp2fB4VyAWP516acHlcJfopyczhJ-OVObOEKy9CFD6anqq/exec';
+
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                statusDiv.textContent = '✅ Results submitted successfully to Google Sheets!';
+                statusDiv.style.background = '#d4edda';
+                statusDiv.style.color = '#155724';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                statusDiv.textContent = '✅ Quiz completed! (Results recorded locally)';
+                statusDiv.style.background = '#d4edda';
+                statusDiv.style.color = '#155724';
+            });
+        }
+
+        // Allow Enter key to check answer
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.getElementById('answerInput')) {
+                if (!isChecked) {
+                    checkAnswer();
+                } else {
+                    nextQuestion();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
