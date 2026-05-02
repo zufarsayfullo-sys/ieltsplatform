@@ -5,21 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Video Task: The benefits of a bilingual brain</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #ffffff;
       color: #1a1a1a;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.5;
-      padding: 2rem 1.5rem;
     }
-    .container {
+    /* Fullscreen start overlay */
+    .start-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+    .start-overlay.hide { display: none; }
+    .start-card {
+      background: #f8fafc;
+      padding: 2rem;
+      border-radius: 32px;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+    .start-card h2 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .start-card p {
+      color: #4b5563;
+      margin-bottom: 1rem;
+    }
+    .start-btn {
+      background: #111827;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: 0.15s;
+    }
+    .start-btn:hover {
+      background: #1e293b;
+      transform: scale(1.02);
+    }
+    .quiz-content {
+      display: none;
       max-width: 880px;
       margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    .quiz-content.visible {
+      display: block;
+    }
+    /* Main quiz styles */
+    .container {
       background: white;
       border-radius: 24px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.05);
@@ -207,40 +257,77 @@
   </style>
 </head>
 <body>
-<div class="container">
-  <h1>🧠 Video Listening: The benefits of a bilingual brain</h1>
-  <p style="color: #4b5563; margin-bottom: 0.5rem;">BBC Ideas – with Dr. Christos Pliatsikas</p>
-
-  <div class="video-wrapper">
-    <iframe src="https://www.youtube.com/embed/WSUj3PRvzzg" title="The benefits of a bilingual brain - BBC Ideas" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<div class="start-overlay" id="startOverlay">
+  <div class="start-card">
+    <h2>🧠 Video Listening Task</h2>
+    <p>The benefits of a bilingual brain</p>
+    <p style="font-size: 0.9rem;">BBC Ideas · 5 questions</p>
+    <button class="start-btn" id="fullscreenStartBtn">🚀 Start Fullscreen Quiz</button>
+    <p style="font-size: 0.7rem; margin-top: 1rem;">Fullscreen will be requested for better focus.</p>
   </div>
+</div>
 
-  <div class="instruction">
-    📺 Watch the video and answer the 5 questions below. Click <strong>“Check answers”</strong> to see your score – it will be sent automatically to your IELTS dashboard.
+<div class="quiz-content" id="quizContent">
+  <div class="container">
+    <h1>🧠 Video: The benefits of a bilingual brain</h1>
+    <p style="color: #4b5563; margin-bottom: 0.5rem;">BBC Ideas – with Dr. Christos Pliatsikas</p>
+
+    <div class="video-wrapper">
+      <iframe src="https://www.youtube.com/embed/WSUj3PRvzzg" title="The benefits of a bilingual brain - BBC Ideas" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+
+    <div class="instruction">
+      📺 Watch the video and answer the 5 questions below. Click <strong>“Check answers”</strong> to see your score – it will be sent automatically to your IELTS dashboard.
+    </div>
+
+    <div class="transcript-note">
+      💡 Need help? Use the YouTube transcript (click the “...” menu and select “Open transcript”) or refer to the key points from the video while answering.
+    </div>
+
+    <div id="questions-area"></div>
+
+    <div class="actions">
+      <button id="checkBtn" class="primary">✅ Check answers</button>
+      <button id="restartBtn">⟳ Restart task</button>
+    </div>
+
+    <div id="scorePanel" class="score-area">
+      <div class="final-score" id="scoreValue">0%</div>
+      <div id="scoreMessage" style="font-size:0.85rem; margin-top:0.3rem"></div>
+      <hr>
+      <button id="restartFromScoreBtn" style="background:#eef2ff;">Watch again / Retry</button>
+    </div>
+    <footer>Your score will be automatically sent to your IELTS dashboard.</footer>
   </div>
-
-  <div class="transcript-note">
-    💡 Need help? Use the YouTube transcript (click the “...” menu and select “Open transcript”) or refer to the key points from the video while answering.
-  </div>
-
-  <div id="questions-area"></div>
-
-  <div class="actions">
-    <button id="checkBtn" class="primary">✅ Check answers</button>
-    <button id="restartBtn">⟳ Restart task</button>
-  </div>
-
-  <div id="scorePanel" class="score-area">
-    <div class="final-score" id="scoreValue">0%</div>
-    <div id="scoreMessage" style="font-size:0.85rem; margin-top:0.3rem"></div>
-    <hr>
-    <button id="restartFromScoreBtn" style="background:#eef2ff;">Watch again / Retry</button>
-  </div>
-  <footer>Your score will be automatically sent to your IELTS dashboard.</footer>
 </div>
 
 <script>
-  // Questions based on the video transcript
+  // Fullscreen start logic
+  (function() {
+    const overlay = document.getElementById('startOverlay');
+    const quizDiv = document.getElementById('quizContent');
+    const startBtn = document.getElementById('fullscreenStartBtn');
+
+    function requestFullscreenAndStart() {
+      const elem = document.documentElement;
+      const req = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.mozRequestFullScreen || elem.msRequestFullscreen;
+      if (req) {
+        req.call(elem).then(() => {
+          overlay.classList.add('hide');
+          quizDiv.classList.add('visible');
+        }).catch(() => {
+          overlay.classList.add('hide');
+          quizDiv.classList.add('visible');
+        });
+      } else {
+        overlay.classList.add('hide');
+        quizDiv.classList.add('visible');
+      }
+    }
+    startBtn.addEventListener('click', requestFullscreenAndStart);
+  })();
+
+  // ----- Video quiz data (based on transcript) -----
   const questions = [
     {
       text: "According to the video, what did people used to think about being bilingual?",
@@ -250,7 +337,7 @@
         "It was only beneficial for adults.",
         "It helped with learning mathematics."
       ],
-      correct: 1  // index 1 (B)
+      correct: 1
     },
     {
       text: "What did Ellen Bialystok and her team discover in Toronto in 2007?",
@@ -296,7 +383,6 @@
 
   let userAnswers = new Array(questions.length).fill(null);
   let evaluated = false;
-  let finalScore = null;
 
   const questionsDiv = document.getElementById('questions-area');
   const checkBtn = document.getElementById('checkBtn');
@@ -377,7 +463,6 @@
 
   function showScoreAndSend() {
     const pct = computeScore();
-    finalScore = pct;
     scoreValueSpan.innerText = `${pct}%`;
     let msg = "";
     if (pct >= 80) msg = "Excellent listening comprehension! 🎉";
@@ -405,7 +490,6 @@
   function restartTask() {
     userAnswers.fill(null);
     evaluated = false;
-    finalScore = null;
     scorePanel.style.display = "none";
     checkBtn.disabled = false;
     renderQuestions();
