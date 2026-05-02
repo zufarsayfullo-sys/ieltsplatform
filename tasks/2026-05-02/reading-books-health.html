@@ -5,269 +5,127 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reading Task: Why Books Are Good for Your Health</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: #ffffff;
       color: #1a1a1a;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       line-height: 1.5;
-      padding: 2rem 1.5rem;
     }
-    .container {
-      max-width: 880px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 24px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-      padding: 2rem;
-    }
-    h1 {
-      font-size: 1.8rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-      color: #111;
-    }
-    .passage {
-      background: #f9fafb;
-      padding: 1.2rem;
-      border-radius: 16px;
-      margin: 1.2rem 0;
-      font-size: 0.95rem;
-      line-height: 1.6;
-      color: #1e293b;
-      border: 1px solid #eef2f6;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .passage p {
-      margin-bottom: 0.75rem;
-    }
-    .instruction {
-      background: #fef9e3;
-      padding: 0.8rem 1rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-    }
-    .question-card {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
-      padding: 1.2rem;
-      margin-bottom: 1.2rem;
-    }
-    .question-text {
-      font-weight: 600;
-      font-size: 1rem;
-      margin-bottom: 0.75rem;
-      color: #0f172a;
-    }
-    .options {
+    .start-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      z-index: 1000;
       display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-    }
-    .option {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.6rem 1rem;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      background: #fff;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .option:hover:not(.disabled) {
-      background: #f1f5f9;
-      border-color: #94a3b8;
-    }
-    .option.selected {
-      background: #eff6ff;
-      border-color: #3b82f6;
-    }
-    .option.correct {
-      background: #ecfdf5;
-      border-color: #10b981;
-    }
-    .option.wrong {
-      background: #fef2f2;
-      border-color: #ef4444;
-    }
-    .option.disabled {
-      cursor: default;
-      opacity: 0.9;
-    }
-    .option-letter {
-      font-weight: 700;
-      width: 28px;
-      height: 28px;
-      display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: #f1f5f9;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      color: #1e293b;
+      flex-direction: column;
+      text-align: center;
     }
-    .option.selected .option-letter {
-      background: #3b82f6;
-      color: white;
+    .start-overlay.hide { display: none; }
+    .start-card {
+      background: #f8fafc;
+      padding: 2rem;
+      border-radius: 32px;
+      max-width: 400px;
     }
-    .option.correct .option-letter {
-      background: #10b981;
-      color: white;
-    }
-    .option.wrong .option-letter {
-      background: #ef4444;
-      color: white;
-    }
-    .option-text {
-      font-size: 0.9rem;
-    }
-    .feedback {
-      margin-top: 0.6rem;
-      font-size: 0.8rem;
-      padding-left: 0.2rem;
-    }
-    .feedback.correct-fb {
-      color: #10b981;
-    }
-    .feedback.wrong-fb {
-      color: #ef4444;
-    }
-    .actions {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      margin: 1.5rem 0 1rem;
-      flex-wrap: wrap;
-    }
-    button {
-      font-family: inherit;
-      font-weight: 500;
-      padding: 0.65rem 1.4rem;
-      border-radius: 40px;
-      border: none;
-      cursor: pointer;
-      background: #f1f5f9;
-      color: #1e293b;
-      transition: 0.15s;
-    }
-    button.primary {
+    .start-card h2 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .start-btn {
       background: #111827;
       color: white;
-    }
-    button.primary:hover {
-      background: #1e293b;
-      transform: translateY(-1px);
-    }
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .score-area {
-      margin-top: 2rem;
-      text-align: center;
-      padding: 1rem;
-      background: #f8fafc;
-      border-radius: 24px;
-      display: none;
-    }
-    .final-score {
-      font-size: 2.2rem;
-      font-weight: 700;
-    }
-    hr {
-      margin: 1rem 0;
       border: none;
-      border-top: 1px solid #eef2f6;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 16px;
     }
-    footer {
-      font-size: 0.7rem;
-      text-align: center;
-      margin-top: 2rem;
-      color: #94a3b8;
+    .quiz-content {
+      display: none;
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
     }
+    .quiz-content.visible { display: block; }
+    /* Original reading quiz styles (simplified for brevity, but same as earlier) */
+    .container { background: white; border-radius: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); padding: 2rem; }
+    h1 { font-size: 1.8rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .passage { background: #f9fafb; padding: 1.2rem; border-radius: 16px; margin: 1.2rem 0; border: 1px solid #eef2f6; max-height: 400px; overflow-y: auto; }
+    .passage p { margin-bottom: 0.75rem; }
+    .question-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 1.2rem; margin-bottom: 1.2rem; }
+    .question-text { font-weight: 600; margin-bottom: 0.75rem; }
+    .options { display: flex; flex-direction: column; gap: 0.6rem; }
+    .option { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 1rem; border: 1px solid #e2e8f0; border-radius: 14px; cursor: pointer; }
+    .option.selected { background: #eff6ff; border-color: #3b82f6; }
+    .option.correct { background: #ecfdf5; border-color: #10b981; }
+    .option.wrong { background: #fef2f2; border-color: #ef4444; }
+    .option.disabled { cursor: default; opacity: 0.9; }
+    .option-letter { font-weight: 700; width: 28px; height: 28px; background: #f1f5f9; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; }
+    .actions { display: flex; justify-content: space-between; margin: 1.5rem 0; gap: 1rem; }
+    button { font-family: inherit; padding: 0.65rem 1.4rem; border-radius: 40px; border: none; cursor: pointer; background: #f1f5f9; }
+    button.primary { background: #111827; color: white; }
+    button.primary:hover { background: #1e293b; }
+    .score-area { margin-top: 2rem; text-align: center; padding: 1rem; background: #f8fafc; border-radius: 24px; display: none; }
+    .final-score { font-size: 2.2rem; font-weight: 700; }
+    footer { font-size: 0.7rem; text-align: center; margin-top: 2rem; color: #94a3b8; }
   </style>
 </head>
 <body>
-<div class="container">
-  <h1>📚 Reading: Why Books Are Good for Your Health</h1>
-  <div class="instruction">
-    Read the passage carefully, then answer the 6 multiple-choice questions.<br>
-    Click <strong>“Check answers”</strong> to see your score – it will be sent automatically.
+<div class="start-overlay" id="startOverlay">
+  <div class="start-card">
+    <h2>📚 Reading Task</h2>
+    <p>Why Books Are Good for Your Health</p>
+    <p style="font-size: 0.9rem;">📖 Passage + 6 multiple-choice questions</p>
+    <button class="start-btn" id="fullscreenStartBtn">🚀 Start Fullscreen Quiz</button>
   </div>
-
-  <div class="passage">
-    <p><strong>Why Books Are Good for Your Health</strong></p>
-    <p>Although it's a sedentary activity, reading books can be good for your health. In fact, people who read books tend to live longer. Why? Like most hobbies, the answer is simple: mental engagement. In the case of books, this is achieved via "deep reading," which is the immersive process of connecting with a text, asking questions about it, and thinking about how it connects to the real world. Studies have also revealed that readers have stronger concentration and critical thinking skills, and they are better at understanding other people's feelings. In short, books keep our minds active, and an active mind often means a longer, healthier life.</p>
-    <p>This makes sense. Just like our bodies, our brains need exercise. Whether we get that exercise from books, board games, or crossword puzzles, the important thing is consistent mental engagement. When it comes to reading, a twelve-year Yale University study revealed that senior citizens who read books were around 20% less likely to die than those who read nothing. This was for people who read for more than 3.5 hours per week. This statistic reinforces the importance of keeping our minds going.</p>
-    <p>Another benefit of reading is stress reduction. In addition to being a relaxing activity, reading exposes us to new ideas and ways of looking at the world. As mentioned, this helps develop our critical thinking skills and ability to understand other people's feelings. As these abilities grow stronger, we become better at understanding the world and handling its daily stresses.</p>
-    <p>But what about online news reports or magazine articles? Don't they have similar benefits? Not quite. The key reason for this is depth. While you can finish most articles in five to ten minutes, a book demands more focus and commitment. Authors take their time exploring themes, character psychologies, and real-world issues—basically, we spend more time with a book's ideas and end up thinking about them more. The bright side for news lovers is that there is evidence that longer, thoughtful articles can provide benefits. Like books, it is the quality of our reading diet that is important.</p>
-    <p>In conclusion, books don't just entertain us—they actively strengthen our mental muscles and help us live longer, healthier lives. In a digital world that continues to destroy our attention spans, it is books that can save us.</p>
-    <p><em>References: Yale University study, deep reading research</em></p>
-  </div>
-
-  <div id="questions-area"></div>
-
-  <div class="actions">
-    <button id="checkBtn" class="primary">✅ Check answers</button>
-    <button id="restartBtn">⟳ Restart task</button>
-  </div>
-
-  <div id="scorePanel" class="score-area">
-    <div class="final-score" id="scoreValue">0%</div>
-    <div id="scoreMessage" style="font-size:0.85rem; margin-top:0.3rem"></div>
-    <hr>
-    <button id="restartFromScoreBtn" style="background:#eef2ff;">Start over</button>
-  </div>
-  <footer>Your score will be automatically sent to your IELTS dashboard.</footer>
 </div>
-
+<div class="quiz-content" id="quizContent">
+  <div class="container">
+    <h1>📚 Reading: Why Books Are Good for Your Health</h1>
+    <div class="instruction" style="background:#fef9e3; padding:0.8rem 1rem; border-radius:12px; margin-bottom:1.5rem;">Read the passage carefully, then answer 6 questions. Your score will be sent automatically.</div>
+    <div class="passage">
+      <p><strong>Why Books Are Good for Your Health</strong></p>
+      <p>Although it's a sedentary activity, reading books can be good for your health. In fact, people who read books tend to live longer. Why? Like most hobbies, the answer is simple: mental engagement. In the case of books, this is achieved via "deep reading," which is the immersive process of connecting with a text, asking questions about it, and thinking about how it connects to the real world. Studies have also revealed that readers have stronger concentration and critical thinking skills, and they are better at understanding other people's feelings. In short, books keep our minds active, and an active mind often means a longer, healthier life.</p>
+      <p>This makes sense. Just like our bodies, our brains need exercise. Whether we get that exercise from books, board games, or crossword puzzles, the important thing is consistent mental engagement. When it comes to reading, a twelve-year Yale University study revealed that senior citizens who read books were around 20% less likely to die than those who read nothing. This was for people who read for more than 3.5 hours per week. This statistic reinforces the importance of keeping our minds going.</p>
+      <p>Another benefit of reading is stress reduction. In addition to being a relaxing activity, reading exposes us to new ideas and ways of looking at the world. As mentioned, this helps develop our critical thinking skills and ability to understand other people's feelings. As these abilities grow stronger, we become better at understanding the world and handling its daily stresses.</p>
+      <p>But what about online news reports or magazine articles? Don't they have similar benefits? Not quite. The key reason for this is depth. While you can finish most articles in five to ten minutes, a book demands more focus and commitment. Authors take their time exploring themes, character psychologies, and real-world issues—basically, we spend more time with a book's ideas and end up thinking about them more. The bright side for news lovers is that there is evidence that longer, thoughtful articles can provide benefits. Like books, it is the quality of our reading diet that is important.</p>
+      <p>In conclusion, books don't just entertain us—they actively strengthen our mental muscles and help us live longer, healthier lives. In a digital world that continues to destroy our attention spans, it is books that can save us.</p>
+    </div>
+    <div id="questions-area"></div>
+    <div class="actions"><button id="checkBtn" class="primary">✅ Check answers</button><button id="restartBtn">⟳ Restart task</button></div>
+    <div id="scorePanel" class="score-area"><div class="final-score" id="scoreValue">0%</div><div id="scoreMessage" style="font-size:0.85rem; margin-top:0.3rem"></div><hr><button id="restartFromScoreBtn" style="background:#eef2ff;">Start over</button></div>
+    <footer>Your score will be automatically sent to your IELTS dashboard.</footer>
+  </div>
+</div>
 <script>
-  // Questions based on the passage
-  const questions = [
-    {
-      text: "A synonym for 'sedentary' is _______________.",
-      options: ["energetic", "standard", "inactive"],
-      correct: 2  // index 0-based: 0->a,1->b,2->c
-    },
-    {
-      text: "A synonym for 'mental engagement' is _______________.",
-      options: ["mental strength", "mental involvement", "mental positivity"],
-      correct: 1
-    },
-    {
-      text: "Crossword puzzles are an example of _______________.",
-      options: ["board games", "a brain exercise", "critical thinking practice"],
-      correct: 1
-    },
-    {
-      text: "People who read _______________ 3.5 hours per week were around 20% less likely to die in the study.",
-      options: ["less than", "more than", "around"],
-      correct: 1
-    },
-    {
-      text: "Reading can lower _______________.",
-      options: ["stress", "attention", "critical thinking skills"],
-      correct: 0
-    },
-    {
-      text: "News reports and articles are usually too _______________ to provide significant health benefits.",
-      options: ["stressful", "short", "easy"],
-      correct: 1
-    }
-  ];
+  // Fullscreen start
+  const overlay = document.getElementById('startOverlay');
+  const quizDiv = document.getElementById('quizContent');
+  const startBtn = document.getElementById('fullscreenStartBtn');
+  function requestFullscreenAndStart() {
+    const elem = document.documentElement;
+    const req = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.mozRequestFullScreen || elem.msRequestFullscreen;
+    if (req) { req.call(elem).then(() => { overlay.classList.add('hide'); quizDiv.classList.add('visible'); }).catch(() => { overlay.classList.add('hide'); quizDiv.classList.add('visible'); }); }
+    else { overlay.classList.add('hide'); quizDiv.classList.add('visible'); }
+  }
+  startBtn.addEventListener('click', requestFullscreenAndStart);
 
+  // Reading quiz logic (same as before)
+  const questions = [
+    { text: "A synonym for 'sedentary' is _______________.", options: ["energetic", "standard", "inactive"], correct: 2 },
+    { text: "A synonym for 'mental engagement' is _______________.", options: ["mental strength", "mental involvement", "mental positivity"], correct: 1 },
+    { text: "Crossword puzzles are an example of _______________.", options: ["board games", "a brain exercise", "critical thinking practice"], correct: 1 },
+    { text: "People who read _______________ 3.5 hours per week were around 20% less likely to die in the study.", options: ["less than", "more than", "around"], correct: 1 },
+    { text: "Reading can lower _______________.", options: ["stress", "attention", "critical thinking skills"], correct: 0 },
+    { text: "News reports and articles are usually too _______________ to provide significant health benefits.", options: ["stressful", "short", "easy"], correct: 1 }
+  ];
   let userAnswers = new Array(questions.length).fill(null);
   let evaluated = false;
-  let finalScore = null;
-
   const questionsDiv = document.getElementById('questions-area');
   const checkBtn = document.getElementById('checkBtn');
   const restartBtn = document.getElementById('restartBtn');
@@ -279,114 +137,41 @@
   function renderQuestions() {
     questionsDiv.innerHTML = '';
     questions.forEach((q, idx) => {
-      const card = document.createElement('div');
-      card.className = 'question-card';
-      const qText = document.createElement('div');
-      qText.className = 'question-text';
-      qText.innerText = `${idx+1}. ${q.text}`;
+      const card = document.createElement('div'); card.className = 'question-card';
+      const qText = document.createElement('div'); qText.className = 'question-text'; qText.innerText = `${idx+1}. ${q.text}`;
       card.appendChild(qText);
-
-      const optionsDiv = document.createElement('div');
-      optionsDiv.className = 'options';
+      const optionsDiv = document.createElement('div'); optionsDiv.className = 'options';
       q.options.forEach((opt, optIdx) => {
-        const optDiv = document.createElement('div');
-        optDiv.className = 'option';
+        const optDiv = document.createElement('div'); optDiv.className = 'option';
         if (evaluated) optDiv.classList.add('disabled');
         if (userAnswers[idx] === optIdx && !evaluated) optDiv.classList.add('selected');
         if (evaluated) {
           if (optIdx === q.correct) optDiv.classList.add('correct');
           if (userAnswers[idx] === optIdx && userAnswers[idx] !== q.correct) optDiv.classList.add('wrong');
         }
-        optDiv.innerHTML = `
-          <span class="option-letter">${String.fromCharCode(65+optIdx)}</span>
-          <span class="option-text">${opt}</span>
-        `;
-        if (!evaluated) {
-          optDiv.addEventListener('click', () => {
-            if (evaluated) return;
-            userAnswers[idx] = optIdx;
-            renderQuestions();
-          });
-        }
+        optDiv.innerHTML = `<span class="option-letter">${String.fromCharCode(65+optIdx)}</span><span class="option-text">${opt}</span>`;
+        if (!evaluated) optDiv.addEventListener('click', () => { if (!evaluated) { userAnswers[idx] = optIdx; renderQuestions(); } });
         optionsDiv.appendChild(optDiv);
       });
       card.appendChild(optionsDiv);
-
       if (evaluated) {
-        const fb = document.createElement('div');
-        fb.className = 'feedback';
-        if (userAnswers[idx] === null) {
-          fb.innerText = '⚠️ Not answered.';
-          fb.style.color = '#ef4444';
-        } else if (userAnswers[idx] === q.correct) {
-          fb.innerText = '✓ Correct!';
-          fb.classList.add('correct-fb');
-        } else {
-          fb.innerText = `✗ Incorrect. The correct answer is ${String.fromCharCode(65+q.correct)}: ${q.options[q.correct]}`;
-          fb.classList.add('wrong-fb');
-        }
+        const fb = document.createElement('div'); fb.className = 'feedback';
+        if (userAnswers[idx] === null) fb.innerText = '⚠️ Not answered.';
+        else if (userAnswers[idx] === q.correct) fb.innerText = '✓ Correct!';
+        else fb.innerText = `✗ Incorrect. Correct: ${String.fromCharCode(65+q.correct)}: ${q.options[q.correct]}`;
         card.appendChild(fb);
       }
       questionsDiv.appendChild(card);
     });
   }
-
-  function computeScore() {
-    let correct = 0;
-    for (let i = 0; i < questions.length; i++) {
-      if (userAnswers[i] !== null && userAnswers[i] === questions[i].correct) correct++;
-    }
-    return Math.round((correct / questions.length) * 100);
-  }
-
-  function sendScoreToParent(score) {
-    try {
-      window.parent.postMessage({ type: 'IELTS_QUIZ_SCORE', score: score }, '*');
-    } catch(e) { /* iframe may restrict, ignore */ }
-  }
-
-  function showScoreAndSend() {
-    const pct = computeScore();
-    finalScore = pct;
-    scoreValueSpan.innerText = `${pct}%`;
-    let msg = "";
-    if (pct >= 80) msg = "Excellent comprehension! 🎉";
-    else if (pct >= 60) msg = "Good effort – review the passage. 📘";
-    else msg = "Keep practicing – try reading more carefully. 💪";
-    scoreMessageSpan.innerText = msg;
-    scorePanel.style.display = "block";
-    sendScoreToParent(pct);
-  }
-
-  function evaluateAndScore() {
-    if (evaluated) return;
-    // Warn about unanswered questions
-    let allAnswered = userAnswers.every(a => a !== null);
-    if (!allAnswered) {
-      if (!confirm("You haven't answered all questions. Unanswered will be marked wrong. Continue?")) {
-        return;
-      }
-    }
-    evaluated = true;
-    renderQuestions();
-    showScoreAndSend();
-    checkBtn.disabled = true;
-  }
-
-  function restartTask() {
-    userAnswers.fill(null);
-    evaluated = false;
-    finalScore = null;
-    scorePanel.style.display = "none";
-    checkBtn.disabled = false;
-    renderQuestions();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
+  function computeScore() { let correct = 0; for (let i=0;i<questions.length;i++) if (userAnswers[i]===questions[i].correct) correct++; return Math.round((correct/questions.length)*100); }
+  function sendScoreToParent(score) { try { window.parent.postMessage({ type: 'IELTS_QUIZ_SCORE', score: score }, '*'); } catch(e) {} }
+  function showScoreAndSend() { const pct = computeScore(); scoreValueSpan.innerText = `${pct}%`; scoreMessageSpan.innerText = pct>=80?"Excellent!":pct>=60?"Good effort!":"Keep practicing!"; scorePanel.style.display = "block"; sendScoreToParent(pct); }
+  function evaluateAndScore() { if (evaluated) return; if (!userAnswers.every(a=>a!==null) && !confirm("Some questions unanswered. Continue?")) return; evaluated = true; renderQuestions(); showScoreAndSend(); checkBtn.disabled = true; }
+  function restartTask() { userAnswers.fill(null); evaluated = false; scorePanel.style.display = "none"; checkBtn.disabled = false; renderQuestions(); }
   checkBtn.addEventListener('click', evaluateAndScore);
   restartBtn.addEventListener('click', restartTask);
   restartFromScoreBtn.addEventListener('click', restartTask);
-
   renderQuestions();
 </script>
 </body>
