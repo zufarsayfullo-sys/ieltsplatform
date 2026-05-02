@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Video Task: Why can't we stop eating certain foods?</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #ffffff;
+      color: #1a1a1a;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      padding: 2rem 1.5rem;
+    }
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #111;
+    }
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 */
+      height: 0;
+      margin: 1.5rem 0;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+    }
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .instruction {
+      background: #fef9e3;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+    .question-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .question-text {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      color: #0f172a;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .option:hover:not(.disabled) {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+    .option.selected {
+      background: #eff6ff;
+      border-color: #3b82f6;
+    }
+    .option.correct {
+      background: #ecfdf5;
+      border-color: #10b981;
+    }
+    .option.wrong {
+      background: #fef2f2;
+      border-color: #ef4444;
+    }
+    .option.disabled {
+      cursor: default;
+      opacity: 0.9;
+    }
+    .option-letter {
+      font-weight: 700;
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f1f5f9;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: #1e293b;
+    }
+    .option.selected .option-letter {
+      background: #3b82f6;
+      color: white;
+    }
+    .option.correct .option-letter {
+      background: #10b981;
+      color: white;
+    }
+    .option.wrong .option-letter {
+      background: #ef4444;
+      color: white;
+    }
+    .option-text {
+      font-size: 0.9rem;
+    }
+    .feedback {
+      margin-top: 0.6rem;
+      font-size: 0.8rem;
+      padding-left: 0.2rem;
+    }
+    .feedback.correct-fb {
+      color: #10b981;
+    }
+    .feedback.wrong-fb {
+      color: #ef4444;
+    }
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin: 1.5rem 0 1rem;
+      flex-wrap: wrap;
+    }
+    button {
+      font-family: inherit;
+      font-weight: 500;
+      padding: 0.65rem 1.4rem;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      background: #f1f5f9;
+      color: #1e293b;
+      transition: 0.15s;
+    }
+    button.primary {
+      background: #111827;
+      color: white;
+    }
+    button.primary:hover {
+      background: #1e293b;
+      transform: translateY(-1px);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .score-area {
+      margin-top: 2rem;
+      text-align: center;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 24px;
+      display: none;
+    }
+    .final-score {
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+    hr {
+      margin: 1rem 0;
+      border: none;
+      border-top: 1px solid #eef2f6;
+    }
+    footer {
+      font-size: 0.7rem;
+      text-align: center;
+      margin-top: 2rem;
+      color: #94a3b8;
+    }
+    .transcript-note {
+      background: #f8fafc;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+      color: #475569;
+      border-left: 3px solid #3b82f6;
+    }
+    .transcript-note a {
+      color: #3b82f6;
+      text-decoration: none;
+    }
+    .transcript-note a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🎥 Video Listening: Why can't we stop eating certain foods?</h1>
+  <p style="color: #4b5563; margin-bottom: 0.5rem;">BBC Documentary with Dr. Chris van Tulleken</p>
+
+  <div class="video-wrapper">
+    <iframe src="https://www.youtube.com/embed/J_03EXyhYS8" title="Why can't we stop eating certain foods? - BBC" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  </div>
+
+  <div class="instruction">
+    📺 Watch the video and answer the 5 questions below. Click <strong>“Check answers”</strong> to see your score – it will be sent automatically to your IELTS dashboard.
+  </div>
+
+  <div class="transcript-note">
+    💡 Need help? The transcript of the video is available above the video (click the “...” menu and select “Open transcript”). You can also refer to the key points from the documentary while answering.
+  </div>
+
+  <div id="questions-area"></div>
+
+  <div class="actions">
+    <button id="checkBtn" class="primary">✅ Check answers</button>
+    <button id="restartBtn">⟳ Restart task</button>
+  </div>
+
+  <div id="scorePanel" class="score-area">
+    <div class="final-score" id="scoreValue">0%</div>
+    <div id="scoreMessage" style="font-size:0.85rem; margin-top:0.3rem"></div>
+    <hr>
+    <button id="restartFromScoreBtn" style="background:#eef2ff;">Watch again / Retry</button>
+  </div>
+  <footer>Your score will be automatically sent to your IELTS dashboard.</footer>
+</div>
+
+<script>
+  // Questions based on the video transcript
+  const questions = [
+    {
+      text: "According to Dr. Chris van Tulleken, what happened to obesity rates in the mid-1970s?",
+      options: [
+        "They remained stable.",
+        "They started increasing across all groups simultaneously.",
+        "They decreased due to healthier food choices.",
+        "They only increased among older adults."
+      ],
+      correct: 1  // index 1 (B)
+    },
+    {
+      text: "According to the video, why is the idea that obesity is caused by a 'failure of willpower' not plausible?",
+      options: [
+        "Because people have always eaten the same amount.",
+        "Because all groups of people would have simultaneously lost moral responsibility, which is unlikely.",
+        "Because doctors have proven willpower doesn't exist.",
+        "Because obesity rates have always been high."
+      ],
+      correct: 1
+    },
+    {
+      text: "What does the former food industry insider John Ruff say about how food companies optimise their products?",
+      options: [
+        "They focus only on reducing calories.",
+        "They use trained sensory panels to rate texture, flavour, and taste.",
+        "They rely on government guidelines for nutrition.",
+        "They only care about packaging design."
+      ],
+      correct: 1
+    },
+    {
+      text: "What is 'vanishing caloric density' according to the video?",
+      options: [
+        "When food has zero calories.",
+        "When soft, puffy foods melt in the mouth and are consumed very quickly.",
+        "When food is packaged in small portions.",
+        "When food is cooked at very high temperatures."
+      ],
+      correct: 1
+    },
+    {
+      text: "What does the video say about the food industry's response to concerns about ultra-processed foods?",
+      options: [
+        "They deny all responsibility and refuse to change.",
+        "They claim to take the issue seriously, invest in healthier products, and support a review of labelling.",
+        "They have stopped producing ultra-processed foods entirely.",
+        "They blame consumers for their choices."
+      ],
+      correct: 1
+    }
+  ];
+
+  let userAnswers = new Array(questions.length).fill(null);
+  let evaluated = false;
+  let finalScore = null;
+
+  const questionsDiv = document.getElementById('questions-area');
+  const checkBtn = document.getElementById('checkBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const scorePanel = document.getElementById('scorePanel');
+  const scoreValueSpan = document.getElementById('scoreValue');
+  const scoreMessageSpan = document.getElementById('scoreMessage');
+  const restartFromScoreBtn = document.getElementById('restartFromScoreBtn');
+
+  function renderQuestions() {
+    questionsDiv.innerHTML = '';
+    questions.forEach((q, idx) => {
+      const card = document.createElement('div');
+      card.className = 'question-card';
+      const qText = document.createElement('div');
+      qText.className = 'question-text';
+      qText.innerText = `${idx+1}. ${q.text}`;
+      card.appendChild(qText);
+
+      const optionsDiv = document.createElement('div');
+      optionsDiv.className = 'options';
+      q.options.forEach((opt, optIdx) => {
+        const optDiv = document.createElement('div');
+        optDiv.className = 'option';
+        if (evaluated) optDiv.classList.add('disabled');
+        if (userAnswers[idx] === optIdx && !evaluated) optDiv.classList.add('selected');
+        if (evaluated) {
+          if (optIdx === q.correct) optDiv.classList.add('correct');
+          if (userAnswers[idx] === optIdx && userAnswers[idx] !== q.correct) optDiv.classList.add('wrong');
+        }
+        optDiv.innerHTML = `
+          <span class="option-letter">${String.fromCharCode(65+optIdx)}</span>
+          <span class="option-text">${opt}</span>
+        `;
+        if (!evaluated) {
+          optDiv.addEventListener('click', () => {
+            if (evaluated) return;
+            userAnswers[idx] = optIdx;
+            renderQuestions();
+          });
+        }
+        optionsDiv.appendChild(optDiv);
+      });
+      card.appendChild(optionsDiv);
+
+      if (evaluated) {
+        const fb = document.createElement('div');
+        fb.className = 'feedback';
+        if (userAnswers[idx] === null) {
+          fb.innerText = '⚠️ Not answered.';
+          fb.style.color = '#ef4444';
+        } else if (userAnswers[idx] === q.correct) {
+          fb.innerText = '✓ Correct!';
+          fb.classList.add('correct-fb');
+        } else {
+          fb.innerText = `✗ Incorrect. The correct answer is ${String.fromCharCode(65+q.correct)}: ${q.options[q.correct]}`;
+          fb.classList.add('wrong-fb');
+        }
+        card.appendChild(fb);
+      }
+      questionsDiv.appendChild(card);
+    });
+  }
+
+  function computeScore() {
+    let correct = 0;
+    for (let i = 0; i < questions.length; i++) {
+      if (userAnswers[i] !== null && userAnswers[i] === questions[i].correct) correct++;
+    }
+    return Math.round((correct / questions.length) * 100);
+  }
+
+  function sendScoreToParent(score) {
+    try {
+      window.parent.postMessage({ type: 'IELTS_QUIZ_SCORE', score: score }, '*');
+    } catch(e) { /* iframe may restrict, ignore */ }
+  }
+
+  function showScoreAndSend() {
+    const pct = computeScore();
+    finalScore = pct;
+    scoreValueSpan.innerText = `${pct}%`;
+    let msg = "";
+    if (pct >= 80) msg = "Excellent listening comprehension! 🎉";
+    else if (pct >= 60) msg = "Good effort – rewatch sections if needed. 📘";
+    else msg = "Try watching the video again and pay attention to key details. 💪";
+    scoreMessageSpan.innerText = msg;
+    scorePanel.style.display = "block";
+    sendScoreToParent(pct);
+  }
+
+  function evaluateAndScore() {
+    if (evaluated) return;
+    let allAnswered = userAnswers.every(a => a !== null);
+    if (!allAnswered) {
+      if (!confirm("You haven't answered all questions. Unanswered will be marked wrong. Continue?")) {
+        return;
+      }
+    }
+    evaluated = true;
+    renderQuestions();
+    showScoreAndSend();
+    checkBtn.disabled = true;
+  }
+
+  function restartTask() {
+    userAnswers.fill(null);
+    evaluated = false;
+    finalScore = null;
+    scorePanel.style.display = "none";
+    checkBtn.disabled = false;
+    renderQuestions();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  checkBtn.addEventListener('click', evaluateAndScore);
+  restartBtn.addEventListener('click', restartTask);
+  restartFromScoreBtn.addEventListener('click', restartTask);
+
+  renderQuestions();
+</script>
+</body>
+</html>
