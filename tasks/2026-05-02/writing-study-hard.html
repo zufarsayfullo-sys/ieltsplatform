@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Task: Study Hard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #ffffff;
+      color: #1a1a1a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+      padding: 2rem 1.5rem;
+    }
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      padding: 2rem;
+    }
+    h1 { font-size: 1.8rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .topic-box {
+      background: #f8fafc;
+      border-left: 4px solid #3b82f6;
+      padding: 1rem 1.2rem;
+      margin: 1.2rem 0;
+      border-radius: 12px;
+    }
+    .topic-label { font-weight: 600; font-size: 0.85rem; text-transform: uppercase; color: #3b82f6; letter-spacing: 0.5px; }
+    .topic-text { font-size: 1.1rem; margin-top: 0.25rem; }
+    .instruction {
+      background: #fef9e3;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      margin-bottom: 1.8rem;
+    }
+    textarea {
+      width: 100%;
+      min-height: 280px;
+      padding: 1rem;
+      font-family: 'Inter', monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      resize: vertical;
+      background: #fefefe;
+    }
+    textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+    .actions {
+      display: flex;
+      gap: 1rem;
+      margin: 1.5rem 0 1rem;
+      flex-wrap: wrap;
+    }
+    button {
+      font-family: inherit;
+      font-weight: 500;
+      padding: 0.65rem 1.4rem;
+      border-radius: 40px;
+      border: none;
+      cursor: pointer;
+      background: #f1f5f9;
+      color: #1e293b;
+      transition: 0.15s;
+    }
+    button.primary {
+      background: #111827;
+      color: white;
+    }
+    button.primary:hover { background: #1e293b; transform: translateY(-1px); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .result-box {
+      margin-top: 2rem;
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 1.2rem;
+      display: none;
+    }
+    .criteria-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .criterion {
+      background: white;
+      border-radius: 16px;
+      padding: 0.8rem;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .criterion-name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      color: #475569;
+    }
+    .criterion-score {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .overall {
+      text-align: center;
+      margin: 0.5rem 0;
+    }
+    .overall-score {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #10b981;
+    }
+    .feedback-text {
+      background: white;
+      padding: 1rem;
+      border-radius: 16px;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      border: 1px solid #e2e8f0;
+    }
+    hr { margin: 1rem 0; border: none; border-top: 1px solid #eef2f6; }
+    footer { font-size: 0.7rem; text-align: center; margin-top: 2rem; color: #94a3b8; }
+    .loader { display: inline-block; width: 16px; height: 16px; border: 2px solid #e2e8f0; border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>✍️ Writing Task</h1>
+  <div class="topic-box">
+    <div class="topic-label">📌 Topic</div>
+    <div class="topic-text">It is important to study hard if you want to achieve your goals.</div>
+  </div>
+  <div class="instruction">
+    ⏱️ Time limit: <strong>10 minutes</strong> (but take as long as you need for practice).<br>
+    Write a short paragraph (150–200 words) expressing your opinion. Use examples and clear reasoning.<br>
+    When you finish, click <strong>“AI Check”</strong> – DeepSeek will evaluate four criteria and return a score.
+  </div>
+
+  <textarea id="essayInput" placeholder="Write your response here..."></textarea>
+
+  <div class="actions">
+    <button id="checkBtn" class="primary">🤖 AI Check (DeepSeek)</button>
+    <button id="resetBtn">🗑️ Clear</button>
+  </div>
+
+  <div id="resultBox" class="result-box">
+    <div class="criteria-grid" id="criteriaGrid"></div>
+    <div class="overall">
+      <div class="overall-score" id="overallScore">—</div>
+      <div style="font-size:0.8rem;">Overall Score (0–100)</div>
+    </div>
+    <div class="feedback-text" id="aiFeedback"></div>
+    <hr>
+    <button id="sendScoreBtn" style="background:#eef2ff; width:100%;">📤 Send score to platform</button>
+  </div>
+  <footer>Your score will be automatically sent after AI evaluation. You can also send manually.</footer>
+</div>
+
+<script>
+  const DEEPSEEK_API_KEY = "sk-527571fb922941168935f8a3d939876f";
+  const API_URL = "https://api.deepseek.com/v1/chat/completions";
+
+  let currentScore = null;
+  let evaluationResult = null;
+
+  const essayInput = document.getElementById('essayInput');
+  const checkBtn = document.getElementById('checkBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const resultBox = document.getElementById('resultBox');
+  const criteriaGrid = document.getElementById('criteriaGrid');
+  const overallScoreSpan = document.getElementById('overallScore');
+  const aiFeedbackDiv = document.getElementById('aiFeedback');
+  const sendScoreBtn = document.getElementById('sendScoreBtn');
+
+  function setLoading(loading) {
+    if (loading) {
+      checkBtn.disabled = true;
+      checkBtn.innerHTML = '<span class="loader"></span> Analysing...';
+    } else {
+      checkBtn.disabled = false;
+      checkBtn.innerHTML = '🤖 AI Check (DeepSeek)';
+    }
+  }
+
+  async function callDeepSeek(essay) {
+    const systemPrompt = `You are an IELTS writing evaluator. Rate the following essay on four criteria (each 0-100):
+- Task Achievement: how well the writer addresses the prompt and develops their position.
+- Coherence & Cohesion: logical flow, paragraphing, linking words.
+- Lexical Resource (Vocabulary): range and accuracy of words.
+- Grammatical Range & Accuracy: sentence structures, errors.
+
+Return ONLY a valid JSON object with this exact structure:
+{
+  "task_achievement": number,
+  "coherence": number,
+  "vocabulary": number,
+  "grammar": number,
+  "overall": number,
+  "feedback": "short constructive feedback (2-3 sentences)"
+}
+Do not include any extra text or markdown.`;
+
+    const userPrompt = `Essay topic: "It is important to study hard if you want to achieve your goals."\n\nStudent essay:\n${essay}`;
+
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+          ],
+          temperature: 0.3,
+          response_format: { type: "json_object" }
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        throw new Error(`API error: ${response.status} - ${err}`);
+      }
+
+      const data = await response.json();
+      const content = data.choices[0].message.content;
+      const parsed = JSON.parse(content);
+      // ensure all fields exist
+      return {
+        task_achievement: parsed.task_achievement || 0,
+        coherence: parsed.coherence || 0,
+        vocabulary: parsed.vocabulary || 0,
+        grammar: parsed.grammar || 0,
+        overall: parsed.overall || Math.round((parsed.task_achievement + parsed.coherence + parsed.vocabulary + parsed.grammar)/4),
+        feedback: parsed.feedback || "Great effort! Keep practicing."
+      };
+    } catch (error) {
+      console.error(error);
+      throw new Error(`DeepSeek evaluation failed: ${error.message}`);
+    }
+  }
+
+  async function evaluateEssay() {
+    const essay = essayInput.value.trim();
+    if (essay.length < 20) {
+      alert("Please write at least 20 words before checking.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await callDeepSeek(essay);
+      evaluationResult = result;
+      currentScore = result.overall;
+
+      // Display criteria
+      criteriaGrid.innerHTML = `
+        <div class="criterion"><div class="criterion-name">Task Achievement</div><div class="criterion-score">${result.task_achievement}</div></div>
+        <div class="criterion"><div class="criterion-name">Coherence</div><div class="criterion-score">${result.coherence}</div></div>
+        <div class="criterion"><div class="criterion-name">Vocabulary</div><div class="criterion-score">${result.vocabulary}</div></div>
+        <div class="criterion"><div class="criterion-name">Grammar</div><div class="criterion-score">${result.grammar}</div></div>
+      `;
+      overallScoreSpan.innerText = `${result.overall}%`;
+      aiFeedbackDiv.innerText = result.feedback;
+
+      resultBox.style.display = "block";
+      // Auto-send score to parent platform
+      sendScoreToParent(result.overall);
+    } catch (err) {
+      alert(`Error: ${err.message}. Please try again later.`);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function sendScoreToParent(score) {
+    try {
+      window.parent.postMessage({ type: 'IELTS_QUIZ_SCORE', score: score }, '*');
+      // Show a temporary indicator (optional)
+      const toast = document.createElement('div');
+      toast.innerText = `✅ Score ${score}% sent to platform`;
+      toast.style.position = 'fixed';
+      toast.style.bottom = '20px';
+      toast.style.right = '20px';
+      toast.style.backgroundColor = '#10b981';
+      toast.style.color = 'white';
+      toast.style.padding = '8px 16px';
+      toast.style.borderRadius = '40px';
+      toast.style.fontSize = '0.8rem';
+      toast.style.zIndex = '999';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    } catch(e) { /* iframe may restrict cross-origin */ }
+  }
+
+  resetBtn.addEventListener('click', () => {
+    essayInput.value = '';
+    resultBox.style.display = 'none';
+    currentScore = null;
+    evaluationResult = null;
+  });
+
+  checkBtn.addEventListener('click', evaluateEssay);
+  sendScoreBtn.addEventListener('click', () => {
+    if (currentScore !== null) sendScoreToParent(currentScore);
+    else alert("No evaluation yet. Click 'AI Check' first.");
+  });
+
+  // If the user already completed, you can also send automatically on load? no.
+</script>
+</body>
+</html>
