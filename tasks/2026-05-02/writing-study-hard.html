@@ -317,4 +317,57 @@ Do not include any extra text or markdown.`;
   // If the user already completed, you can also send automatically on load? no.
 </script>
 </body>
+  <script>
+(function() {
+  // Only run once
+  if (window.__fullscreenStartAdded) return;
+  window.__fullscreenStartAdded = true;
+
+  // Move all existing body children into a wrapper div
+  const originalChildren = Array.from(document.body.children);
+  const quizWrapper = document.createElement('div');
+  quizWrapper.id = 'quizContent';
+  quizWrapper.style.display = 'none';
+  originalChildren.forEach(child => quizWrapper.appendChild(child));
+  document.body.innerHTML = '';
+
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.id = 'startOverlay';
+  overlay.style.cssText = `
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background: white; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; text-align: center;
+  `;
+  overlay.innerHTML = `
+    <div style="background: #f8fafc; padding: 2rem; border-radius: 32px; max-width: 400px;">
+      <h2 style="font-size: 1.8rem;">📖 Task Ready</h2>
+      <p style="color: #4b5563;">Click start to enter fullscreen and begin.</p>
+      <button id="fullscreenStartBtn" style="background:#111827; color:white; border:none; padding:12px 28px; border-radius:40px; font-size:1rem; margin-top:16px; cursor:pointer;">🚀 Start Fullscreen</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  document.body.appendChild(quizWrapper);
+
+  const startBtn = document.getElementById('fullscreenStartBtn');
+  const requestFS = () => {
+    const elem = document.documentElement;
+    const req = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.mozRequestFullScreen || elem.msRequestFullscreen;
+    if (req) {
+      req.call(elem).then(() => {
+        overlay.style.display = 'none';
+        quizWrapper.style.display = 'block';
+      }).catch(() => {
+        overlay.style.display = 'none';
+        quizWrapper.style.display = 'block';
+      });
+    } else {
+      overlay.style.display = 'none';
+      quizWrapper.style.display = 'block';
+    }
+  };
+  startBtn.addEventListener('click', requestFS);
+})();
+</script>
 </html>
