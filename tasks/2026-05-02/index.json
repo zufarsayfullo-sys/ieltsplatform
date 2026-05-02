@@ -1,0 +1,26 @@
+[
+  {
+    "file": "writing-study-hard.html",
+    "title": "Writing: Study Hard (AI evaluated)",
+    "type": "writing",
+    "duration": "10 min"
+  },
+  {
+    "file": "reading-books-health.html",
+    "title": "Reading: Why Books Are Good for Your Health",
+    "type": "reading",
+    "duration": "8 min"
+  },
+  {
+    "file": "video-ultraprocessed-food.html",
+    "title": "Video: Ultra‑processed food (BBC)",
+    "type": "listening",
+    "duration": "10 min"
+  },
+  {
+    "file": "video-bilingual-brain.html",
+    "title": "Video: The benefits of a bilingual brain",
+    "type": "listening",
+    "duration": "8 min"
+  }
+]
