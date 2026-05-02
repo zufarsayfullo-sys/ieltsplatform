@@ -11,11 +11,52 @@
       color: #1a1a1a;
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       line-height: 1.5;
-      padding: 2rem 1.5rem;
     }
-    .container {
+    .start-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+    }
+    .start-overlay.hide { display: none; }
+    .start-card {
+      background: #f8fafc;
+      padding: 2rem;
+      border-radius: 32px;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+    .start-card h2 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .start-card p { color: #4b5563; margin-bottom: 1rem; }
+    .start-btn {
+      background: #111827;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .start-btn:hover { background: #1e293b; transform: scale(1.02); }
+    .quiz-content {
+      display: none;
       max-width: 880px;
       margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    .quiz-content.visible { display: block; }
+    /* Original quiz styles */
+    .container {
       background: white;
       border-radius: 24px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.05);
@@ -29,7 +70,7 @@
       margin: 1.2rem 0;
       border-radius: 12px;
     }
-    .topic-label { font-weight: 600; font-size: 0.85rem; text-transform: uppercase; color: #3b82f6; letter-spacing: 0.5px; }
+    .topic-label { font-weight: 600; font-size: 0.85rem; text-transform: uppercase; color: #3b82f6; }
     .topic-text { font-size: 1.1rem; margin-top: 0.25rem; }
     .instruction {
       background: #fef9e3;
@@ -44,11 +85,9 @@
       padding: 1rem;
       font-family: 'Inter', monospace;
       font-size: 0.95rem;
-      line-height: 1.5;
       border: 1px solid #cbd5e1;
       border-radius: 16px;
       resize: vertical;
-      background: #fefefe;
     }
     textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
     .actions {
@@ -66,12 +105,8 @@
       cursor: pointer;
       background: #f1f5f9;
       color: #1e293b;
-      transition: 0.15s;
     }
-    button.primary {
-      background: #111827;
-      color: white;
-    }
+    button.primary { background: #111827; color: white; }
     button.primary:hover { background: #1e293b; transform: translateY(-1px); }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
     .result-box {
@@ -92,28 +127,11 @@
       border-radius: 16px;
       padding: 0.8rem;
       text-align: center;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
-    .criterion-name {
-      font-weight: 600;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      color: #475569;
-    }
-    .criterion-score {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #0f172a;
-    }
-    .overall {
-      text-align: center;
-      margin: 0.5rem 0;
-    }
-    .overall-score {
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: #10b981;
-    }
+    .criterion-name { font-weight: 600; font-size: 0.85rem; color: #475569; }
+    .criterion-score { font-size: 1.8rem; font-weight: 700; }
+    .overall { text-align: center; margin: 0.5rem 0; }
+    .overall-score { font-size: 2.2rem; font-weight: 800; color: #10b981; }
     .feedback-text {
       background: white;
       padding: 1rem;
@@ -129,45 +147,64 @@
   </style>
 </head>
 <body>
-<div class="container">
-  <h1>✍️ Writing Task</h1>
-  <div class="topic-box">
-    <div class="topic-label">📌 Topic</div>
-    <div class="topic-text">It is important to study hard if you want to achieve your goals.</div>
+<div class="start-overlay" id="startOverlay">
+  <div class="start-card">
+    <h2>✍️ Writing Task</h2>
+    <p>Topic: <strong>It is important to study hard if you want to achieve your goals.</strong></p>
+    <p style="font-size: 0.9rem;">⏱️ 10 minutes · AI evaluated on 4 criteria</p>
+    <button class="start-btn" id="fullscreenStartBtn">🚀 Start Fullscreen Quiz</button>
+    <p style="font-size: 0.7rem; margin-top: 1rem;">Fullscreen will be requested for better focus.</p>
   </div>
-  <div class="instruction">
-    ⏱️ Time limit: <strong>10 minutes</strong> (but take as long as you need for practice).<br>
-    Write a short paragraph (150–200 words) expressing your opinion. Use examples and clear reasoning.<br>
-    When you finish, click <strong>“AI Check”</strong> – DeepSeek will evaluate four criteria and return a score.
-  </div>
-
-  <textarea id="essayInput" placeholder="Write your response here..."></textarea>
-
-  <div class="actions">
-    <button id="checkBtn" class="primary">🤖 AI Check (DeepSeek)</button>
-    <button id="resetBtn">🗑️ Clear</button>
-  </div>
-
-  <div id="resultBox" class="result-box">
-    <div class="criteria-grid" id="criteriaGrid"></div>
-    <div class="overall">
-      <div class="overall-score" id="overallScore">—</div>
-      <div style="font-size:0.8rem;">Overall Score (0–100)</div>
-    </div>
-    <div class="feedback-text" id="aiFeedback"></div>
-    <hr>
-    <button id="sendScoreBtn" style="background:#eef2ff; width:100%;">📤 Send score to platform</button>
-  </div>
-  <footer>Your score will be automatically sent after AI evaluation. You can also send manually.</footer>
 </div>
-
+<div class="quiz-content" id="quizContent">
+  <div class="container">
+    <h1>✍️ Writing Task</h1>
+    <div class="topic-box">
+      <div class="topic-label">📌 Topic</div>
+      <div class="topic-text">It is important to study hard if you want to achieve your goals.</div>
+    </div>
+    <div class="instruction">⏱️ Time limit: 10 minutes (but take as long as you need).<br>Write a short paragraph (150–200 words). When finished, click <strong>“AI Check”</strong> – DeepSeek will evaluate four criteria and send your score.</div>
+    <textarea id="essayInput" placeholder="Write your response here..."></textarea>
+    <div class="actions">
+      <button id="checkBtn" class="primary">🤖 AI Check (DeepSeek)</button>
+      <button id="resetBtn">🗑️ Clear</button>
+    </div>
+    <div id="resultBox" class="result-box">
+      <div class="criteria-grid" id="criteriaGrid"></div>
+      <div class="overall"><div class="overall-score" id="overallScore">—</div><div style="font-size:0.8rem;">Overall Score (0–100)</div></div>
+      <div class="feedback-text" id="aiFeedback"></div>
+      <hr><button id="sendScoreBtn" style="background:#eef2ff; width:100%;">📤 Send score to platform</button>
+    </div>
+    <footer>Your score will be automatically sent after AI evaluation.</footer>
+  </div>
+</div>
 <script>
+  // Fullscreen start logic
+  const overlay = document.getElementById('startOverlay');
+  const quizDiv = document.getElementById('quizContent');
+  const startBtn = document.getElementById('fullscreenStartBtn');
+  function requestFullscreenAndStart() {
+    const elem = document.documentElement;
+    const req = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.mozRequestFullScreen || elem.msRequestFullscreen;
+    if (req) {
+      req.call(elem).then(() => {
+        overlay.classList.add('hide');
+        quizDiv.classList.add('visible');
+      }).catch(() => {
+        overlay.classList.add('hide');
+        quizDiv.classList.add('visible');
+      });
+    } else {
+      overlay.classList.add('hide');
+      quizDiv.classList.add('visible');
+    }
+  }
+  startBtn.addEventListener('click', requestFullscreenAndStart);
+
+  // Writing task logic (same as before, with DeepSeek API)
   const DEEPSEEK_API_KEY = "sk-527571fb922941168935f8a3d939876f";
   const API_URL = "https://api.deepseek.com/v1/chat/completions";
-
   let currentScore = null;
-  let evaluationResult = null;
-
   const essayInput = document.getElementById('essayInput');
   const checkBtn = document.getElementById('checkBtn');
   const resetBtn = document.getElementById('resetBtn');
@@ -178,90 +215,36 @@
   const sendScoreBtn = document.getElementById('sendScoreBtn');
 
   function setLoading(loading) {
-    if (loading) {
-      checkBtn.disabled = true;
-      checkBtn.innerHTML = '<span class="loader"></span> Analysing...';
-    } else {
-      checkBtn.disabled = false;
-      checkBtn.innerHTML = '🤖 AI Check (DeepSeek)';
-    }
+    if (loading) { checkBtn.disabled = true; checkBtn.innerHTML = '<span class="loader"></span> Analysing...'; }
+    else { checkBtn.disabled = false; checkBtn.innerHTML = '🤖 AI Check (DeepSeek)'; }
   }
-
   async function callDeepSeek(essay) {
     const systemPrompt = `You are an IELTS writing evaluator. Rate the following essay on four criteria (each 0-100):
 - Task Achievement: how well the writer addresses the prompt and develops their position.
 - Coherence & Cohesion: logical flow, paragraphing, linking words.
 - Lexical Resource (Vocabulary): range and accuracy of words.
 - Grammatical Range & Accuracy: sentence structures, errors.
-
 Return ONLY a valid JSON object with this exact structure:
-{
-  "task_achievement": number,
-  "coherence": number,
-  "vocabulary": number,
-  "grammar": number,
-  "overall": number,
-  "feedback": "short constructive feedback (2-3 sentences)"
-}
-Do not include any extra text or markdown.`;
-
+{"task_achievement": number, "coherence": number, "vocabulary": number, "grammar": number, "overall": number, "feedback": "short feedback"}
+Do not include any extra text.`;
     const userPrompt = `Essay topic: "It is important to study hard if you want to achieve your goals."\n\nStudent essay:\n${essay}`;
-
-    try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "deepseek-chat",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: userPrompt }
-          ],
-          temperature: 0.3,
-          response_format: { type: "json_object" }
-        })
-      });
-
-      if (!response.ok) {
-        const err = await response.text();
-        throw new Error(`API error: ${response.status} - ${err}`);
-      }
-
-      const data = await response.json();
-      const content = data.choices[0].message.content;
-      const parsed = JSON.parse(content);
-      // ensure all fields exist
-      return {
-        task_achievement: parsed.task_achievement || 0,
-        coherence: parsed.coherence || 0,
-        vocabulary: parsed.vocabulary || 0,
-        grammar: parsed.grammar || 0,
-        overall: parsed.overall || Math.round((parsed.task_achievement + parsed.coherence + parsed.vocabulary + parsed.grammar)/4),
-        feedback: parsed.feedback || "Great effort! Keep practicing."
-      };
-    } catch (error) {
-      console.error(error);
-      throw new Error(`DeepSeek evaluation failed: ${error.message}`);
-    }
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${DEEPSEEK_API_KEY}` },
+      body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }], temperature: 0.3, response_format: { type: "json_object" } })
+    });
+    if (!response.ok) throw new Error(`API error: ${response.status}`);
+    const data = await response.json();
+    const content = data.choices[0].message.content;
+    return JSON.parse(content);
   }
-
   async function evaluateEssay() {
     const essay = essayInput.value.trim();
-    if (essay.length < 20) {
-      alert("Please write at least 20 words before checking.");
-      return;
-    }
-
+    if (essay.length < 20) { alert("Please write at least 20 words."); return; }
     setLoading(true);
     try {
       const result = await callDeepSeek(essay);
-      evaluationResult = result;
       currentScore = result.overall;
-
-      // Display criteria
       criteriaGrid.innerHTML = `
         <div class="criterion"><div class="criterion-name">Task Achievement</div><div class="criterion-score">${result.task_achievement}</div></div>
         <div class="criterion"><div class="criterion-name">Coherence</div><div class="criterion-score">${result.coherence}</div></div>
@@ -270,104 +253,17 @@ Do not include any extra text or markdown.`;
       `;
       overallScoreSpan.innerText = `${result.overall}%`;
       aiFeedbackDiv.innerText = result.feedback;
-
       resultBox.style.display = "block";
-      // Auto-send score to parent platform
       sendScoreToParent(result.overall);
-    } catch (err) {
-      alert(`Error: ${err.message}. Please try again later.`);
-    } finally {
-      setLoading(false);
-    }
+    } catch(err) { alert(`Error: ${err.message}`); }
+    finally { setLoading(false); }
   }
-
   function sendScoreToParent(score) {
-    try {
-      window.parent.postMessage({ type: 'IELTS_QUIZ_SCORE', score: score }, '*');
-      // Show a temporary indicator (optional)
-      const toast = document.createElement('div');
-      toast.innerText = `✅ Score ${score}% sent to platform`;
-      toast.style.position = 'fixed';
-      toast.style.bottom = '20px';
-      toast.style.right = '20px';
-      toast.style.backgroundColor = '#10b981';
-      toast.style.color = 'white';
-      toast.style.padding = '8px 16px';
-      toast.style.borderRadius = '40px';
-      toast.style.fontSize = '0.8rem';
-      toast.style.zIndex = '999';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    } catch(e) { /* iframe may restrict cross-origin */ }
+    try { window.parent.postMessage({ type: 'IELTS_QUIZ_SCORE', score: score }, '*'); } catch(e) {}
   }
-
-  resetBtn.addEventListener('click', () => {
-    essayInput.value = '';
-    resultBox.style.display = 'none';
-    currentScore = null;
-    evaluationResult = null;
-  });
-
+  resetBtn.addEventListener('click', () => { essayInput.value = ''; resultBox.style.display = 'none'; currentScore = null; });
   checkBtn.addEventListener('click', evaluateEssay);
-  sendScoreBtn.addEventListener('click', () => {
-    if (currentScore !== null) sendScoreToParent(currentScore);
-    else alert("No evaluation yet. Click 'AI Check' first.");
-  });
-
-  // If the user already completed, you can also send automatically on load? no.
+  sendScoreBtn.addEventListener('click', () => { if (currentScore !== null) sendScoreToParent(currentScore); else alert("No evaluation yet."); });
 </script>
 </body>
-  <script>
-(function() {
-  // Only run once
-  if (window.__fullscreenStartAdded) return;
-  window.__fullscreenStartAdded = true;
-
-  // Move all existing body children into a wrapper div
-  const originalChildren = Array.from(document.body.children);
-  const quizWrapper = document.createElement('div');
-  quizWrapper.id = 'quizContent';
-  quizWrapper.style.display = 'none';
-  originalChildren.forEach(child => quizWrapper.appendChild(child));
-  document.body.innerHTML = '';
-
-  // Create overlay
-  const overlay = document.createElement('div');
-  overlay.id = 'startOverlay';
-  overlay.style.cssText = `
-    position: fixed; top:0; left:0; width:100%; height:100%;
-    background: white; z-index: 9999;
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column; text-align: center;
-  `;
-  overlay.innerHTML = `
-    <div style="background: #f8fafc; padding: 2rem; border-radius: 32px; max-width: 400px;">
-      <h2 style="font-size: 1.8rem;">📖 Task Ready</h2>
-      <p style="color: #4b5563;">Click start to enter fullscreen and begin.</p>
-      <button id="fullscreenStartBtn" style="background:#111827; color:white; border:none; padding:12px 28px; border-radius:40px; font-size:1rem; margin-top:16px; cursor:pointer;">🚀 Start Fullscreen</button>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-  document.body.appendChild(quizWrapper);
-
-  const startBtn = document.getElementById('fullscreenStartBtn');
-  const requestFS = () => {
-    const elem = document.documentElement;
-    const req = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.mozRequestFullScreen || elem.msRequestFullscreen;
-    if (req) {
-      req.call(elem).then(() => {
-        overlay.style.display = 'none';
-        quizWrapper.style.display = 'block';
-      }).catch(() => {
-        overlay.style.display = 'none';
-        quizWrapper.style.display = 'block';
-      });
-    } else {
-      overlay.style.display = 'none';
-      quizWrapper.style.display = 'block';
-    }
-  };
-  startBtn.addEventListener('click', requestFS);
-})();
-</script>
 </html>
